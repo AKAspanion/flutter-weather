@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/views/location_screen.dart';
 import 'package:flutterweather/components/hamburger.dart';
 
 class Home extends StatelessWidget {
@@ -43,11 +44,7 @@ class Home extends StatelessWidget {
                 ],
               ),
             ),
-            Text(
-              "HEY",
-              style: TextStyle(fontSize: 48),
-              textAlign: TextAlign.center,
-            )
+            LocationScreen()
           ],
         ),
       ),
