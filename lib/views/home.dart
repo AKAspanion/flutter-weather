@@ -11,7 +11,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double x = isDrawerOpen ? 230 : 0;
+    final double x = isDrawerOpen ? 320 : 0;
     final double y = isDrawerOpen ? 150 : 0;
     final double factor = isDrawerOpen ? 0.6 : 1;
 
