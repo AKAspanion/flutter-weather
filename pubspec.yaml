@@ -31,6 +31,8 @@ dependencies:
   geolocator: ^5.3.2+2
   http: ^0.12.2
   flutter_spinkit: ^4.1.2+1
+  flare_flutter: ^2.0.6
+  flare_dart: ^2.3.4
 
 dev_dependencies:
   flutter_test:
@@ -46,9 +48,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/animations/cloudy.flr
+    - assets/animations/icons.flr
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see
@@ -66,4 +68,3 @@ flutter:
           style: italic
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-

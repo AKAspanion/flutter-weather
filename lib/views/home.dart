@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/services/location.dart';
 import 'package:flutterweather/views/location_screen.dart';
 import 'package:flutterweather/components/hamburger.dart';
 
 class Home extends StatelessWidget {
+  final bool loading;
   final bool isDrawerOpen;
+  final Location location;
   final void Function() onNavPress;
 
   final DragData homeDragData = DragData();
 
-  Home({@required this.isDrawerOpen, @required this.onNavPress});
+  Home({
+    @required this.isDrawerOpen,
+    @required this.onNavPress,
+    this.location,
+    this.loading,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +52,10 @@ class Home extends StatelessWidget {
                 ],
               ),
             ),
-            LocationScreen()
+            LocationScreen(
+              location: location,
+              loading: loading,
+            ),
           ],
         ),
       ),

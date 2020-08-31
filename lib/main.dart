@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterweather/views/home.dart';
 import 'package:flutterweather/views/menu.dart';
+import 'package:flutterweather/services/location.dart';
 
 void main() => runApp(new MainApp());
 
@@ -11,7 +12,15 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  bool loading = true;
   bool isDrawerOpen = false;
+  Location location = Location();
+
+  @override
+  void initState() {
+    super.initState();
+    getLocation();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +39,8 @@ class _MainAppState extends State<MainApp> {
             Home(
               isDrawerOpen: isDrawerOpen,
               onNavPress: toggleMenu,
+              location: location,
+              loading: loading,
             ),
           ],
         ),
@@ -41,5 +52,19 @@ class _MainAppState extends State<MainApp> {
     setState(() {
       isDrawerOpen = !isDrawerOpen;
     });
+  }
+
+  void getLocation() async {
+    try {
+      await location.getCurrentLocation();
+      await location.getLocationData();
+      // await location.getCityData("Kolkata");
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 }
