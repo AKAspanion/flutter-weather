@@ -14,8 +14,8 @@ class Btn extends StatelessWidget {
     return GestureDetector(
       onTap: onPress,
       child: Container(
-        width: 64,
-        height: 64,
+        width: 56,
+        height: 56,
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 40.0)],

@@ -86,7 +86,7 @@ class LocationView extends StatelessWidget {
           child: FlareActor(
             "assets/animations/cloudy.flr",
             alignment: Alignment.center,
-            animation: 'cloudy-rain',
+            animation: 'cloudy-${weather.getIcon()}',
           ),
         ),
         Container(
