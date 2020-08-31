@@ -22,9 +22,9 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double x = isDrawerOpen ? 320 : 0;
-    final double y = isDrawerOpen ? 150 : 0;
-    final double factor = isDrawerOpen ? 0.6 : 1;
+    final double x = isDrawerOpen ? 70 : 0;
+    final double y = isDrawerOpen ? 120 : 0;
+    final double factor = isDrawerOpen ? 0.65 : 1;
 
     return GestureDetector(
       onHorizontalDragEnd: onDragEnd,

@@ -26,7 +26,7 @@ class LocationScreen extends StatelessWidget {
         margin: EdgeInsets.only(top: 240),
         child: SpinKitPulse(
           size: 100,
-          color: Colors.blue,
+          color: GradientValues().gradients[accent].gradient[0],
         ),
       );
     } else {

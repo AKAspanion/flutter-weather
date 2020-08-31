@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutterweather/components/btn.dart';
 import 'package:flutterweather/views/home.dart';
 import 'package:flutterweather/views/menu.dart';
 import 'package:flutterweather/services/location.dart';
@@ -39,6 +40,28 @@ class _MainAppState extends State<MainApp> {
               accent: selectedAccent,
               onNavPress: toggleMenu,
             ),
+            Positioned(
+              child: Btn(
+                onPress: toggleMenu,
+                child: Icon(
+                  Icons.close,
+                  size: 32,
+                ),
+              ),
+              top: 24,
+              left: 24,
+            ),
+            Positioned(
+              child: Btn(
+                onPress: getLocation,
+                child: Icon(
+                  Icons.refresh,
+                  size: 32,
+                ),
+              ),
+              top: 24,
+              right: 24,
+            ),
             Home(
               isDrawerOpen: isDrawerOpen,
               onNavPress: toggleMenu,
@@ -65,6 +88,9 @@ class _MainAppState extends State<MainApp> {
   }
 
   void getLocation() async {
+    setState(() {
+      loading = true;
+    });
     try {
       await location.getCurrentLocation();
       await location.getLocationData();
