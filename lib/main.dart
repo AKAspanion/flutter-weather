@@ -13,6 +13,7 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   bool loading = true;
+  int selectedAccent = 0;
   bool isDrawerOpen = false;
   Location location = Location();
 
@@ -33,12 +34,15 @@ class _MainAppState extends State<MainApp> {
         body: Stack(
           children: [
             Menu(
+              onAccentSelect: onAccentSelect,
               isDrawerOpen: isDrawerOpen,
+              accent: selectedAccent,
               onNavPress: toggleMenu,
             ),
             Home(
               isDrawerOpen: isDrawerOpen,
               onNavPress: toggleMenu,
+              accent: selectedAccent,
               location: location,
               loading: loading,
             ),
@@ -51,6 +55,12 @@ class _MainAppState extends State<MainApp> {
   void toggleMenu() {
     setState(() {
       isDrawerOpen = !isDrawerOpen;
+    });
+  }
+
+  void onAccentSelect(int i) {
+    setState(() {
+      selectedAccent = i;
     });
   }
 

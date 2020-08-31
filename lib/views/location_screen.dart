@@ -8,22 +8,25 @@ import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/gradients.dart';
 
 class LocationScreen extends StatelessWidget {
+  final int accent;
   final bool loading;
   final Location location;
 
-  LocationScreen({this.location, this.loading});
+  LocationScreen({
+    this.location,
+    this.loading,
+    this.accent = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
     Weather weather = location.getWeather();
     if (loading) {
-      return Positioned(
-        child: Container(
-          margin: EdgeInsets.only(top: 240),
-          child: SpinKitPulse(
-            size: 100,
-            color: Colors.blue,
-          ),
+      return Container(
+        margin: EdgeInsets.only(top: 240),
+        child: SpinKitPulse(
+          size: 100,
+          color: Colors.blue,
         ),
       );
     } else {
@@ -32,6 +35,7 @@ class LocationScreen extends StatelessWidget {
       } else {
         return LocationView(
           weather: weather,
+          accent: accent,
         );
       }
     }
@@ -39,9 +43,10 @@ class LocationScreen extends StatelessWidget {
 }
 
 class LocationView extends StatelessWidget {
+  final int accent;
   final Weather weather;
 
-  LocationView({this.weather});
+  LocationView({this.weather, this.accent = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -116,19 +121,19 @@ class LocationView extends StatelessWidget {
                 icon: "sun",
                 text: "sunrise",
                 value: '${getSunriseTime(weather.sunrise)}',
-                gradient: GradientValues().gradients[0].gradient,
+                gradient: GradientValues().gradients[accent].gradient,
               ),
               WeatherDetailChip(
                 icon: "wind",
                 text: "wind",
                 value: '${weather.windSpeed}m/s',
-                gradient: GradientValues().gradients[0].gradient,
+                gradient: GradientValues().gradients[accent].gradient,
               ),
               WeatherDetailChip(
                 icon: "drop",
                 text: "humidity",
                 value: '${weather.humidity}%',
-                gradient: GradientValues().gradients[0].gradient,
+                gradient: GradientValues().gradients[accent].gradient,
               ),
             ],
           ),

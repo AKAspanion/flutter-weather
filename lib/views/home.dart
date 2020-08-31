@@ -4,6 +4,7 @@ import 'package:flutterweather/views/location_screen.dart';
 import 'package:flutterweather/components/hamburger.dart';
 
 class Home extends StatelessWidget {
+  final int accent;
   final bool loading;
   final bool isDrawerOpen;
   final Location location;
@@ -14,6 +15,7 @@ class Home extends StatelessWidget {
   Home({
     @required this.isDrawerOpen,
     @required this.onNavPress,
+    this.accent = 0,
     this.location,
     this.loading,
   });
@@ -38,7 +40,7 @@ class Home extends StatelessWidget {
           boxShadow: isDrawerOpen
               ? [BoxShadow(color: Colors.black38, blurRadius: 40.0)]
               : [],
-          borderRadius: BorderRadius.circular(isDrawerOpen ? 48 : 0),
+          borderRadius: BorderRadius.circular(isDrawerOpen ? 42 : 0),
         ),
         child: Column(
           children: <Widget>[
@@ -55,6 +57,7 @@ class Home extends StatelessWidget {
             LocationScreen(
               location: location,
               loading: loading,
+              accent: accent,
             ),
           ],
         ),
