@@ -43,8 +43,8 @@ class LocationView extends StatelessWidget {
           width: 200,
           height: 200,
           margin: EdgeInsets.only(
-            top: 32,
-            bottom: 32,
+            top: 8,
+            bottom: 24,
           ),
           child: FlareActor(
             "assets/animations/cloudy.flr",
@@ -84,7 +84,7 @@ class LocationView extends StatelessWidget {
         ),
         Container(
           padding: EdgeInsets.only(
-            top: 64,
+            top: 48,
             left: 8,
             right: 8,
           ),
