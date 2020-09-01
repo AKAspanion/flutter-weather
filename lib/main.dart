@@ -74,7 +74,7 @@ class _MainAppState extends State<MainApp> {
                   child: Btn(
                     onPress: () => toggleTheme(manager),
                     child: Icon(
-                      manager.theme == AppTheme.White
+                      manager.theme == AppTheme.Dark
                           ? Icons.wb_sunny
                           : Icons.brightness_3,
                       size: 32,
