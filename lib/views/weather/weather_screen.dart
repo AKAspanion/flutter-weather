@@ -21,8 +21,7 @@ class LocationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Weather weather = location.getWeather();
     if (loading) {
-      return Container(
-        margin: EdgeInsets.only(top: 240),
+      return Center(
         child: SpinKitPulse(
           size: 100,
           color: GradientValues().gradients[accent].gradient[0],

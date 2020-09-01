@@ -28,6 +28,7 @@ class Home extends StatelessWidget {
     final double y = isDrawerOpen ? 120 : 0;
     final double factor = isDrawerOpen ? 0.65 : 1;
     Color bgColor = Provider.of<ThemeManager>(context).bgColor;
+    final size = MediaQuery.of(context).size;
 
     return GestureDetector(
       onHorizontalDragEnd: onDragEnd,
@@ -57,10 +58,13 @@ class Home extends StatelessWidget {
                 ],
               ),
             ),
-            LocationScreen(
-              location: location,
-              loading: loading,
-              accent: accent,
+            Container(
+              height: size.height - 112,
+              child: LocationScreen(
+                location: location,
+                loading: loading,
+                accent: accent,
+              ),
             ),
           ],
         ),

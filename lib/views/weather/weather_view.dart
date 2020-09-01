@@ -17,34 +17,35 @@ class LocationView extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       verticalDirection: VerticalDirection.down,
       crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Container(
-          padding: EdgeInsets.only(
-            top: 32,
-            bottom: 4,
-          ),
-          child: Text(
-            '${weather.name.toUpperCase()}',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
+        Column(children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(
+              top: 32,
+              bottom: 4,
+            ),
+            child: Text(
+              '${weather.name.toUpperCase()}',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
-        ),
-        Text(
-          '${getDateTime()}',
-          style: TextStyle(
-            fontSize: 12,
-            letterSpacing: 2,
+          Text(
+            '${getDateTime()}',
+            style: TextStyle(
+              fontSize: 12,
+              letterSpacing: 2,
+            ),
           ),
-        ),
+        ]),
         Container(
           width: 200,
           height: 200,
-          margin: EdgeInsets.only(
-            top: 8,
-            bottom: 24,
+          padding: EdgeInsets.only(
+            bottom: 16,
           ),
           child: FlareActor(
             "assets/animations/cloudy.flr",
@@ -52,41 +53,38 @@ class LocationView extends StatelessWidget {
             animation: 'cloudy-${weather.getIcon()}',
           ),
         ),
-        Container(
-          padding: EdgeInsets.only(
-            bottom: 16,
-          ),
-          child: Text(
-            '${(weather.temperature - 273.15).floor()}°C',
-            style: TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.w700,
+        Column(children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(
+              bottom: 16,
+            ),
+            child: Text(
+              '${(weather.temperature - 273.15).floor()}°C',
+              style: TextStyle(
+                fontSize: 56,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
-        ),
-        Text(
-          '${getGreeting()}',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2,
+          Text(
+            '${getGreeting()}',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+            ),
           ),
-        ),
-        SizedBox(
-          height: 4,
-        ),
-        Text(
-          '${weather.description.toUpperCase()}',
-          style: TextStyle(
-            fontSize: 12,
-            letterSpacing: 2,
+          Text(
+            '${weather.description.toUpperCase()}',
+            style: TextStyle(
+              fontSize: 12,
+              letterSpacing: 2,
+            ),
           ),
-        ),
+        ]),
         Container(
-          padding: EdgeInsets.only(
-            top: 48,
-            left: 8,
-            right: 8,
+          padding: EdgeInsets.symmetric(
+            horizontal: 4,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
