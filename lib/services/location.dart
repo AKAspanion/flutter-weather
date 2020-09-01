@@ -31,12 +31,12 @@ class Location {
     weather = Weather(
       name: decoded['name'],
       condition: decoded['weather'][0]['id'],
+      description: decoded['weather'][0]['description'],
       temperature: decoded['main']['temp'],
       humidity: decoded['main']['humidity'],
       windSpeed: decoded['wind']['speed'],
       sunrise: decoded['sys']['sunrise'],
       sunset: decoded['sys']['sunset'],
-      icon: decoded['weather'][0]['icon'],
     );
   }
 

@@ -40,8 +40,8 @@ class LocationView extends StatelessWidget {
           ),
         ),
         Container(
-          width: 220,
-          height: 220,
+          width: 200,
+          height: 200,
           margin: EdgeInsets.only(
             top: 32,
             bottom: 32,
@@ -66,6 +66,17 @@ class LocationView extends StatelessWidget {
         ),
         Text(
           '${getGreeting()}',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+          ),
+        ),
+        SizedBox(
+          height: 4,
+        ),
+        Text(
+          '${weather.description.toUpperCase()}',
           style: TextStyle(
             fontSize: 12,
             letterSpacing: 2,
