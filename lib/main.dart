@@ -7,6 +7,7 @@ import 'package:flutterweather/views/home.dart';
 import 'package:flutterweather/views/menu.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(new MainApp());
 
@@ -25,6 +26,7 @@ class _MainAppState extends State<MainApp> {
   void initState() {
     super.initState();
     getLocation();
+    getAccent();
   }
 
   @override
@@ -41,8 +43,8 @@ class _MainAppState extends State<MainApp> {
             body: Stack(
               children: [
                 Menu(
-                  onAccentSelect: onAccentSelect,
                   isDrawerOpen: isDrawerOpen,
+                  onAccentSelect: setAccent,
                   accent: selectedAccent,
                   onNavPress: toggleMenu,
                 ),
@@ -110,9 +112,21 @@ class _MainAppState extends State<MainApp> {
     });
   }
 
-  void onAccentSelect(int i) {
+  void setAccent(int i) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt("accent_preference", i);
+
     setState(() {
       selectedAccent = i;
+    });
+  }
+
+  void getAccent() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int preferredAccent = prefs.getInt("accent_preference") ?? 0;
+
+    setState(() {
+      selectedAccent = preferredAccent;
     });
   }
 
@@ -123,7 +137,6 @@ class _MainAppState extends State<MainApp> {
     try {
       await location.getCurrentLocation();
       await location.getLocationData();
-      // await location.getCityData("Kolkata");
     } catch (e) {
       print(e);
     } finally {

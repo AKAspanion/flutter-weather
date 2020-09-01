@@ -50,6 +50,7 @@ class LocationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(weather.toString());
     return Column(
       mainAxisSize: MainAxisSize.max,
       verticalDirection: VerticalDirection.down,

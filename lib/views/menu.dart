@@ -40,7 +40,7 @@ class Menu extends StatelessWidget {
             decoration: BoxDecoration(
               color: theme.bgColor,
               boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 40.0)],
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: SizedBox(
               height: 88,

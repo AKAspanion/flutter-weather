@@ -31,9 +31,9 @@ class Weather {
     } else if (condition == 803 || condition == 804) {
       return "broken";
     } else if (condition >= 500 && condition <= 504) {
-      return "few";
+      return "rain";
     } else {
-      return "clouds";
+      return "few";
     }
   }
 
