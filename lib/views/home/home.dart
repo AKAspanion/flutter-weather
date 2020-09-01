@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:flutterweather/services/theme_manager.dart';
-import 'package:flutterweather/views/location_screen.dart';
+import 'package:flutterweather/views/weather/weather_screen.dart';
 import 'package:flutterweather/components/hamburger.dart';
 import 'package:provider/provider.dart';
 
