@@ -37,11 +37,11 @@ class ThemeManager with ChangeNotifier {
   }
 
   Color get bgColor {
-    return _theme == AppTheme.White ? Color(0xFFF2F7FB) : Color(0xFF3E4551);
+    return _theme == AppTheme.White ? Colors.white : Color(0xFF3E4551);
   }
 
   Color get textColor {
-    return _theme == AppTheme.Dark ? Color(0xFFFAFAFB) : Colors.black87;
+    return _theme == AppTheme.Dark ? Colors.white : Colors.black87;
   }
 
   setTheme(AppTheme theme) async {
