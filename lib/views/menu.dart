@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/theme/gradients.dart';
+import 'package:provider/provider.dart';
 
 class Menu extends StatelessWidget {
   final int accent;
@@ -18,6 +20,8 @@ class Menu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = GradientValues().gradients[accent].gradient;
+    ThemeManager theme = Provider.of<ThemeManager>(context);
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -34,7 +38,7 @@ class Menu extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.bgColor,
               boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 40.0)],
               borderRadius: BorderRadius.circular(20),
             ),

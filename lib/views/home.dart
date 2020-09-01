@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutterweather/services/location.dart';
+import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/views/location_screen.dart';
 import 'package:flutterweather/components/hamburger.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
   final int accent;
@@ -25,6 +27,7 @@ class Home extends StatelessWidget {
     final double x = isDrawerOpen ? 70 : 0;
     final double y = isDrawerOpen ? 120 : 0;
     final double factor = isDrawerOpen ? 0.65 : 1;
+    Color bgColor = Provider.of<ThemeManager>(context).bgColor;
 
     return GestureDetector(
       onHorizontalDragEnd: onDragEnd,
@@ -36,7 +39,7 @@ class Home extends StatelessWidget {
         transform: Matrix4.translationValues(x, y, 0)..scale(factor),
         duration: Duration(milliseconds: 250),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: bgColor,
           boxShadow: isDrawerOpen
               ? [BoxShadow(color: Colors.black38, blurRadius: 40.0)]
               : [],

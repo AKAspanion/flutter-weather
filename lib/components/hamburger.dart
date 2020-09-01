@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/services/theme_manager.dart';
+import 'package:flutterweather/theme/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class Hamburger extends StatelessWidget {
   final bool isDrawerOpen;
   final double _hamSize = 48;
   final double _barHeight = 4;
-  final Color _hamColor = Colors.black87;
   final onPressed;
 
   Hamburger({@required this.onPressed, @required this.isDrawerOpen});
@@ -12,11 +14,16 @@ class Hamburger extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double translateX = isDrawerOpen ? 9 : -9;
+    ThemeManager theme = Provider.of<ThemeManager>(context);
+
+    final Color _bgColor = theme.bgColor;
+    final Color _hamColor = theme.textColor;
+
     return GestureDetector(
       onTap: onPressed,
       child: Container(
+        color: _bgColor,
         margin: EdgeInsets.all(4),
-        color: Colors.white,
         child: SizedBox(
           width: _hamSize,
           height: _hamSize,

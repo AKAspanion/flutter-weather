@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterweather/components/btn.dart';
+import 'package:flutterweather/services/theme_manager.dart';
+import 'package:flutterweather/theme/app_theme.dart';
 import 'package:flutterweather/views/home.dart';
 import 'package:flutterweather/views/menu.dart';
 import 'package:flutterweather/services/location.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(new MainApp());
 
@@ -28,51 +31,77 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
 
-    return MaterialApp(
-      title: "Beautiful Weather",
-      theme: ThemeData(fontFamily: "Montserrat"),
-      home: Scaffold(
-        body: Stack(
-          children: [
-            Menu(
-              onAccentSelect: onAccentSelect,
-              isDrawerOpen: isDrawerOpen,
-              accent: selectedAccent,
-              onNavPress: toggleMenu,
-            ),
-            Positioned(
-              child: Btn(
-                onPress: toggleMenu,
-                child: Icon(
-                  Icons.close,
-                  size: 32,
+    return ChangeNotifierProvider(
+      create: (_) => ThemeManager(),
+      child: Consumer<ThemeManager>(builder: (_, manager, __) {
+        return MaterialApp(
+          title: "Beautiful Weather",
+          theme: manager.themeData,
+          home: Scaffold(
+            body: Stack(
+              children: [
+                Menu(
+                  onAccentSelect: onAccentSelect,
+                  isDrawerOpen: isDrawerOpen,
+                  accent: selectedAccent,
+                  onNavPress: toggleMenu,
                 ),
-              ),
-              top: 24,
-              left: 24,
-            ),
-            Positioned(
-              child: Btn(
-                onPress: getLocation,
-                child: Icon(
-                  Icons.refresh,
-                  size: 32,
+                Positioned(
+                  child: Btn(
+                    onPress: getLocation,
+                    child: Icon(
+                      Icons.refresh,
+                      size: 32,
+                    ),
+                  ),
+                  top: 24,
+                  left: 24,
                 ),
-              ),
-              top: 24,
-              right: 24,
+                Positioned(
+                  child: Btn(
+                    onPress: toggleMenu,
+                    child: Icon(
+                      Icons.close,
+                      size: 32,
+                    ),
+                  ),
+                  top: 24,
+                  right: 24,
+                ),
+                Positioned(
+                  child: Btn(
+                    onPress: () => toggleTheme(manager),
+                    child: Icon(
+                      manager.theme == AppTheme.White
+                          ? Icons.wb_sunny
+                          : Icons.brightness_3,
+                      size: 32,
+                    ),
+                  ),
+                  top: 24,
+                  left: 98,
+                ),
+                Home(
+                  isDrawerOpen: isDrawerOpen,
+                  onNavPress: toggleMenu,
+                  accent: selectedAccent,
+                  location: location,
+                  loading: loading,
+                ),
+              ],
             ),
-            Home(
-              isDrawerOpen: isDrawerOpen,
-              onNavPress: toggleMenu,
-              accent: selectedAccent,
-              location: location,
-              loading: loading,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      }),
     );
+  }
+
+  void toggleTheme(manager) {
+    if (manager.theme == AppTheme.White) {
+      manager.setTheme(AppTheme.Dark);
+    } else {
+      manager.setTheme(AppTheme.White);
+    }
   }
 
   void toggleMenu() {
