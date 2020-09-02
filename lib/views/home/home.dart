@@ -46,7 +46,7 @@ class Home extends StatelessWidget {
           boxShadow: isDrawerOpen
               ? [BoxShadow(color: Colors.black38, blurRadius: 40.0)]
               : [],
-          borderRadius: BorderRadius.circular(isDrawerOpen ? 42 : 0),
+          borderRadius: BorderRadius.circular(isDrawerOpen ? 24 : 0),
         ),
         child: Column(
           children: <Widget>[

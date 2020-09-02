@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:vibrate/vibrate.dart';
 import 'package:flutterweather/components/btn.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/theme/app_theme.dart';
@@ -133,8 +132,6 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt("accent_preference", i);
 
-    _vibrate(FeedbackType.light);
-
     setState(() {
       selectedAccent = i;
     });
@@ -157,7 +154,6 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
       await location.getCurrentLocation();
       await location.getLocationData();
 
-      _vibrate(FeedbackType.medium);
       _controller.reset();
       _playAnimation();
     } catch (e) {
@@ -167,9 +163,5 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
         loading = false;
       });
     }
-  }
-
-  void _vibrate(FeedbackType type) {
-    Vibrate.feedback(type);
   }
 }

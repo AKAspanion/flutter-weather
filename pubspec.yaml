@@ -34,7 +34,6 @@ dependencies:
   flare_flutter: ^2.0.6
   flare_dart: ^2.3.4
   shared_preferences: ^0.5.10
-  vibrate: ^0.0.4
 
 dev_dependencies:
   flutter_test:
