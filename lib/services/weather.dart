@@ -1,21 +1,21 @@
 class Weather {
   String name;
-  int condition;
-  int humidity;
-  double windSpeed;
-  int sunrise;
   int sunset;
+  int sunrise;
+  int humidity;
+  int condition;
+  String windSpeed;
   double temperature;
   String description;
 
   Weather({
     this.name,
-    this.condition,
-    this.temperature,
-    this.humidity,
-    this.sunrise,
     this.sunset,
+    this.sunrise,
+    this.humidity,
+    this.condition,
     this.windSpeed,
+    this.temperature,
     this.description,
   });
 

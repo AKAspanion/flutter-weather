@@ -30,13 +30,13 @@ class Location {
 
     weather = Weather(
       name: decoded['name'],
-      condition: decoded['weather'][0]['id'],
-      description: decoded['weather'][0]['description'],
+      sunset: decoded['sys']['sunset'],
+      sunrise: decoded['sys']['sunrise'],
       temperature: decoded['main']['temp'],
       humidity: decoded['main']['humidity'],
-      windSpeed: decoded['wind']['speed'],
-      sunrise: decoded['sys']['sunrise'],
-      sunset: decoded['sys']['sunset'],
+      condition: decoded['weather'][0]['id'],
+      windSpeed: decoded['wind']['speed'].toString(),
+      description: decoded['weather'][0]['description'],
     );
   }
 
