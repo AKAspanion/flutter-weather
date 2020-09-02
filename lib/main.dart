@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vibrate/vibrate.dart';
 import 'package:flutterweather/components/btn.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/theme/app_theme.dart';
@@ -116,6 +117,8 @@ class _MainAppState extends State<MainApp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt("accent_preference", i);
 
+    _vibrate(FeedbackType.light);
+
     setState(() {
       selectedAccent = i;
     });
@@ -137,12 +140,19 @@ class _MainAppState extends State<MainApp> {
     try {
       await location.getCurrentLocation();
       await location.getLocationData();
+
+      // vibrate device
+      _vibrate(FeedbackType.medium);
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     } finally {
       setState(() {
         loading = false;
       });
     }
+  }
+
+  void _vibrate(FeedbackType type) {
+    Vibrate.feedback(type);
   }
 }

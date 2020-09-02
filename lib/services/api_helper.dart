@@ -15,7 +15,7 @@ class APIService {
 
       return jsonDecode(data);
     } else {
-      print(response.statusCode);
+      debugPrint(response.statusCode.toString());
     }
   }
 }

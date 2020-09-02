@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/services/api_helper.dart';
 import 'package:geolocator/geolocator.dart';
@@ -14,7 +15,7 @@ class Location {
       lat = position.latitude;
       lon = position.longitude;
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 
