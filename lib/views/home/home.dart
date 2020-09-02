@@ -11,6 +11,7 @@ class Home extends StatelessWidget {
   final bool isDrawerOpen;
   final Location location;
   final void Function() onNavPress;
+  final Animation<double> controller;
 
   final DragData homeDragData = DragData();
 
@@ -18,6 +19,7 @@ class Home extends StatelessWidget {
     @required this.isDrawerOpen,
     @required this.onNavPress,
     this.accent = 0,
+    this.controller,
     this.location,
     this.loading,
   });
@@ -61,6 +63,7 @@ class Home extends StatelessWidget {
             Container(
               height: size.height - 112,
               child: LocationScreen(
+                controller: controller,
                 location: location,
                 loading: loading,
                 accent: accent,

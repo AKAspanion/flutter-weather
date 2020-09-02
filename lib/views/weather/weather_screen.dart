@@ -10,11 +10,13 @@ class LocationScreen extends StatelessWidget {
   final int accent;
   final bool loading;
   final Location location;
+  final Animation<double> controller;
 
   LocationScreen({
     this.location,
     this.loading,
     this.accent = 0,
+    this.controller,
   });
 
   @override
@@ -32,6 +34,7 @@ class LocationScreen extends StatelessWidget {
         return ErrorView();
       } else {
         return LocationView(
+          controller: controller,
           weather: weather,
           accent: accent,
         );

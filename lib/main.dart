@@ -17,17 +17,32 @@ class MainApp extends StatefulWidget {
   _MainAppState createState() => _MainAppState();
 }
 
-class _MainAppState extends State<MainApp> {
+class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   bool loading = true;
   int selectedAccent = 0;
   bool isDrawerOpen = false;
   Location location = Location();
+
+  AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
     getLocation();
     getAccent();
+
+    _controller = AnimationController(
+        duration: const Duration(milliseconds: 2000), vsync: this);
+
+    _playAnimation();
+  }
+
+  Future<void> _playAnimation() async {
+    try {
+      await _controller.forward().orCancel;
+    } on TickerCanceled {
+      debugPrint("animation cancelled");
+    }
   }
 
   @override
@@ -85,6 +100,7 @@ class _MainAppState extends State<MainApp> {
                   left: 98,
                 ),
                 Home(
+                  controller: _controller.view,
                   isDrawerOpen: isDrawerOpen,
                   onNavPress: toggleMenu,
                   accent: selectedAccent,
@@ -141,8 +157,9 @@ class _MainAppState extends State<MainApp> {
       await location.getCurrentLocation();
       await location.getLocationData();
 
-      // vibrate device
       _vibrate(FeedbackType.medium);
+      _controller.reset();
+      _playAnimation();
     } catch (e) {
       debugPrint(e.toString());
     } finally {

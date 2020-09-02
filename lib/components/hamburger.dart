@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutterweather/services/theme_manager.dart';
-import 'package:flutterweather/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class Hamburger extends StatelessWidget {
