@@ -195,7 +195,7 @@ class LocationView extends StatelessWidget {
   String getDateTime(int zone) {
     DateTime now = DateTime.now().toUtc();
     DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
-    print(zoneTime.month);
+
     List<String> weekdays = [
       "Monday",
       "Tuesday",
@@ -232,9 +232,9 @@ class LocationView extends StatelessWidget {
 
     final int hour = zoneTime.hour;
 
-    if (hour > 19 || hour <= 3) {
+    if (hour > 19 || hour <= 5) {
       return "GOOD NIGHT";
-    } else if (hour > 3 && hour < 12) {
+    } else if (hour > 5 && hour < 12) {
       return "GOOD MORNING";
     } else if (hour >= 12 && hour < 16) {
       return "GOOD AFTERNOON";

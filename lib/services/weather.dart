@@ -22,8 +22,9 @@ class Weather {
   });
 
   String getIcon() {
-    DateTime now = DateTime.now();
-    String night = now.hour > 18 && now.hour <= 0 ? "night" : "";
+    DateTime now = DateTime.now().toUtc();
+    DateTime zoneTime = now.add(Duration(seconds: timezone ?? 0));
+    String night = zoneTime.hour > 18 || zoneTime.hour <= 6 ? "-night" : "";
 
     if (condition >= 200 && condition < 300) {
       return "thunder";
