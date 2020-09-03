@@ -31,6 +31,7 @@ class Location {
 
     weather = Weather(
       name: decoded['name'],
+      timezone: decoded['timezone'],
       sunset: decoded['sys']['sunset'],
       sunrise: decoded['sys']['sunrise'],
       temperature: decoded['main']['temp'],
@@ -50,6 +51,7 @@ class Location {
 
     weather = Weather(
       name: decoded['name'],
+      timezone: decoded['timezone'],
       sunset: decoded['sys']['sunset'],
       sunrise: decoded['sys']['sunrise'],
       temperature: decoded['main']['temp'],

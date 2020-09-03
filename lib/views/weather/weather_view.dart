@@ -72,7 +72,7 @@ class LocationView extends StatelessWidget {
               Container(
                 transform: Matrix4.translationValues(0, yTranslate.value, 0),
                 child: Text(
-                  '${getDateTime()}',
+                  '${getDateTime(weather.timezone)}',
                   style: TextStyle(
                     fontSize: 12,
                     letterSpacing: 2,
@@ -119,7 +119,7 @@ class LocationView extends StatelessWidget {
                 transform:
                     Matrix4.translationValues(0, yTranslate.value * 0.4, 0),
                 child: Text(
-                  '${getGreeting()}',
+                  '${getGreeting(weather.timezone)}',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -154,7 +154,7 @@ class LocationView extends StatelessWidget {
                 WeatherDetailChip(
                   icon: "sun",
                   text: "sunrise",
-                  value: '${getSunriseTime(weather.sunrise)}',
+                  value: '${getSunriseTime(weather.sunrise, weather.timezone)}',
                   gradient: GradientValues().gradients[accent].gradient,
                 ),
                 WeatherDetailChip(
@@ -184,14 +184,18 @@ class LocationView extends StatelessWidget {
     );
   }
 
-  String getSunriseTime(int date) {
-    DateTime now = DateTime.fromMicrosecondsSinceEpoch(date, isUtc: false);
-    final int hour = now.hour > 12 ? now.hour - 12 : now.hour;
-    return '$hour:${now.minute}'.toUpperCase();
+  String getSunriseTime(int date, int zone) {
+    DateTime now =
+        DateTime.fromMillisecondsSinceEpoch(date * 1000, isUtc: true);
+    DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
+    final int hour = zoneTime.hour > 12 ? zoneTime.hour - 12 : zoneTime.hour;
+    return '$hour:${zoneTime.minute}'.toUpperCase();
   }
 
-  String getDateTime() {
-    DateTime now = DateTime.now();
+  String getDateTime(int zone) {
+    DateTime now = DateTime.now().toUtc();
+    DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
+    print(zoneTime.month);
     List<String> weekdays = [
       "Monday",
       "Tuesday",
@@ -201,14 +205,32 @@ class LocationView extends StatelessWidget {
       "Saturday",
       "Sunday"
     ];
-    final String ampm = now.hour >= 12 ? 'pm' : 'am';
-    final int hour = now.hour > 12 ? now.hour - 12 : now.hour;
-    return '${weekdays[now.weekday - 1]} $hour $ampm'.toUpperCase();
+    List<String> months = [
+      "jan",
+      "feb",
+      "mar",
+      "apr",
+      "may",
+      "jun",
+      "jul",
+      "aug",
+      "sep",
+      "oct",
+      "nov",
+      "dec",
+    ];
+    final String ampm = zoneTime.hour >= 12 ? 'pm' : 'am';
+    int hour = zoneTime.hour > 12 ? zoneTime.hour - 12 : zoneTime.hour;
+    hour = hour == 0 ? 12 : hour;
+    return '${zoneTime.day} ${months[zoneTime.month - 1]}, ${weekdays[zoneTime.weekday - 1]} $hour $ampm'
+        .toUpperCase();
   }
 
-  String getGreeting() {
-    DateTime now = DateTime.now();
-    final int hour = now.hour;
+  String getGreeting(int zone) {
+    DateTime now = DateTime.now().toUtc();
+    DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
+
+    final int hour = zoneTime.hour;
 
     if (hour > 19 || hour <= 3) {
       return "GOOD NIGHT";

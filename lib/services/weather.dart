@@ -2,6 +2,7 @@ class Weather {
   String name;
   int sunset;
   int sunrise;
+  int timezone;
   int humidity;
   int condition;
   String windSpeed;
@@ -12,6 +13,7 @@ class Weather {
     this.name,
     this.sunset,
     this.sunrise,
+    this.timezone,
     this.humidity,
     this.condition,
     this.windSpeed,
@@ -46,6 +48,6 @@ class Weather {
         'name: $name, description: $description, condition: $condition, temperature: $temperature';
     final String data2 =
         'humidity: $humidity, sunrise: $sunrise, sunset: $sunset';
-    return 'Weather($data1, $data2, windSpeed: $windSpeed)';
+    return 'Weather($data1, $data2, windSpeed: $windSpeed, timezone: $timezone)';
   }
 }
