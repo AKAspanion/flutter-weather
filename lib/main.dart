@@ -31,7 +31,9 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     getAccent();
 
     _controller = AnimationController(
-        duration: const Duration(milliseconds: 2000), vsync: this);
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    );
 
     _playAnimation();
   }

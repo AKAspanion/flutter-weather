@@ -20,20 +20,23 @@ class Weather {
   });
 
   String getIcon() {
+    DateTime now = DateTime.now();
+    String night = now.hour > 18 && now.hour <= 0 ? "night" : "";
+
     if (condition >= 200 && condition < 300) {
       return "thunder";
     } else if (condition >= 300 && condition <= 321) {
       return "rain";
     } else if (condition == 800) {
-      return "clear";
+      return "clear" + night;
     } else if (condition == 801) {
-      return "sunny";
+      return "sunny" + night;
     } else if (condition == 803 || condition == 804) {
       return "broken";
     } else if (condition >= 500 && condition <= 504) {
       return "rain";
     } else {
-      return "few";
+      return "few" + night;
     }
   }
 
