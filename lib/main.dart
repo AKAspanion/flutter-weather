@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutterweather/components/btn.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/theme/app_theme.dart';
+import 'package:flutterweather/views/home/dialog_overlay.dart';
 import 'package:flutterweather/views/home/home.dart';
 import 'package:flutterweather/views/menu/menu.dart';
 import 'package:flutterweather/services/location.dart';
@@ -19,6 +20,7 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   bool loading = true;
   int selectedAccent = 0;
+  bool isDialogOpen = false;
   bool isDrawerOpen = false;
   Location location = Location();
 
@@ -100,6 +102,17 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   top: 24,
                   left: 98,
                 ),
+                Positioned(
+                  child: Btn(
+                    onPress: () => toggleDialog(),
+                    child: Icon(
+                      Icons.location_on,
+                      size: 32,
+                    ),
+                  ),
+                  top: 24,
+                  right: 98,
+                ),
                 Home(
                   controller: _controller.view,
                   isDrawerOpen: isDrawerOpen,
@@ -108,6 +121,13 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   location: location,
                   loading: loading,
                 ),
+                isDialogOpen
+                    ? DialogOverlay(
+                        accent: selectedAccent,
+                        onCancel: () => toggleDialog(),
+                        onSubmit: (city) => getLocation(city: city),
+                      )
+                    : Container(),
               ],
             ),
           ),
@@ -130,6 +150,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     });
   }
 
+  void toggleDialog() {
+    setState(() {
+      isDialogOpen = !isDialogOpen;
+    });
+  }
+
   void setAccent(int i) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt("accent_preference", i);
@@ -148,17 +174,28 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     });
   }
 
-  void getLocation() async {
+  void getLocation({city = ""}) async {
+    if (city != "") {
+      toggleDialog();
+    }
+
     setState(() {
       loading = true;
     });
     try {
       await location.getCurrentLocation();
-      await location.getLocationData();
+      if (city == "") {
+        await location.getLocationData();
+      } else {
+        await location.getCityData(city);
+      }
 
       _controller.reset();
       _playAnimation();
     } catch (e) {
+      setState(() {
+        location = Location();
+      });
       debugPrint(e.toString());
     } finally {
       setState(() {
