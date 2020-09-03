@@ -92,11 +92,14 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                 Positioned(
                   child: Btn(
                     onPress: () => toggleTheme(manager),
-                    child: Icon(
-                      manager.theme == AppTheme.Dark
-                          ? Icons.wb_sunny
-                          : Icons.brightness_3,
-                      size: 32,
+                    child: Transform.rotate(
+                      angle: 3.1415926535897932 / 4.5,
+                      child: Icon(
+                        manager.theme == AppTheme.Dark
+                            ? Icons.wb_sunny
+                            : Icons.brightness_3,
+                        size: 32,
+                      ),
                     ),
                   ),
                   top: 24,
