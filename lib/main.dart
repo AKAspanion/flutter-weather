@@ -205,7 +205,6 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
 
   void getLocation() async {
     String city = await getCity();
-    print(city);
 
     if (city != "") {
       toggleDialog(false);

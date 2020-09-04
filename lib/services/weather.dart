@@ -30,14 +30,18 @@ class Weather {
       return "thunder";
     } else if (condition >= 300 && condition <= 321) {
       return "rain";
+    } else if (condition >= 500 && condition <= 504) {
+      return "rain";
+    } else if (condition >= 600 && condition <= 622) {
+      return "snow";
     } else if (condition == 800) {
       return "clear" + night;
     } else if (condition == 801) {
       return "sunny" + night;
+    } else if (condition == 741) {
+      return "foggy";
     } else if (condition == 803 || condition == 804) {
       return "broken";
-    } else if (condition >= 500 && condition <= 504) {
-      return "rain";
     } else {
       return "few" + night;
     }
