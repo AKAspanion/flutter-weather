@@ -69,7 +69,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                 ),
                 Positioned(
                   child: Btn(
-                    onPress: getLocation,
+                    onPress: onRefresh,
                     child: Icon(
                       Icons.refresh,
                       size: 32,
@@ -107,7 +107,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                 ),
                 Positioned(
                   child: Btn(
-                    onPress: () => toggleDialog(),
+                    onPress: () => toggleDialog(true),
                     child: Icon(
                       Icons.location_on,
                       size: 32,
@@ -127,8 +127,8 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                 isDialogOpen
                     ? DialogOverlay(
                         accent: selectedAccent,
-                        onCancel: () => toggleDialog(),
-                        onSubmit: (city) => getLocation(city: city),
+                        onCancel: () => toggleDialog(false),
+                        onSubmit: (city) => onSubmit(city),
                       )
                     : Container(),
               ],
@@ -153,9 +153,9 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     });
   }
 
-  void toggleDialog() {
+  void toggleDialog(bool value) {
     setState(() {
-      isDialogOpen = !isDialogOpen;
+      isDialogOpen = value;
     });
   }
 
@@ -177,9 +177,38 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     });
   }
 
-  void getLocation({city = ""}) async {
+  Future<bool> setCity(String city) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("city_preference", city);
+
+    return true;
+  }
+
+  Future<String> getCity() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String preferredCity = prefs.getString("city_preference") ?? "";
+
+    return preferredCity;
+  }
+
+  void onRefresh() async {
+    await setCity("");
+
+    getLocation();
+  }
+
+  void onSubmit(String city) async {
+    await setCity(city);
+
+    getLocation();
+  }
+
+  void getLocation() async {
+    String city = await getCity();
+    print(city);
+
     if (city != "") {
-      toggleDialog();
+      toggleDialog(false);
     }
 
     setState(() {
