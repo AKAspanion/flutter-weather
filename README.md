@@ -2,6 +2,13 @@
 
 A beautiful weather app built using Flutter.
 
+
+App has following features.
+- Beautiful animated weather icons.
+- Beautiful accent colors.
+- Dark and Light theme support.
+- Set current location or any city for weather data. 
+
 ![Beautiful Flutter](/assets/animations/demo.gif "Beautiful Flutter")
 
 Built this app to learn and get familiar with flutter and dart.
