@@ -1,22 +1,32 @@
 class Weather {
-  String name;
+  int date;
   int sunset;
   int sunrise;
+  String name;
   int timezone;
   int humidity;
   int condition;
+  double latitude;
+  double longitude;
   String windSpeed;
+  double tempMin;
+  double tempMax;
   double temperature;
   String description;
 
   Weather({
     this.name,
+    this.date,
     this.sunset,
     this.sunrise,
     this.timezone,
     this.humidity,
     this.condition,
+    this.latitude,
+    this.longitude,
     this.windSpeed,
+    this.tempMin,
+    this.tempMax,
     this.temperature,
     this.description,
   });
@@ -52,7 +62,7 @@ class Weather {
     final String data1 =
         'name: $name, description: $description, condition: $condition, temperature: $temperature';
     final String data2 =
-        'humidity: $humidity, sunrise: $sunrise, sunset: $sunset';
-    return 'Weather($data1, $data2, windSpeed: $windSpeed, timezone: $timezone)';
+        'humidity: $humidity, sunrise: $sunrise, sunset: $sunset, date: $date, min: $tempMin, max: $tempMax';
+    return 'Weather($data1, $data2, windSpeed: $windSpeed, timezone: $timezone, latitude: $latitude, longitude $longitude)';
   }
 }

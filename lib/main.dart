@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterweather/components/btn.dart';
 import 'package:flutterweather/services/theme_manager.dart';
+import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/app_theme.dart';
 import 'package:flutterweather/views/home/dialog_overlay.dart';
 import 'package:flutterweather/views/home/home.dart';
@@ -220,6 +221,9 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
       } else {
         await location.getCityData(city);
       }
+
+      final Weather weather = location.getWeather();
+      await location.getForecast(weather.latitude, weather.longitude);
 
       _controller.reset();
       _playAnimation();
