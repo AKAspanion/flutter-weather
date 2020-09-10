@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:flutterweather/services/theme_manager.dart';
+import 'package:flutterweather/views/forecast/daily.dart';
 import 'package:flutterweather/views/forecast/hourly.dart';
 import 'package:provider/provider.dart';
 
@@ -26,10 +27,10 @@ class Forecast extends StatelessWidget {
     // dynamic currentGradient = GradientValues().gradients[accent].gradient
 
     return AnimatedContainer(
-      curve: Curves.easeInOutCirc,
-      duration: Duration(milliseconds: 800),
       width: size.width,
       height: size.height,
+      curve: Curves.easeInOutCirc,
+      duration: Duration(milliseconds: 800),
       transform: Matrix4.translationValues(0, y, 0),
       decoration: BoxDecoration(
         color: bgColor,
@@ -54,7 +55,7 @@ class Forecast extends StatelessWidget {
             ],
           ),
           Container(
-            padding: EdgeInsets.only(top: 48),
+            padding: EdgeInsets.only(top: 40),
             child: Text(
               "NEXT HOURS",
               style: TextStyle(
@@ -64,7 +65,7 @@ class Forecast extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 4, bottom: 24),
+            padding: EdgeInsets.only(top: 4, bottom: 16),
             child: Text(
               "Forecast for the next few hours".toUpperCase(),
               style: TextStyle(
@@ -87,7 +88,7 @@ class Forecast extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 4, bottom: 24),
+            padding: EdgeInsets.only(top: 4, bottom: 8),
             child: Text(
               "Forecast for the next 7 days".toUpperCase(),
               style: TextStyle(
@@ -99,11 +100,10 @@ class Forecast extends StatelessWidget {
             padding: EdgeInsets.only(
               top: 16,
             ),
-            height: 250,
-            child: ListView(
-              children: [
-                Text(location.getHourly().toString()),
-              ],
+            height: size.height - 480,
+            child: DailyView(
+              accent: accent,
+              daily: location.getDaily(),
             ),
           ),
         ],

@@ -18,14 +18,14 @@ class HourlyDetail extends StatefulWidget {
 }
 
 class _HourlyDetailState extends State<HourlyDetail> {
-  bool expaned = false;
+  bool expanded = false;
 
   @override
   Widget build(BuildContext context) {
     final Weather weather = widget.detail;
     final int accentIndex = widget.accent;
-    final double width = expaned ? 200 : 80;
-    final double innerWidth = expaned ? 50 : 0;
+    final double width = expanded ? 200 : 80;
+    final double innerWidth = expanded ? 50 : 0;
     return InkWell(
       onTap: toggleExpand,
       child: AnimatedContainer(
@@ -71,7 +71,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
                   duration: Duration(milliseconds: 500),
                   child: Column(
                     children: [
-                      SizedBox(height: 12),
+                      SizedBox(height: 13),
                       Container(
                         width: 42,
                         height: 42,
@@ -92,7 +92,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
                           duration: Duration(milliseconds: 500),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: expaned ? 12 : 0,
+                            fontSize: expanded ? 10 : 0,
                             fontFamily: "Montserrat",
                             color: Colors.white,
                           ),
@@ -135,7 +135,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
                   duration: Duration(milliseconds: 500),
                   child: Column(
                     children: [
-                      SizedBox(height: 12),
+                      SizedBox(height: 13),
                       Container(
                         width: 42,
                         height: 42,
@@ -156,7 +156,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
                           duration: Duration(milliseconds: 500),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: expaned ? 12 : 0,
+                            fontSize: expanded ? 10 : 0,
                             fontFamily: "Montserrat",
                             color: Colors.white,
                           ),
@@ -175,7 +175,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
 
   void toggleExpand() {
     setState(() {
-      expaned = !expaned;
+      expanded = !expanded;
     });
   }
 
@@ -189,7 +189,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
 
     String date = "";
 
-    if (expaned) {
+    if (expanded) {
       date += ", ${CalendarHelper.weekdays[zoneTime.weekday - 1]}";
       date += "  ${zoneTime.day} ${CalendarHelper.months[zoneTime.month - 1]} ";
     }

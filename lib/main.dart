@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+simport 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterweather/components/btn.dart';
 import 'package:flutterweather/services/theme_manager.dart';
@@ -230,15 +230,20 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
       loading = true;
     });
     try {
-      await location.getCurrentLocation();
+d      Location newLocation = Location();
+      await newLocation.getCurrentLocation();
       if (city == "") {
-        await location.getLocationData();
+        await newLocation.getLocationData();
       } else {
-        await location.getCityData(city);
+        await newLocation.getCityData(city);
       }
 
-      final Weather weather = location.getWeather();
-      await location.getForecast(weather.latitude, weather.longitude);
+      final Weather weather = newLocation.getWeather();
+      await newLocation.getForecast(weather.latitude, weather.longitude);
+
+      setState(() {
+        location = newLocation;
+      });
 
       _controller.reset();
       _playAnimation();
