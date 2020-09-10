@@ -31,10 +31,14 @@ class Weather {
     this.description,
   });
 
-  String getIcon() {
+  String getIcon({String overrideNight}) {
     DateTime now = DateTime.now().toUtc();
     DateTime zoneTime = now.add(Duration(seconds: timezone ?? 0));
     String night = zoneTime.hour > 18 || zoneTime.hour <= 6 ? "-night" : "";
+
+    if (overrideNight != null) {
+      night = overrideNight;
+    }
 
     if (condition >= 200 && condition < 300) {
       return "thunder";

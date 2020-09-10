@@ -11,12 +11,14 @@ class Home extends StatelessWidget {
   final bool isDrawerOpen;
   final Location location;
   final void Function() onNavPress;
+  final void Function() onMorePress;
   final Animation<double> controller;
 
   final DragData homeDragData = DragData();
 
   Home({
     @required this.isDrawerOpen,
+    @required this.onMorePress,
     @required this.onNavPress,
     this.accent = 0,
     this.controller,
@@ -52,10 +54,19 @@ class Home extends StatelessWidget {
           children: <Widget>[
             Container(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Hamburger(
                     isDrawerOpen: isDrawerOpen,
                     onPressed: onNavPress,
+                  ),
+                  IconButton(
+                    iconSize: 36,
+                    onPressed: loading ? null : onMorePress,
+                    icon: Icon(
+                      Icons.schedule,
+                      size: 36,
+                    ),
                   )
                 ],
               ),

@@ -4,6 +4,7 @@ import 'package:flutterweather/components/btn.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/app_theme.dart';
+import 'package:flutterweather/views/forecast/forecast.dart';
 import 'package:flutterweather/views/home/dialog_overlay.dart';
 import 'package:flutterweather/views/home/home.dart';
 import 'package:flutterweather/views/menu/menu.dart';
@@ -23,6 +24,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   int selectedAccent = 0;
   bool isDialogOpen = false;
   bool isDrawerOpen = false;
+  bool isForecastOpen = false;
   Location location = Location();
 
   AnimationController _controller;
@@ -120,6 +122,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                 Home(
                   controller: _controller.view,
                   isDrawerOpen: isDrawerOpen,
+                  onMorePress: toggleForecast,
                   onNavPress: toggleMenu,
                   accent: selectedAccent,
                   location: location,
@@ -132,6 +135,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                         onSubmit: (city) => onSubmit(city),
                       )
                     : Container(),
+                Forecast(
+                  isWindowOpen: isForecastOpen,
+                  onClosePress: toggleForecast,
+                  accent: selectedAccent,
+                  location: location,
+                )
               ],
             ),
           ),
@@ -146,6 +155,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     } else {
       manager.setTheme(AppTheme.White);
     }
+  }
+
+  void toggleForecast() {
+    setState(() {
+      isForecastOpen = !isForecastOpen;
+    });
   }
 
   void toggleMenu() {

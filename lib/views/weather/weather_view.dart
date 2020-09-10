@@ -1,5 +1,6 @@
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterweather/services/calendar.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/gradients.dart';
 import 'package:flutterweather/views/weather/weather_detail_chip.dart';
@@ -196,33 +197,10 @@ class LocationView extends StatelessWidget {
     DateTime now = DateTime.now().toUtc();
     DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
 
-    List<String> weekdays = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday"
-    ];
-    List<String> months = [
-      "jan",
-      "feb",
-      "mar",
-      "apr",
-      "may",
-      "jun",
-      "jul",
-      "aug",
-      "sep",
-      "oct",
-      "nov",
-      "dec",
-    ];
     final String ampm = zoneTime.hour >= 12 ? 'pm' : 'am';
     int hour = zoneTime.hour > 12 ? zoneTime.hour - 12 : zoneTime.hour;
     hour = hour == 0 ? 12 : hour;
-    return '${zoneTime.day} ${months[zoneTime.month - 1]}, ${weekdays[zoneTime.weekday - 1]} $hour $ampm'
+    return '${zoneTime.day} ${CalendarHelper.months[zoneTime.month - 1]}, ${CalendarHelper.weekdays[zoneTime.weekday - 1]} $hour $ampm'
         .toUpperCase();
   }
 
