@@ -28,11 +28,12 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double x = isDrawerOpen ? 70 : 0;
-    final double y = isDrawerOpen ? 120 : 0;
+    final size = MediaQuery.of(context).size;
     final double factor = isDrawerOpen ? 0.65 : 1;
     Color bgColor = Provider.of<ThemeManager>(context).bgColor;
-    final size = MediaQuery.of(context).size;
+
+    final double y = isDrawerOpen ? 120 : 0;
+    final double x = isDrawerOpen ? (size.width - size.width * 0.65) / 2 : 0;
 
     return GestureDetector(
       onHorizontalDragEnd: onDragEnd,
@@ -64,7 +65,7 @@ class Home extends StatelessWidget {
                     iconSize: 36,
                     onPressed: loading ? null : onMorePress,
                     icon: Icon(
-                      Icons.schedule,
+                      Icons.show_chart,
                       size: 36,
                     ),
                   )
