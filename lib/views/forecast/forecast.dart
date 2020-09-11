@@ -67,7 +67,7 @@ class Forecast extends StatelessWidget {
           Container(
             padding: EdgeInsets.only(top: 4, bottom: 16),
             child: Text(
-              "Forecast for the next few hours".toUpperCase(),
+              "Forecast for the next 48 hours".toUpperCase(),
               style: TextStyle(
                 fontSize: 12,
               ),

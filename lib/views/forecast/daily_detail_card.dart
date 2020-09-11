@@ -223,7 +223,7 @@ class _DailyDetailState extends State<DailyDetail> {
     DateTime now =
         DateTime.fromMillisecondsSinceEpoch(weather.date * 1000, isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
-    print(weather.date);
+    
     return "${CalendarHelper.weekdays[zoneTime.weekday - 1]}".toUpperCase();
   }
 

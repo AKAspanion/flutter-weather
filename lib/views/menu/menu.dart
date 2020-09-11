@@ -21,6 +21,7 @@ class Menu extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = GradientValues().gradients[accent].gradient;
     ThemeManager theme = Provider.of<ThemeManager>(context);
+    final size = MediaQuery.of(context).size;
 
     return Container(
       decoration: BoxDecoration(
@@ -46,7 +47,7 @@ class Menu extends StatelessWidget {
               height: 88,
               child: PageView.builder(
                 itemCount: GradientValues().gradients.length,
-                controller: PageController(viewportFraction: 0.31),
+                controller: PageController(viewportFraction: 0.30),
                 itemBuilder: (_, i) {
                   return InkWell(
                     onTap: () => onAccentTap(i),
@@ -54,7 +55,8 @@ class Menu extends StatelessWidget {
                       height: 48,
                       width: 48,
                       duration: Duration(milliseconds: 200),
-                      transform: Matrix4.translationValues(getY(i), getY(i), 0)
+                      transform: Matrix4.translationValues(
+                          getX(i, size.width), getY(i), 0)
                         ..scale(getScale(i)),
                       margin:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 18),
@@ -95,5 +97,12 @@ class Menu extends StatelessWidget {
   getY(i) {
     final current = accent ?? 0;
     return current == i ? -9.0 : 0.0;
+  }
+
+  getX(i, width) {
+    final double boxSize = (width - 48) * 0.30;
+    final double padding = (boxSize * 1.2 - boxSize) / 2;
+    final current = accent ?? 0;
+    return current == i ? -padding : 0.0;
   }
 }

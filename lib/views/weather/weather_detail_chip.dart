@@ -16,8 +16,11 @@ class WeatherDetailChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final double width = (size.width - 108) / 3;
+
     return Container(
-      width: 92,
+      width: width,
       padding: EdgeInsets.only(
         top: 12,
         left: 4,
