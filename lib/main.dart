@@ -76,6 +76,14 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     }
   }
 
+  Future<void> _playReverseAnimation() async {
+    try {
+      await _controller.reverse().orCancel;
+    } on TickerCanceled {
+      debugPrint("home reverse animation cancelled");
+    }
+  }
+
   Future<void> _playMenuAnimation() async {
     try {
       await _controllerMenu.forward().orCancel;
@@ -235,6 +243,8 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
       _controller.reset();
       _playAnimation();
     } else {
+      _playReverseAnimation();
+
       _controllerForecast.reset();
       _playForecastAnimation();
     }
