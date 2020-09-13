@@ -11,12 +11,30 @@ class Forecast extends StatelessWidget {
   final bool isWindowOpen;
   final void Function() onClosePress;
 
+  final Animation<double> yTranslate;
+  final Animation<double> controller;
+
   Forecast({
+    Key key,
     @required this.isWindowOpen,
     @required this.onClosePress,
     this.accent = 0,
+    this.controller,
     this.location,
-  });
+  })  : yTranslate = Tween<double>(
+          begin: 240.0,
+          end: 0.0,
+        ).animate(
+          CurvedAnimation(
+            parent: controller,
+            curve: Interval(
+              0.000,
+              1.000,
+              curve: Curves.easeOutCubic,
+            ),
+          ),
+        ),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +47,7 @@ class Forecast extends StatelessWidget {
     return AnimatedContainer(
       width: size.width,
       height: size.height,
-      curve: Curves.easeInOutCirc,
+      curve: Curves.easeOutCubic,
       duration: Duration(milliseconds: 800),
       transform: Matrix4.translationValues(0, y, 0),
       decoration: BoxDecoration(
@@ -54,60 +72,90 @@ class Forecast extends StatelessWidget {
               SizedBox(width: 24),
             ],
           ),
-          Container(
-            padding: EdgeInsets.only(top: 40),
-            child: Text(
-              "NEXT HOURS",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+          _translateBuilder(
+            Container(
+              padding: EdgeInsets.only(top: 40),
+              child: Text(
+                "NEXT HOURS",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
+            amount: 0.4,
           ),
-          Container(
-            padding: EdgeInsets.only(top: 4, bottom: 16),
-            child: Text(
-              "Forecast for the next 48 hours".toUpperCase(),
-              style: TextStyle(
-                fontSize: 12,
+          _translateBuilder(
+            Container(
+              padding: EdgeInsets.only(top: 4, bottom: 16),
+              child: Text(
+                "Forecast for the next 48 hours".toUpperCase(),
+                style: TextStyle(
+                  fontSize: 12,
+                ),
               ),
             ),
+            amount: 0.4,
           ),
-          HourlyView(
-            accent: accent,
-            hourly: location.getHourly(),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 48),
-            child: Text(
-              "NEXT DAYS",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 4, bottom: 8),
-            child: Text(
-              "Forecast for the next 7 days".toUpperCase(),
-              style: TextStyle(
-                fontSize: 12,
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(
-              top: 16,
-            ),
-            height: size.height - 480,
-            child: DailyView(
+          _translateBuilder(
+            HourlyView(
               accent: accent,
-              daily: location.getDaily(),
+              hourly: location.getHourly(),
+            ),
+            amount: 0.6,
+          ),
+          _translateBuilder(
+            Container(
+              padding: EdgeInsets.only(top: 48),
+              child: Text(
+                "NEXT DAYS",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            amount: 0.8,
+          ),
+          _translateBuilder(
+            Container(
+              padding: EdgeInsets.only(top: 4, bottom: 8),
+              child: Text(
+                "Forecast for the next 7 days".toUpperCase(),
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            amount: 0.8,
+          ),
+          _translateBuilder(
+            Container(
+              padding: EdgeInsets.only(
+                top: 16,
+              ),
+              height: size.height - 480,
+              child: DailyView(
+                accent: accent,
+                daily: location.getDaily(),
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  _translateBuilder(Widget ch, {amount = 1}) {
+    return AnimatedBuilder(
+      animation: controller,
+      child: ch,
+      builder: (BuildContext context, Widget child) {
+        return Transform.translate(
+          offset: Offset(0, yTranslate.value * amount),
+          child: child,
+        );
+      },
     );
   }
 }

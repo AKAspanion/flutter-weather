@@ -27,7 +27,10 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   bool isForecastOpen = false;
   Location location = Location();
 
+  Animation<double> yTranslate;
   AnimationController _controller;
+  AnimationController _controllerMenu;
+  AnimationController _controllerForecast;
 
   @override
   void initState() {
@@ -39,6 +42,28 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
+    _controllerMenu = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _controllerForecast = AnimationController(
+      duration: const Duration(milliseconds: 1400),
+      vsync: this,
+    );
+
+    yTranslate = Tween<double>(
+      begin: -200.0,
+      end: 0.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _controllerMenu,
+        curve: Interval(
+          0.000,
+          1.000,
+          curve: Curves.easeOutCubic,
+        ),
+      ),
+    );
 
     _playAnimation();
   }
@@ -47,7 +72,31 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     try {
       await _controller.forward().orCancel;
     } on TickerCanceled {
-      debugPrint("animation cancelled");
+      debugPrint("home animation cancelled");
+    }
+  }
+
+  Future<void> _playMenuAnimation() async {
+    try {
+      await _controllerMenu.forward().orCancel;
+    } on TickerCanceled {
+      debugPrint("menu animation cancelled");
+    }
+  }
+
+  Future<void> _playReverseMenuAnimation() async {
+    try {
+      await _controllerMenu.reverse().orCancel;
+    } on TickerCanceled {
+      debugPrint("menu reverse animation cancelled");
+    }
+  }
+
+  Future<void> _playForecastAnimation() async {
+    try {
+      await _controllerForecast.forward().orCancel;
+    } on TickerCanceled {
+      debugPrint("forecast animation cancelled");
     }
   }
 
@@ -71,37 +120,45 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   onNavPress: toggleMenu,
                 ),
                 Positioned(
-                  child: Btn(
-                    onPress: onRefresh,
-                    child: Icon(
-                      Icons.refresh,
-                      size: 32,
+                  child: _translateBuilder(
+                    Btn(
+                      onPress: onRefresh,
+                      child: Icon(
+                        Icons.refresh,
+                        size: 32,
+                      ),
                     ),
+                    amount: 0.6,
                   ),
                   top: 24,
                   left: 24,
                 ),
                 Positioned(
-                  child: Btn(
-                    onPress: toggleMenu,
-                    child: Icon(
-                      Icons.close,
-                      size: 32,
+                  child: _translateBuilder(
+                    Btn(
+                      onPress: toggleMenu,
+                      child: Icon(
+                        Icons.close,
+                        size: 32,
+                      ),
                     ),
+                    amount: 0.6,
                   ),
                   top: 24,
                   right: 24,
                 ),
                 Positioned(
-                  child: Btn(
-                    onPress: () => toggleTheme(manager),
-                    child: Transform.rotate(
-                      angle: 3.1415926535897932 / 4.5,
-                      child: Icon(
-                        manager.theme == AppTheme.Dark
-                            ? Icons.wb_sunny
-                            : Icons.brightness_3,
-                        size: 32,
+                  child: _translateBuilder(
+                    Btn(
+                      onPress: () => toggleTheme(manager),
+                      child: Transform.rotate(
+                        angle: 3.1415926535897932 / 4.5,
+                        child: Icon(
+                          manager.theme == AppTheme.Dark
+                              ? Icons.wb_sunny
+                              : Icons.brightness_3,
+                          size: 32,
+                        ),
                       ),
                     ),
                   ),
@@ -109,11 +166,13 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   left: 98,
                 ),
                 Positioned(
-                  child: Btn(
-                    onPress: () => toggleDialog(true),
-                    child: Icon(
-                      Icons.location_on,
-                      size: 32,
+                  child: _translateBuilder(
+                    Btn(
+                      onPress: () => toggleDialog(true),
+                      child: Icon(
+                        Icons.location_on,
+                        size: 32,
+                      ),
                     ),
                   ),
                   top: 24,
@@ -136,6 +195,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                       )
                     : Container(),
                 Forecast(
+                  controller: _controllerForecast,
                   isWindowOpen: isForecastOpen,
                   onClosePress: toggleForecast,
                   accent: selectedAccent,
@@ -149,6 +209,19 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     );
   }
 
+  _translateBuilder(Widget ch, {amount = 1}) {
+    return AnimatedBuilder(
+      animation: _controllerMenu,
+      child: ch,
+      builder: (BuildContext context, Widget child) {
+        return Transform.translate(
+          offset: Offset(0, yTranslate.value * amount),
+          child: child,
+        );
+      },
+    );
+  }
+
   void toggleTheme(manager) {
     if (manager.theme == AppTheme.White) {
       manager.setTheme(AppTheme.Dark);
@@ -158,12 +231,25 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   }
 
   void toggleForecast() {
+    if (isForecastOpen) {
+      _controller.reset();
+      _playAnimation();
+    } else {
+      _controllerForecast.reset();
+      _playForecastAnimation();
+    }
     setState(() {
       isForecastOpen = !isForecastOpen;
     });
   }
 
   void toggleMenu() {
+    if (!isDrawerOpen) {
+      _controllerMenu.reset();
+      _playMenuAnimation();
+    } else {
+      _playReverseMenuAnimation();
+    }
     setState(() {
       isDrawerOpen = !isDrawerOpen;
     });

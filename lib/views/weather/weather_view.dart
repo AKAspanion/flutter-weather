@@ -31,7 +31,7 @@ class LocationView extends StatelessWidget {
           ),
         ),
         yTranslate = Tween<double>(
-          begin: 50.0,
+          begin: 60.0,
           end: 0.0,
         ).animate(
           CurvedAnimation(
@@ -39,7 +39,7 @@ class LocationView extends StatelessWidget {
             curve: Interval(
               0.000,
               0.500,
-              curve: Curves.ease,
+              curve: Curves.easeOutCubic,
             ),
           ),
         ),
@@ -88,6 +88,7 @@ class LocationView extends StatelessWidget {
           child: Container(
             width: 200,
             height: 200,
+            transform: Matrix4.translationValues(0, yTranslate.value * 0.9, 0),
             padding: EdgeInsets.only(
               bottom: 16,
             ),
@@ -104,7 +105,7 @@ class LocationView extends StatelessWidget {
             children: <Widget>[
               Container(
                 transform:
-                    Matrix4.translationValues(0, yTranslate.value * 0.2, 0),
+                    Matrix4.translationValues(0, yTranslate.value * 0.8, 0),
                 padding: EdgeInsets.only(
                   bottom: 16,
                 ),
@@ -118,7 +119,7 @@ class LocationView extends StatelessWidget {
               ),
               Container(
                 transform:
-                    Matrix4.translationValues(0, yTranslate.value * 0.4, 0),
+                    Matrix4.translationValues(0, yTranslate.value * 0.7, 0),
                 child: Text(
                   '${getGreeting(weather.timezone)}',
                   style: TextStyle(
@@ -130,7 +131,7 @@ class LocationView extends StatelessWidget {
               ),
               Container(
                 transform:
-                    Matrix4.translationValues(0, yTranslate.value * 0.4, 0),
+                    Matrix4.translationValues(0, yTranslate.value * 0.7, 0),
                 child: Text(
                   '${weather.description.toUpperCase()}',
                   style: TextStyle(
@@ -145,7 +146,7 @@ class LocationView extends StatelessWidget {
         Opacity(
           opacity: opacity.value,
           child: Container(
-            transform: Matrix4.translationValues(0, yTranslate.value * 0.6, 0),
+            transform: Matrix4.translationValues(0, yTranslate.value * 0.5, 0),
             padding: EdgeInsets.symmetric(
               horizontal: 4,
             ),

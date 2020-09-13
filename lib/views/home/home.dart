@@ -63,7 +63,7 @@ class Home extends StatelessWidget {
                   ),
                   IconButton(
                     iconSize: 36,
-                    onPressed: loading ? null : onMorePress,
+                    onPressed: loading || isDrawerOpen ? null : onMorePress,
                     icon: Icon(
                       Icons.show_chart,
                       size: 36,
