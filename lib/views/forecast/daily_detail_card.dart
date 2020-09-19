@@ -57,8 +57,8 @@ class _DailyDetailState extends State<DailyDetail> {
                   Row(
                     children: [
                       Container(
-                        width: 76,
-                        height: 76,
+                        width: 72,
+                        height: 72,
                         child: FlareActor(
                           "assets/animations/cloudy.flr",
                           alignment: Alignment.center,
@@ -83,7 +83,7 @@ class _DailyDetailState extends State<DailyDetail> {
                             child: Text(
                               "${weather.description}".toUpperCase(),
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 11,
                                 color: expanded ? Colors.white : Colors.black87,
                               ),
                             ),
@@ -98,17 +98,17 @@ class _DailyDetailState extends State<DailyDetail> {
                       Column(
                         children: [
                           Container(
-                            padding: EdgeInsets.only(right: 12),
+                            padding: EdgeInsets.only(right: 12, top: 2),
                             child: Text(
                               "MIN",
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 11,
                                 color: expanded ? Colors.white : Colors.black87,
                               ),
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.only(right: 12),
+                            padding: EdgeInsets.only(right: 12, top: 2),
                             child: Text(
                               '${(weather.tempMin - 273.15).floor()}°C',
                               style: TextStyle(
@@ -123,21 +123,21 @@ class _DailyDetailState extends State<DailyDetail> {
                       Column(
                         children: [
                           Container(
-                            padding: EdgeInsets.only(right: 12),
+                            padding: EdgeInsets.only(right: 12, top: 2),
                             child: Text(
                               "MAX",
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 11,
                                 color: expanded ? Colors.white : Colors.black87,
                               ),
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.only(right: 12),
+                            padding: EdgeInsets.only(right: 12, top: 2),
                             child: Text(
                               '${(weather.tempMax - 273.15).floor()}°C',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: expanded ? Colors.white : Colors.black87,
                               ),
@@ -223,7 +223,7 @@ class _DailyDetailState extends State<DailyDetail> {
     DateTime now =
         DateTime.fromMillisecondsSinceEpoch(weather.date * 1000, isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
-    
+
     return "${CalendarHelper.weekdays[zoneTime.weekday - 1]}".toUpperCase();
   }
 

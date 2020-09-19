@@ -43,7 +43,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
       vsync: this,
     );
     _controllerMenu = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 550),
       vsync: this,
     );
     _controllerForecast = AnimationController(

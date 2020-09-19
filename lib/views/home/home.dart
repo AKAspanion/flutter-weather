@@ -41,9 +41,9 @@ class Home extends StatelessWidget {
       onHorizontalDragUpdate: onDragUpdate,
       child: AnimatedContainer(
         padding: EdgeInsets.all(24),
-        curve: Curves.easeInOut,
+        curve: Curves.easeOutCubic,
         transform: Matrix4.translationValues(x, y, 0)..scale(factor),
-        duration: Duration(milliseconds: 250),
+        duration: Duration(milliseconds: 500),
         decoration: BoxDecoration(
           color: bgColor,
           boxShadow: isDrawerOpen

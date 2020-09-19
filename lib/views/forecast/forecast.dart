@@ -72,73 +72,85 @@ class Forecast extends StatelessWidget {
               SizedBox(width: 24),
             ],
           ),
-          _translateBuilder(
-            Container(
-              padding: EdgeInsets.only(top: 40),
-              child: Text(
-                "NEXT HOURS",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+          Container(
+            padding: EdgeInsets.only(
+              top: 16,
+            ),
+            height: size.height - 76,
+            child: ListView(
+              children: [
+                _translateBuilder(
+                  Container(
+                    padding: EdgeInsets.only(top: 40),
+                    child: Center(
+                      child: Text(
+                        "NEXT HOURS",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  amount: 0.4,
                 ),
-              ),
-            ),
-            amount: 0.4,
-          ),
-          _translateBuilder(
-            Container(
-              padding: EdgeInsets.only(top: 4, bottom: 16),
-              child: Text(
-                "Forecast for the next 48 hours".toUpperCase(),
-                style: TextStyle(
-                  fontSize: 12,
+                _translateBuilder(
+                  Container(
+                    padding: EdgeInsets.only(top: 4, bottom: 16),
+                    child: Center(
+                      child: Text(
+                        "Forecast for the next 48 hours".toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                  amount: 0.4,
                 ),
-              ),
-            ),
-            amount: 0.4,
-          ),
-          _translateBuilder(
-            HourlyView(
-              accent: accent,
-              hourly: location.getHourly(),
-            ),
-            amount: 0.6,
-          ),
-          _translateBuilder(
-            Container(
-              padding: EdgeInsets.only(top: 48),
-              child: Text(
-                "NEXT DAYS",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                _translateBuilder(
+                  HourlyView(
+                    accent: accent,
+                    hourly: location.getHourly(),
+                  ),
+                  amount: 0.6,
                 ),
-              ),
-            ),
-            amount: 0.8,
-          ),
-          _translateBuilder(
-            Container(
-              padding: EdgeInsets.only(top: 4, bottom: 8),
-              child: Text(
-                "Forecast for the next 7 days".toUpperCase(),
-                style: TextStyle(
-                  fontSize: 12,
+                _translateBuilder(
+                  Container(
+                    padding: EdgeInsets.only(top: 48),
+                    child: Center(
+                      child: Text(
+                        "NEXT DAYS",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  amount: 0.8,
                 ),
-              ),
-            ),
-            amount: 0.8,
-          ),
-          _translateBuilder(
-            Container(
-              padding: EdgeInsets.only(
-                top: 16,
-              ),
-              height: size.height - 480,
-              child: DailyView(
-                accent: accent,
-                daily: location.getDaily(),
-              ),
+                _translateBuilder(
+                  Container(
+                    padding: EdgeInsets.only(top: 4, bottom: 8),
+                    child: Center(
+                      child: Text(
+                        "Forecast for the next 7 days".toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                  amount: 0.8,
+                ),
+                _translateBuilder(
+                  DailyView(
+                    accent: accent,
+                    daily: location.getDaily(),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
