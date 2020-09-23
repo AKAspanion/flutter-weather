@@ -1,13 +1,13 @@
 # flutter-weather
 
-A beautiful weather app built using Flutter.
+Beautiful Weather, an app built using flutter that shows the current weather.<br/>
 
-
-App has following features.
-- Beautiful animated weather icons.
-- Beautiful accent colors.
+Very simple app with the following features.
+- Beautiful live animated weather icons.
+- Beautiful accent gradient colors.
 - Dark and Light theme support.
-- Set current location or any city for weather data. 
+- View your current location/any city weather details.
+- View the weather details for the next 48 hours/next 7 days.
 
 ![Beautiful Flutter](/assets/animations/demo.gif "Beautiful Flutter")
 
