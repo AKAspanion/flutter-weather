@@ -11,6 +11,9 @@ Very simple app with the following features.
 
 ![Beautiful Flutter](/assets/animations/demo.gif "Beautiful Flutter")
 
+
+## Motivation
+
 Built this app to learn and get familiar with flutter and dart.
 
 ## Android App
