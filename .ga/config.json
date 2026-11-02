@@ -1,3 +1,22 @@
 {
-  "consent": null
+  "consent": null,
+  "workflow": {
+    "git": {
+      "message": "free",
+      "ticket": "none",
+      "base": "master",
+      "branch": "feat/<topic>",
+      "squash": false
+    },
+    "checks": {
+      "commands": {
+        "typecheck": null,
+        "lint": "flutter analyze",
+        "lint-fix": null,
+        "format-check": null,
+        "test": "flutter test",
+        "e2e": null
+      }
+    }
+  }
 }
