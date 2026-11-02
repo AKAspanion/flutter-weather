@@ -4,98 +4,127 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/widget_background"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="14dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/card_city"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/card_city"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:text="LISBON" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/widget_now"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:maxLines="1"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            android:text="LISBON" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/card_label"
-            android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/card_icon"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:contentDescription="@null"
+                android:src="@drawable/widget_icon_sunny" />
+
+            <TextView
+                android:id="@+id/card_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@android:color/white"
+                android:textSize="34sp"
+                android:text="24°" />
+
+            <TextView
+                android:id="@+id/card_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                android:text="FEW CLOUDS" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            android:text="NOW" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/card_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                android:text="H 24°  L 19°" />
+
+            <TextView
+                android:id="@+id/card_updated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:alpha="0.8"
+                android:textColor="@android:color/white"
+                android:textSize="10sp"
+                android:text="Updated 14:20" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/card_icon"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:alpha="1"
             android:contentDescription="@null"
-            android:src="@drawable/widget_icon_sunny" />
+            android:src="@drawable/widget_dot" />
 
-        <TextView
-            android:id="@+id/card_temperature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@android:color/white"
-            android:textSize="34sp"
-            android:text="24°" />
-
-        <TextView
-            android:id="@+id/card_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="@android:color/white"
-            android:textSize="11sp"
-            android:text="FEW CLOUDS" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/card_detail"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:maxLines="1"
-            android:textColor="@android:color/white"
-            android:textSize="11sp"
-            android:text="H 24°  L 19°" />
-
-        <TextView
-            android:id="@+id/card_updated"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:alpha="0.8"
-            android:textColor="@android:color/white"
-            android:textSize="10sp"
-            android:text="Updated 14:20" />
+        <ImageView
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_marginTop="6dp"
+            android:alpha="0.4"
+            android:contentDescription="@null"
+            android:src="@drawable/widget_dot" />
     </LinearLayout>
 </LinearLayout>

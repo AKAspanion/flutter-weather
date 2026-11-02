@@ -6,18 +6,30 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
+import android.os.Bundle
+import android.util.SizeF
+import android.util.TypedValue
 import android.widget.RemoteViews
 import androidx.core.widget.RemoteViewsCompat
 import es.antonborri.home_widget.HomeWidgetLaunchIntent
+import es.antonborri.home_widget.HomeWidgetPlugin
 import es.antonborri.home_widget.HomeWidgetProvider
 import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * Home-screen widget: a looping stack of two cards, the current weather and the
- * next 24 hours, which the user swipes up or down between. (Home screens keep
- * left/right swipes for paging, so the hours are laid out side by side.) The
- * Flutter side (lib/services/weather_widget.dart) writes the values.
+ * Home-screen widget: one card whose content changes when the user swipes up or
+ * down inside it, between the current weather and the next 24 hours. (Home
+ * screens keep left/right swipes for paging, so the hours are laid out side by
+ * side.) The Flutter side (lib/services/weather_widget.dart) writes the values.
+ *
+ * The pages live in a StackView, the one widget view that snaps between items
+ * on a swipe. A StackView normally looks like a fanned deck: it caps each page
+ * (wrapped in a frame with [FRAME_PADDING] on every side) at 90% of its own
+ * size and shifts the pages behind into the leftover space. On Android 12+,
+ * where the exact card size is known, each page is sized to the card and the
+ * StackView is enlarged past the card's edges so the front page lands exactly
+ * on the card; the card clips to its outline, hiding the page behind.
  */
 class WeatherWidgetProvider : HomeWidgetProvider() {
     override fun onUpdate(
@@ -26,35 +38,111 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         appWidgetIds: IntArray,
         widgetData: SharedPreferences,
     ) {
-        val city = widgetData.getString("city", null)
-        val updated = widgetData.getString("updated", "") ?: ""
-        val now = parseObject(widgetData.getString("now", null))
-        val hours = parseArray(widgetData.getString("hours", null))
+        appWidgetIds.forEach { render(context, appWidgetManager, it, widgetData) }
+    }
 
-        appWidgetIds.forEach { widgetId ->
-            val views = RemoteViews(context.packageName, R.layout.weather_widget).apply {
-                setEmptyView(R.id.widget_stack, R.id.widget_empty)
-                setOnClickPendingIntent(
-                    R.id.widget_empty,
-                    HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java),
-                )
-                setPendingIntentTemplate(R.id.widget_stack, openAppTemplate(context))
+    // The StackView's overhang follows the card's size, so re-render on resize.
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: Bundle,
+    ) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        render(context, appWidgetManager, appWidgetId, HomeWidgetPlugin.getData(context))
+    }
+
+    private fun render(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        widgetId: Int,
+        widgetData: SharedPreferences,
+    ) {
+        val content = Content(
+            city = widgetData.getString("city", null),
+            updated = widgetData.getString("updated", "") ?: "",
+            now = parseObject(widgetData.getString("now", null)),
+            hours = parseArray(widgetData.getString("hours", null)),
+        )
+
+        // From Android 12 the launcher reports the exact sizes the widget is shown
+        // at, which the overhang needs. Earlier versions show the stacked look.
+        val sizes =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                @Suppress("DEPRECATION")
+                appWidgetManager.getAppWidgetOptions(widgetId)
+                    .getParcelableArrayList<SizeF>(AppWidgetManager.OPTION_APPWIDGET_SIZES)
+            } else {
+                null
             }
 
-            val items = RemoteViewsCompat.RemoteCollectionItems.Builder().setViewTypeCount(2)
-            if (city != null && now != null) {
-                items.addItem(0, nowCard(context, city, updated, now))
-                if (hours.isNotEmpty()) items.addItem(1, hoursCard(context, city, hours))
+        val views =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !sizes.isNullOrEmpty()) {
+                RemoteViews(sizes.associateWith { widgetViews(context, widgetId, content, it) })
+            } else {
+                widgetViews(context, widgetId, content, null)
             }
-            RemoteViewsCompat.setRemoteAdapter(context, views, widgetId, R.id.widget_stack, items.build())
-            appWidgetManager.updateAppWidget(widgetId, views)
+        appWidgetManager.updateAppWidget(widgetId, views)
+    }
+
+    private class Content(
+        val city: String?,
+        val updated: String,
+        val now: JSONObject?,
+        val hours: List<JSONObject>,
+    )
+
+    private fun widgetViews(context: Context, widgetId: Int, content: Content, size: SizeF?): RemoteViews {
+        val views = RemoteViews(context.packageName, R.layout.weather_widget).apply {
+            if (size != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) flattenStack(this, size)
+            setEmptyView(R.id.widget_stack, R.id.widget_empty)
+            setOnClickPendingIntent(
+                R.id.widget_empty,
+                HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java),
+            )
+            setPendingIntentTemplate(R.id.widget_stack, openAppTemplate(context))
         }
+
+        val items = RemoteViewsCompat.RemoteCollectionItems.Builder().setViewTypeCount(2)
+        if (content.city != null && content.now != null) {
+            items.addItem(0, nowCard(context, content.city, content.updated, content.now).sizedTo(size))
+            if (content.hours.isNotEmpty()) {
+                items.addItem(1, hoursCard(context, content.city, content.hours).sizedTo(size))
+            }
+        }
+        RemoteViewsCompat.setRemoteAdapter(context, views, widgetId, R.id.widget_stack, items.build())
+        return views
+    }
+
+    /**
+     * Enlarges the StackView so a card-sized page fits inside its 90% cap with
+     * [SLACK] to spare. With spare room StackView offsets the front page by
+     * exactly (stack height - framed page height), which keeps the maths
+     * independent of pixel rounding, and the margins place that page on the card.
+     */
+    private fun flattenStack(views: RemoteViews, card: SizeF) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+        val stackWidth = (card.width + 2 * FRAME_PADDING) / 0.9f + SLACK
+        val stackHeight = (card.height + 2 * FRAME_PADDING) / 0.9f + SLACK
+        fun margin(type: Int, value: Float) =
+            views.setViewLayoutMargin(R.id.widget_stack, type, value, TypedValue.COMPLEX_UNIT_DIP)
+        margin(RemoteViews.MARGIN_START, -FRAME_PADDING)
+        margin(RemoteViews.MARGIN_BOTTOM, -FRAME_PADDING)
+        margin(RemoteViews.MARGIN_TOP, -(stackHeight - card.height - FRAME_PADDING))
+        margin(RemoteViews.MARGIN_END, -(stackWidth - card.width - FRAME_PADDING))
+    }
+
+    /** Pages must be exactly the card's size for [flattenStack]; the root is the page's first view. */
+    private fun RemoteViews.sizedTo(card: SizeF?) = apply {
+        if (card == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return@apply
+        val root = if (layoutId == R.layout.weather_widget_item) R.id.card_root else R.id.hours_root
+        setViewLayoutWidth(root, card.width, TypedValue.COMPLEX_UNIT_DIP)
+        setViewLayoutHeight(root, card.height, TypedValue.COMPLEX_UNIT_DIP)
     }
 
     private fun nowCard(context: Context, city: String, updated: String, now: JSONObject) =
         RemoteViews(context.packageName, R.layout.weather_widget_item).apply {
             setTextViewText(R.id.card_city, city)
-            setTextViewText(R.id.card_label, context.getString(R.string.widget_now))
             setImageViewResource(R.id.card_icon, iconFor(now.optString("icon")))
             setTextViewText(R.id.card_temperature, now.optString("temperature"))
             setTextViewText(R.id.card_description, now.optString("description"))
@@ -123,4 +211,12 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
             "foggy" -> R.drawable.widget_icon_foggy
             else -> R.drawable.widget_icon_few
         }
+
+    private companion object {
+        /** StackView wraps each page in a frame with this padding (dp), see StackView.FRAME_PADDING. */
+        const val FRAME_PADDING = 4f
+
+        /** Extra stack size (dp) beyond the 90% cap, so StackView spreads the pages predictably. */
+        const val SLACK = 2f
+    }
 }

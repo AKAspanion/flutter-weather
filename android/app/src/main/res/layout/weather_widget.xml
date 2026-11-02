@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A stack of cards: the current weather first, then the next hours. Swipe to cycle. -->
+<!-- One card. Its StackView holds two pages, Now and Next 24 hours; a vertical
+     swipe inside the card snaps to the other page. On Android 12+
+     WeatherWidgetProvider sizes the pages to the card and lets the StackView
+     overhang it, so the card (clipped to its rounded outline) hides the page
+     fanned out behind. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:clipToOutline="true">
 
     <StackView
         android:id="@+id/widget_stack"
@@ -15,7 +21,6 @@
         android:id="@+id/widget_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/widget_background"
         android:gravity="center"
         android:padding="16dp"
         android:text="@string/widget_empty"
