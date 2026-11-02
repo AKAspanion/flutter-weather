@@ -14,9 +14,10 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * Home-screen widget: a stack of cards, the current weather first and then the
- * next hours, which the user swipes through. The Flutter side
- * (lib/services/weather_widget.dart) writes the values.
+ * Home-screen widget: a looping stack of two cards, the current weather and the
+ * next 24 hours, which the user swipes up or down between. (Home screens keep
+ * left/right swipes for paging, so the hours are laid out side by side.) The
+ * Flutter side (lib/services/weather_widget.dart) writes the values.
  */
 class WeatherWidgetProvider : HomeWidgetProvider() {
     override fun onUpdate(
@@ -27,7 +28,8 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
     ) {
         val city = widgetData.getString("city", null)
         val updated = widgetData.getString("updated", "") ?: ""
-        val cards = parseCards(widgetData.getString("cards", null))
+        val now = parseObject(widgetData.getString("now", null))
+        val hours = parseArray(widgetData.getString("hours", null))
 
         appWidgetIds.forEach { widgetId ->
             val views = RemoteViews(context.packageName, R.layout.weather_widget).apply {
@@ -39,31 +41,43 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
                 setPendingIntentTemplate(R.id.widget_stack, openAppTemplate(context))
             }
 
-            val items = RemoteViewsCompat.RemoteCollectionItems.Builder().setViewTypeCount(1)
-            if (city != null) {
-                cards.forEachIndexed { index, card ->
-                    items.addItem(index.toLong(), cardViews(context, city, updated, card))
-                }
+            val items = RemoteViewsCompat.RemoteCollectionItems.Builder().setViewTypeCount(2)
+            if (city != null && now != null) {
+                items.addItem(0, nowCard(context, city, updated, now))
+                if (hours.isNotEmpty()) items.addItem(1, hoursCard(context, city, hours))
             }
             RemoteViewsCompat.setRemoteAdapter(context, views, widgetId, R.id.widget_stack, items.build())
             appWidgetManager.updateAppWidget(widgetId, views)
         }
     }
 
-    private fun cardViews(context: Context, city: String, updated: String, card: JSONObject) =
+    private fun nowCard(context: Context, city: String, updated: String, now: JSONObject) =
         RemoteViews(context.packageName, R.layout.weather_widget_item).apply {
             setTextViewText(R.id.card_city, city)
-            setTextViewText(R.id.card_label, card.optString("label"))
-            setImageViewResource(R.id.card_icon, iconFor(card.optString("icon")))
-            setTextViewText(R.id.card_temperature, card.optString("temperature"))
-            setTextViewText(R.id.card_description, card.optString("description"))
-            setTextViewText(R.id.card_detail, card.optString("detail"))
-            // Hour cards show wind here; the current-weather card shows when it was refreshed.
-            setTextViewText(
-                R.id.card_updated,
-                card.optString("aside").ifEmpty { context.getString(R.string.widget_updated, updated) },
-            )
+            setTextViewText(R.id.card_label, context.getString(R.string.widget_now))
+            setImageViewResource(R.id.card_icon, iconFor(now.optString("icon")))
+            setTextViewText(R.id.card_temperature, now.optString("temperature"))
+            setTextViewText(R.id.card_description, now.optString("description"))
+            setTextViewText(R.id.card_detail, now.optString("detail"))
+            setTextViewText(R.id.card_updated, context.getString(R.string.widget_updated, updated))
             setOnClickFillInIntent(R.id.card_root, Intent())
+        }
+
+    private fun hoursCard(context: Context, city: String, hours: List<JSONObject>) =
+        RemoteViews(context.packageName, R.layout.weather_widget_hours).apply {
+            setTextViewText(R.id.hours_city, city)
+            removeAllViews(R.id.hours_row)
+            hours.forEach { hour ->
+                addView(
+                    R.id.hours_row,
+                    RemoteViews(context.packageName, R.layout.weather_widget_hour).apply {
+                        setTextViewText(R.id.hour_label, hour.optString("label"))
+                        setImageViewResource(R.id.hour_icon, iconFor(hour.optString("icon")))
+                        setTextViewText(R.id.hour_temperature, hour.optString("temperature"))
+                    },
+                )
+            }
+            setOnClickFillInIntent(R.id.hours_root, Intent())
         }
 
     /** Collection items can't have their own PendingIntents, only fill-ins for this template. */
@@ -74,7 +88,14 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         return PendingIntent.getActivity(context, 1, intent, flags)
     }
 
-    private fun parseCards(json: String?): List<JSONObject> {
+    private fun parseObject(json: String?): JSONObject? =
+        try {
+            json?.let { JSONObject(it) }
+        } catch (e: Exception) {
+            null
+        }
+
+    private fun parseArray(json: String?): List<JSONObject> {
         if (json == null) return emptyList()
         return try {
             val array = JSONArray(json)

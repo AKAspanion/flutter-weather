@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutterweather/services/calendar.dart';
 import 'package:flutterweather/services/providers/weather_provider.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/services/weather_cache.dart';
@@ -17,8 +16,9 @@ class WeatherWidget {
 
   static bool get _supported => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
-  /// How many upcoming forecast entries the widget's card stack holds.
-  static const int _hourCards = 12;
+  /// The second widget card shows the next 24 hours as 8 columns, 3 hours apart.
+  static const int _hourColumns = 8;
+  static const int _hourStep = 3 * 3600;
 
   static Future<void> update(WeatherReport report) async {
     if (!_supported) return;
@@ -26,38 +26,19 @@ class WeatherWidget {
       final Weather now = report.current;
       final Weather? today = report.daily.isEmpty ? null : report.daily.first;
       final DateTime updated = DateTime.now();
-      final int nowSeconds = updated.millisecondsSinceEpoch ~/ 1000;
-
-      final List<Map<String, String>> hours = report.hourly
-          .where((w) => (w.date ?? 0) > nowSeconds)
-          .take(_hourCards)
-          .map((w) => {
-                'label': _hourLabel(w),
-                'temperature': _degrees(w.temperature),
-                'icon': w.getIcon(overrideNight: _isNight(w) ? '-night' : ''),
-                'description': (w.description ?? '').toUpperCase(),
-                'detail': 'HUMIDITY ${w.humidity ?? '--'}%',
-                'aside': 'WIND ${w.windSpeed ?? '--'}m/s',
-              })
-          .toList();
-
-      // The current weather comes first. The widget's looping StackView reveals
-      // the previous card on a swipe up, so the hours go in reverse after it:
-      // swiping up then steps forward through the next hours.
-      final List<Map<String, String>> cards = [
-        {
-          'label': 'NOW',
-          'temperature': _degrees(now.temperature),
-          'icon': now.getIcon(),
-          'description': (now.description ?? '').toUpperCase(),
-          'detail': today == null ? '' : 'H ${_degrees(today.tempMax)}  L ${_degrees(today.tempMin)}',
-        },
-        ...hours.reversed,
-      ];
 
       await Future.wait([
         HomeWidget.saveWidgetData<String>('city', (now.name ?? '').toUpperCase()),
-        HomeWidget.saveWidgetData<String>('cards', jsonEncode(cards)),
+        HomeWidget.saveWidgetData<String>(
+          'now',
+          jsonEncode({
+            'temperature': _degrees(now.temperature),
+            'icon': now.getIcon(),
+            'description': (now.description ?? '').toUpperCase(),
+            'detail': today == null ? '' : 'H ${_degrees(today.tempMax)}  L ${_degrees(today.tempMin)}',
+          }),
+        ),
+        HomeWidget.saveWidgetData<String>('hours', jsonEncode(_nextDay(report.hourly, updated))),
         HomeWidget.saveWidgetData<String>(
           'updated',
           '${updated.hour.toString().padLeft(2, '0')}:${updated.minute.toString().padLeft(2, '0')}',
@@ -69,16 +50,34 @@ class WeatherWidget {
     }
   }
 
+  /// Picks forecast entries at least 3 hours apart across the next 24 hours.
+  /// OpenWeatherMap already steps by 3 hours; hourly providers get thinned out.
+  static List<Map<String, String>> _nextDay(List<Weather> hourly, DateTime from) {
+    final int start = from.millisecondsSinceEpoch ~/ 1000;
+    final List<Map<String, String>> picked = [];
+    int? last;
+    for (final Weather w in hourly) {
+      final int date = w.date ?? 0;
+      if (date <= start || date > start + Duration.secondsPerDay) continue;
+      if (last != null && date - last < _hourStep - 60) continue;
+      picked.add({
+        'label': _hourLabel(w),
+        'icon': w.getIcon(overrideNight: _isNight(w) ? '-night' : ''),
+        'temperature': _degrees(w.temperature),
+      });
+      last = date;
+      if (picked.length == _hourColumns) break;
+    }
+    return picked;
+  }
+
   static DateTime _localTime(Weather w) =>
       DateTime.fromMillisecondsSinceEpoch(w.date! * 1000, isUtc: true).add(Duration(seconds: w.timezone ?? 0));
 
-  /// "3 PM", or "TUE 3 AM" once the forecast reaches the next day.
+  /// Compact hour for a narrow column: "12P", "3A".
   static String _hourLabel(Weather w) {
     final DateTime time = _localTime(w);
-    final DateTime placeNow = DateTime.now().toUtc().add(Duration(seconds: w.timezone ?? 0));
-    final String hour = '${(time.hour + 11) % 12 + 1} ${time.hour >= 12 ? 'PM' : 'AM'}';
-    if (time.day == placeNow.day) return hour;
-    return '${CalendarHelper.weekdays[time.weekday - 1].substring(0, 3).toUpperCase()} $hour';
+    return '${(time.hour + 11) % 12 + 1}${time.hour >= 12 ? 'P' : 'A'}';
   }
 
   // Same rule as the hourly forecast chips.

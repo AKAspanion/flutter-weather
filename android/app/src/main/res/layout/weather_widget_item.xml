@@ -8,9 +8,12 @@
     android:orientation="vertical"
     android:padding="14dp">
 
+    <!-- Margins keep this text out of the strips where the card peeks from behind the stack. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:orientation="horizontal">
 
         <TextView
