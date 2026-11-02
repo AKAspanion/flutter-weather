@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterweather/services/ads.dart';
 import 'package:flutterweather/services/theme_manager.dart';
-import 'package:flutterweather/services/weather_widget.dart';
 import 'package:flutterweather/theme/gradients.dart';
 import 'package:provider/provider.dart';
 
@@ -16,9 +15,9 @@ class Menu extends StatelessWidget {
 
   static const double _actionsHeight = 48;
 
-  /// Height of the accent picker and action row, plus padding, which the
-  /// home card has to stay clear of while the drawer is open.
-  static const double footerHeight = 24 + 88 + _actionsHeight + 16;
+  /// Height of the accent picker (plus the privacy row, when shown) and
+  /// padding, which the home card has to stay clear of while the drawer is open.
+  static double get footerHeight => 24 + 88 + 16 + (Ads.privacyOptionsRequired.value ? _actionsHeight : 0);
 
   const Menu({
     Key? key,
@@ -49,24 +48,15 @@ class Menu extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(
-            height: _actionsHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                FutureBuilder<bool>(
-                  future: WeatherWidget.canPin(),
-                  builder: (_, snapshot) => snapshot.data != true
-                      ? SizedBox.shrink()
-                      : _action("ADD WIDGET", WeatherWidget.pin),
-                ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: Ads.privacyOptionsRequired,
-                  builder: (_, required, __) =>
-                      !required ? SizedBox.shrink() : _action("PRIVACY", Ads.showPrivacyOptions),
-                ),
-              ],
-            ),
+          // Only for users who must be able to revisit their ad consent (e.g. in the EEA).
+          ValueListenableBuilder<bool>(
+            valueListenable: Ads.privacyOptionsRequired,
+            builder: (_, required, __) => !required
+                ? SizedBox(height: 16)
+                : SizedBox(
+                    height: _actionsHeight,
+                    child: Center(child: _action("PRIVACY", Ads.showPrivacyOptions)),
+                  ),
           ),
           Container(
             decoration: BoxDecoration(

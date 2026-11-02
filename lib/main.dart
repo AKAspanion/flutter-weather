@@ -203,6 +203,28 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   top: 24,
                   right: 98,
                 ),
+                // Centred, which is exactly midway between the theme and location buttons.
+                Positioned(
+                  top: 24,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: FutureBuilder<bool>(
+                      future: WeatherWidget.canPin(),
+                      builder: (_, snapshot) => snapshot.data != true
+                          ? SizedBox.shrink()
+                          : _translateBuilder(
+                              Btn(
+                                onPress: WeatherWidget.pin,
+                                child: Icon(
+                                  Icons.widgets,
+                                  size: 32,
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
                 Home(
                   controller: _controller.view,
                   isDrawerOpen: isDrawerOpen,

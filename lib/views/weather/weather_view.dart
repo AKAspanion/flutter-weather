@@ -200,7 +200,7 @@ class LocationView extends StatelessWidget {
         DateTime.fromMillisecondsSinceEpoch(date * 1000, isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
     final int hour = zoneTime.hour > 12 ? zoneTime.hour - 12 : zoneTime.hour;
-    return '$hour:${zoneTime.minute}'.toUpperCase();
+    return '$hour:${zoneTime.minute.toString().padLeft(2, '0')}'.toUpperCase();
   }
 
   String getDateTime(int? zone) {

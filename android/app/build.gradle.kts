@@ -78,3 +78,8 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // RemoteViewsCompat: collection widgets (the card stack) on every supported Android version.
+    implementation("androidx.core:core-remoteviews:1.1.0")
+}
