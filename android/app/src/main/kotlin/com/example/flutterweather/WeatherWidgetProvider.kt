@@ -105,9 +105,9 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
 
         val items = RemoteViewsCompat.RemoteCollectionItems.Builder().setViewTypeCount(2)
         if (content.city != null && content.now != null) {
-            items.addItem(0, nowCard(context, content.city, content.updated, content.now).sizedTo(size))
+            items.addItem(0, nowCard(context, content.city, content.updated, content.now, size).sizedTo(size))
             if (content.hours.isNotEmpty()) {
-                items.addItem(1, hoursCard(context, content.city, content.hours).sizedTo(size))
+                items.addItem(1, hoursCard(context, content.city, content.hours, size).sizedTo(size))
             }
         }
         RemoteViewsCompat.setRemoteAdapter(context, views, widgetId, R.id.widget_stack, items.build())
@@ -140,20 +140,37 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         setViewLayoutHeight(root, card.height, TypedValue.COMPLEX_UNIT_DIP)
     }
 
-    private fun nowCard(context: Context, city: String, updated: String, now: JSONObject) =
+    private fun nowCard(context: Context, city: String, updated: String, now: JSONObject, card: SizeF?) =
         RemoteViews(context.packageName, R.layout.weather_widget_item).apply {
             setTextViewText(R.id.card_city, city)
             setImageViewResource(R.id.card_icon, iconFor(now.optString("icon")))
             setTextViewText(R.id.card_temperature, now.optString("temperature"))
             setTextViewText(R.id.card_description, now.optString("description"))
             setTextViewText(R.id.card_detail, now.optString("detail"))
+            setTextViewText(R.id.card_sunrise, now.optString("sunrise"))
+            setTextViewText(R.id.card_wind, now.optString("wind"))
+            setTextViewText(R.id.card_humidity, now.optString("humidity"))
             setTextViewText(R.id.card_updated, context.getString(R.string.widget_updated, updated))
             setOnClickFillInIntent(R.id.card_root, Intent())
+
+            val scale = scaleFor(card)
+            text(R.id.card_city, 12f, scale)
+            text(R.id.card_label, 12f, scale)
+            text(R.id.card_temperature, 44f, scale)
+            text(R.id.card_description, 13f, scale)
+            text(R.id.card_detail, 13f, scale)
+            listOf(R.id.card_sunrise, R.id.card_wind, R.id.card_humidity).forEach { text(it, 12f, scale) }
+            text(R.id.card_updated, 10f, scale)
+            image(R.id.card_icon, 64f, scale)
+            listOf(R.id.card_sunrise_icon, R.id.card_wind_icon, R.id.card_humidity_icon).forEach { image(it, 16f, scale) }
         }
 
-    private fun hoursCard(context: Context, city: String, hours: List<JSONObject>) =
+    private fun hoursCard(context: Context, city: String, hours: List<JSONObject>, card: SizeF?) =
         RemoteViews(context.packageName, R.layout.weather_widget_hours).apply {
+            val scale = scaleFor(card)
             setTextViewText(R.id.hours_city, city)
+            text(R.id.hours_city, 12f, scale)
+            text(R.id.hours_label, 12f, scale)
             removeAllViews(R.id.hours_row)
             hours.forEach { hour ->
                 addView(
@@ -162,11 +179,34 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
                         setTextViewText(R.id.hour_label, hour.optString("label"))
                         setImageViewResource(R.id.hour_icon, iconFor(hour.optString("icon")))
                         setTextViewText(R.id.hour_temperature, hour.optString("temperature"))
+                        text(R.id.hour_label, 11f, scale)
+                        text(R.id.hour_temperature, 14f, scale)
+                        image(R.id.hour_icon, 30f, scale)
                     },
                 )
             }
             setOnClickFillInIntent(R.id.hours_root, Intent())
         }
+
+    /**
+     * How much to enlarge the pages' text and icons so they fill a bigger card.
+     * The layouts are designed for the minimum size (about 250 x 110 dp); the
+     * scale is capped by both dimensions so nothing overflows.
+     */
+    private fun scaleFor(card: SizeF?): Float {
+        if (card == null) return 1f
+        return minOf(card.height / 125f, card.width / 300f).coerceIn(1f, 1.6f)
+    }
+
+    private fun RemoteViews.text(id: Int, sp: Float, scale: Float) {
+        if (scale != 1f) setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, sp * scale)
+    }
+
+    private fun RemoteViews.image(id: Int, dp: Float, scale: Float) {
+        if (scale == 1f || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+        setViewLayoutWidth(id, dp * scale, TypedValue.COMPLEX_UNIT_DIP)
+        setViewLayoutHeight(id, dp * scale, TypedValue.COMPLEX_UNIT_DIP)
+    }
 
     /** Collection items can't have their own PendingIntents, only fill-ins for this template. */
     private fun openAppTemplate(context: Context): PendingIntent {
