@@ -16,6 +16,7 @@ import es.antonborri.home_widget.HomeWidgetPlugin
 import es.antonborri.home_widget.HomeWidgetProvider
 import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.math.roundToInt
 
 /**
  * Home-screen widget: one card whose content changes when the user swipes up or
@@ -80,9 +81,21 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !sizes.isNullOrEmpty()) {
                 RemoteViews(sizes.associateWith { widgetViews(context, widgetId, content, it) })
             } else {
-                widgetViews(context, widgetId, content, null)
+                widgetViews(context, widgetId, content, portraitSize(appWidgetManager, widgetId))
             }
         appWidgetManager.updateAppWidget(widgetId, views)
+    }
+
+    /**
+     * Before Android 12 there's no list of exact sizes; the options give the
+     * portrait size as min width x max height. Only the text scale and column
+     * count use it, since sizing views needs Android 12.
+     */
+    private fun portraitSize(appWidgetManager: AppWidgetManager, widgetId: Int): SizeF? {
+        val options = appWidgetManager.getAppWidgetOptions(widgetId)
+        val width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+        val height = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT)
+        return if (width > 0 && height > 0) SizeF(width.toFloat(), height.toFloat()) else null
     }
 
     private class Content(
@@ -103,11 +116,14 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
             setPendingIntentTemplate(R.id.widget_stack, openAppTemplate(context))
         }
 
+        // Item ids encode the card size: the host keeps items whose id it has seen,
+        // so reusing 0 and 1 left pages sized for the old card after a resize.
+        val idBase = size?.let { (it.width.roundToInt().toLong() shl 20) or (it.height.roundToInt().toLong() shl 4) } ?: 0L
         val items = RemoteViewsCompat.RemoteCollectionItems.Builder().setViewTypeCount(2)
         if (content.city != null && content.now != null) {
-            items.addItem(0, nowCard(context, content.city, content.updated, content.now, size).sizedTo(size))
+            items.addItem(idBase, nowCard(context, content.city, content.updated, content.now, size).sizedTo(size))
             if (content.hours.isNotEmpty()) {
-                items.addItem(1, hoursCard(context, content.city, content.hours, size).sizedTo(size))
+                items.addItem(idBase + 1, hoursCard(context, content.city, hoursFor(content.hours, size), size).sizedTo(size))
             }
         }
         RemoteViewsCompat.setRemoteAdapter(context, views, widgetId, R.id.widget_stack, items.build())
@@ -189,6 +205,16 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         }
 
     /**
+     * The app sends 8 entries 3 hours apart. A squarish card (e.g. 4x3) has
+     * room for 4 columns, so it shows every other entry: still the next 24
+     * hours, 6 hours apart. Wider cards (4x2, 3x2) show all 8.
+     */
+    private fun hoursFor(hours: List<JSONObject>, card: SizeF?): List<JSONObject> {
+        val square = card != null && card.width / card.height < SQUARE_RATIO
+        return if (square) hours.filterIndexed { i, _ -> i % 2 == 0 } else hours
+    }
+
+    /**
      * How much to enlarge the pages' text and icons so they fill a bigger card.
      * The layouts are designed for the minimum size (about 250 x 110 dp); the
      * scale is capped by both dimensions so nothing overflows.
@@ -258,5 +284,8 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
 
         /** Extra stack size (dp) beyond the 90% cap, so StackView spreads the pages predictably. */
         const val SLACK = 2f
+
+        /** Cards narrower than this width-to-height ratio count as square for the hours page. */
+        const val SQUARE_RATIO = 1.3f
     }
 }
