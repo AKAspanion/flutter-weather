@@ -35,7 +35,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "spanion.flutterweather.xyz"
+        // New listing: the original spanion.flutterweather.xyz signing key was lost.
+        applicationId = "in.spanion.weather"
         minSdk = flutter.minSdkVersion
         // Google Play requires targeting Android 16 (API 36) from 31 Aug 2026.
         targetSdk = 36
