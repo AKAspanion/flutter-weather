@@ -1,4 +1,4 @@
-import 'package:flare_flutter/flare_actor.dart';
+import 'package:flutterweather/components/flare_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterweather/services/calendar.dart';
 import 'package:flutterweather/services/weather.dart';
@@ -9,8 +9,8 @@ class DailyDetail extends StatefulWidget {
   final Weather detail;
 
   DailyDetail({
-    this.accent,
-    this.detail,
+    required this.accent,
+    required this.detail,
   });
 
   @override
@@ -59,9 +59,8 @@ class _DailyDetailState extends State<DailyDetail> {
                       Container(
                         width: 72,
                         height: 72,
-                        child: FlareActor(
+                        child: FlareIcon(
                           "assets/animations/cloudy.flr",
-                          alignment: Alignment.center,
                           animation:
                               'cloudy-${weather.getIcon(overrideNight: "")}',
                         ),
@@ -110,7 +109,7 @@ class _DailyDetailState extends State<DailyDetail> {
                           Container(
                             padding: EdgeInsets.only(right: 12, top: 2),
                             child: Text(
-                              '${(weather.tempMin - 273.15).floor()}°C',
+                              '${(weather.tempMin! - 273.15).floor()}°C',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -135,7 +134,7 @@ class _DailyDetailState extends State<DailyDetail> {
                           Container(
                             padding: EdgeInsets.only(right: 12, top: 2),
                             child: Text(
-                              '${(weather.tempMax - 273.15).floor()}°C',
+                              '${(weather.tempMax! - 273.15).floor()}°C',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -154,23 +153,26 @@ class _DailyDetailState extends State<DailyDetail> {
               height: expanded ? 104 : 0,
               curve: Curves.easeInOutCirc,
               duration: Duration(milliseconds: 500),
-              child: Column(
-                children: [
-                  Divider(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      getExpandRowItem("sun", "sunrise", getSunrise(weather)),
-                      getExpandRowItem(
-                          "wind", "wind", "${weather.windSpeed}m/s"),
-                      getExpandRowItem(
-                          "drop", "humidity", "${weather.humidity}%"),
-                    ],
-                  ),
-                ],
-              ),
+              child: !expanded
+                  ? null
+                  : Column(
+                      children: [
+                        Divider(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            getExpandRowItem(
+                                "sun", "sunrise", getSunrise(weather)),
+                            getExpandRowItem(
+                                "wind", "wind", "${weather.windSpeed}m/s"),
+                            getExpandRowItem(
+                                "drop", "humidity", "${weather.humidity}%"),
+                          ],
+                        ),
+                      ],
+                    ),
             )
           ],
         ),
@@ -192,9 +194,8 @@ class _DailyDetailState extends State<DailyDetail> {
           Container(
             width: 42,
             height: 42,
-            child: FlareActor(
+            child: FlareIcon(
               "assets/animations/icons.flr",
-              alignment: Alignment.center,
               animation: icon,
             ),
           ),
@@ -221,14 +222,15 @@ class _DailyDetailState extends State<DailyDetail> {
 
   String getWeekday(Weather weather) {
     DateTime now =
-        DateTime.fromMillisecondsSinceEpoch(weather.date * 1000, isUtc: true);
+        DateTime.fromMillisecondsSinceEpoch(weather.date! * 1000, isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
 
     return "${CalendarHelper.weekdays[zoneTime.weekday - 1]}".toUpperCase();
   }
 
   String getSunrise(Weather weather) {
-    DateTime now = DateTime.fromMillisecondsSinceEpoch(weather.sunrise * 1000,
+    if (weather.sunrise == null) return "--";
+    DateTime now = DateTime.fromMillisecondsSinceEpoch(weather.sunrise! * 1000,
         isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
     final int hour = zoneTime.hour > 12 ? zoneTime.hour - 12 : zoneTime.hour;

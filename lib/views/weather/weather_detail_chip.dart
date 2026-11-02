@@ -1,4 +1,4 @@
-import 'package:flare_flutter/flare_actor.dart';
+import 'package:flutterweather/components/flare_icon.dart';
 import 'package:flutter/material.dart';
 
 class WeatherDetailChip extends StatelessWidget {
@@ -8,10 +8,10 @@ class WeatherDetailChip extends StatelessWidget {
   final List<Color> gradient;
 
   WeatherDetailChip({
-    this.text,
-    this.icon,
-    this.value,
-    this.gradient,
+    required this.text,
+    required this.icon,
+    required this.value,
+    required this.gradient,
   });
 
   @override
@@ -43,9 +43,8 @@ class WeatherDetailChip extends StatelessWidget {
           Container(
             width: 56,
             height: 56,
-            child: FlareActor(
+            child: FlareIcon(
               "assets/animations/icons.flr",
-              alignment: Alignment.center,
               animation: icon,
             ),
           ),

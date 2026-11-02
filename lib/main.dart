@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutterweather/components/ad_banner.dart';
 import 'package:flutterweather/components/btn.dart';
+import 'package:flutterweather/services/ads.dart';
 import 'package:flutterweather/services/theme_manager.dart';
-import 'package:flutterweather/services/weather.dart';
+import 'package:flutterweather/services/providers/weather_provider.dart';
+import 'package:flutterweather/services/weather_cache.dart';
+import 'package:flutterweather/services/weather_service.dart';
+import 'package:flutterweather/services/weather_widget.dart';
 import 'package:flutterweather/theme/app_theme.dart';
 import 'package:flutterweather/views/forecast/forecast.dart';
 import 'package:flutterweather/views/home/dialog_overlay.dart';
 import 'package:flutterweather/views/home/home.dart';
 import 'package:flutterweather/views/menu/menu.dart';
 import 'package:flutterweather/services/location.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,17 +31,28 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   bool isDialogOpen = false;
   bool isDrawerOpen = false;
   bool isForecastOpen = false;
+  // Keeps the forecast's animated icons alive only while the panel is on screen.
+  bool isForecastMounted = false;
   Location location = Location();
+  final WeatherService _weatherService = WeatherService.withDefaultProviders();
+  final GlobalKey<ScaffoldMessengerState> _messenger = GlobalKey();
+  // Height of the banner ad once one has loaded.
+  double adHeight = 0;
 
-  Animation<double> yTranslate;
-  AnimationController _controller;
-  AnimationController _controllerMenu;
-  AnimationController _controllerForecast;
+  late Animation<double> yTranslate;
+  late AnimationController _controller;
+  late AnimationController _controllerMenu;
+  late AnimationController _controllerForecast;
 
   @override
   void initState() {
     super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    _loadCachedReport();
     getLocation();
+    // The ads SDK is heavy; start it after the first frame so launch isn't slowed.
+    WidgetsBinding.instance.addPostFrameCallback((_) => Ads.initialize());
+    WeatherWidget.scheduleRefresh();
     getAccent();
 
     _controller = AnimationController(
@@ -110,13 +127,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
-
     return ChangeNotifierProvider(
       create: (_) => ThemeManager(),
       child: Consumer<ThemeManager>(builder: (_, manager, __) {
         return MaterialApp(
           title: "Beautiful Weather",
+          scaffoldMessengerKey: _messenger,
           theme: manager.themeData,
           home: Scaffold(
             body: Stack(
@@ -126,6 +142,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   onAccentSelect: setAccent,
                   accent: selectedAccent,
                   onNavPress: toggleMenu,
+                  bottomInset: adHeight,
                 ),
                 Positioned(
                   child: _translateBuilder(
@@ -193,7 +210,9 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   onNavPress: toggleMenu,
                   accent: selectedAccent,
                   location: location,
-                  loading: loading,
+                  // Cached weather stays on screen while a refresh runs.
+                  loading: loading && location.getWeather() == null,
+                  bottomInset: adHeight,
                 ),
                 isDialogOpen
                     ? DialogOverlay(
@@ -206,9 +225,21 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   controller: _controllerForecast,
                   isWindowOpen: isForecastOpen,
                   onClosePress: toggleForecast,
+                  showContent: isForecastMounted,
+                  bottomInset: adHeight,
                   accent: selectedAccent,
                   location: location,
-                )
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: AdBanner(
+                      onHeightChanged: (height) => setState(() => adHeight = height),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -221,7 +252,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     return AnimatedBuilder(
       animation: _controllerMenu,
       child: ch,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Transform.translate(
           offset: Offset(0, yTranslate.value * amount),
           child: child,
@@ -242,7 +273,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     if (isForecastOpen) {
       _controller.reset();
       _playAnimation();
+      // Unmount the content once the panel has finished sliding away.
+      Future.delayed(const Duration(milliseconds: 800), () {
+        if (mounted && !isForecastOpen) setState(() => isForecastMounted = false);
+      });
     } else {
+      isForecastMounted = true;
       _playReverseAnimation();
 
       _controllerForecast.reset();
@@ -326,32 +362,48 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
       loading = true;
     });
     try {
-      Location newLocation = Location();
-      await newLocation.getCurrentLocation();
+      final WeatherQuery query;
       if (city == "") {
-        await newLocation.getLocationData();
+        final Position? position = await Location.currentPosition();
+        if (position == null) {
+          throw ("No lat or lon data found");
+        }
+        query = WeatherQuery.coords(position.latitude, position.longitude);
       } else {
-        await newLocation.getCityData(city);
+        query = WeatherQuery.city(city);
       }
 
-      final Weather weather = newLocation.getWeather();
-      await newLocation.getForecast(weather.latitude, weather.longitude);
-
-      setState(() {
-        location = newLocation;
-      });
-
-      _controller.reset();
-      _playAnimation();
+      final WeatherReport report = await query.fetch(_weatherService);
+      await WeatherCache.save(report, query);
+      _showReport(report);
+      WeatherWidget.update(report);
     } catch (e) {
-      setState(() {
-        location = Location();
-      });
       debugPrint(e.toString());
+      if (location.getWeather() != null) {
+        _messenger.currentState?.showSnackBar(
+          SnackBar(content: Text("Couldn't update the weather, showing the last result")),
+        );
+      }
     } finally {
       setState(() {
         loading = false;
       });
     }
+  }
+
+  void _loadCachedReport() async {
+    final WeatherReport? cached = await WeatherCache.loadReport();
+    if (cached != null && mounted && location.getWeather() == null) {
+      _showReport(cached);
+    }
+  }
+
+  void _showReport(WeatherReport report) {
+    setState(() {
+      location = Location(report);
+    });
+
+    _controller.reset();
+    _playAnimation();
   }
 }

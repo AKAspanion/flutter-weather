@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flare_flutter/flare_actor.dart';
+import 'package:flutterweather/components/flare_icon.dart';
 import 'package:flutterweather/services/calendar.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/gradients.dart';
@@ -9,8 +9,8 @@ class HourlyDetail extends StatefulWidget {
   final Weather detail;
 
   HourlyDetail({
-    this.accent,
-    this.detail,
+    required this.accent,
+    required this.detail,
   });
 
   @override
@@ -75,11 +75,12 @@ class _HourlyDetailState extends State<HourlyDetail> {
                       Container(
                         width: 42,
                         height: 42,
-                        child: FlareActor(
-                          "assets/animations/icons.flr",
-                          alignment: Alignment.center,
-                          animation: "drop",
-                        ),
+                        child: expanded
+                            ? FlareIcon(
+                                "assets/animations/icons.flr",
+                                animation: "drop",
+                              )
+                            : null,
                       ),
                       Container(
                         margin: EdgeInsets.only(
@@ -109,9 +110,8 @@ class _HourlyDetailState extends State<HourlyDetail> {
                         width: 64,
                         height: 64,
                         padding: EdgeInsets.only(top: 8),
-                        child: FlareActor(
+                        child: FlareIcon(
                           "assets/animations/cloudy.flr",
-                          alignment: Alignment.center,
                           animation:
                               'cloudy-${weather.getIcon(overrideNight: getNight(weather))}',
                         ),
@@ -119,7 +119,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
                       Container(
                         padding: EdgeInsets.only(top: 8),
                         child: Text(
-                          '${(weather.temperature - 273.15).floor()}°C',
+                          '${(weather.temperature! - 273.15).floor()}°C',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,
@@ -139,11 +139,12 @@ class _HourlyDetailState extends State<HourlyDetail> {
                       Container(
                         width: 42,
                         height: 42,
-                        child: FlareActor(
-                          "assets/animations/icons.flr",
-                          alignment: Alignment.center,
-                          animation: "wind",
-                        ),
+                        child: expanded
+                            ? FlareIcon(
+                                "assets/animations/icons.flr",
+                                animation: "wind",
+                              )
+                            : null,
                       ),
                       Container(
                         margin: EdgeInsets.only(
@@ -181,7 +182,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
 
   String getTime(Weather weather) {
     DateTime now =
-        DateTime.fromMillisecondsSinceEpoch(weather.date * 1000, isUtc: true);
+        DateTime.fromMillisecondsSinceEpoch(weather.date! * 1000, isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
 
     final suffix = zoneTime.hour >= 12 ? "PM" : "AM";
@@ -199,7 +200,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
 
   String getNight(Weather weather) {
     DateTime now =
-        DateTime.fromMillisecondsSinceEpoch(weather.date * 1000, isUtc: true);
+        DateTime.fromMillisecondsSinceEpoch(weather.date! * 1000, isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
 
     String night = zoneTime.hour > 18 || zoneTime.hour <= 6 ? "-night" : "";

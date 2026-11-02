@@ -1,6 +1,6 @@
 **Beautiful Weather App Privacy Policy**
 
-*Last Updated: 01/03/2024*
+*Last Updated: 02/11/2026*
 
 Welcome to Beautiful Weather, a mobile application developed by panditankit1995@gmail.com. This Privacy Policy is designed to help you understand how we collect, use, and safeguard your personal information when you use our Beautiful Weather app.
 
@@ -24,6 +24,18 @@ We collect information about how you interact with Beautiful Weather, including 
 
 We may collect information about the device you use to access Beautiful Weather, such as the device model, operating system version, and unique device identifiers. This data helps us troubleshoot technical issues and optimize the app for different devices.
 
+#### Advertising
+
+Beautiful Weather shows ads served by Google AdMob. AdMob may collect and use your device's advertising ID, IP address, approximate location and information about how you interact with ads in order to show and measure ads. Where the law requires it (for example in the European Economic Area and the United Kingdom), we ask for your consent before ads are personalised; you can change that choice at any time from "Privacy" in the app menu. You can also reset or delete your advertising ID in your device settings. See Google's policy at https://policies.google.com/technologies/partner-sites.
+
+#### Weather Services
+
+To fetch the weather, the app sends your coordinates (or the city name you search for) to one of the following weather services: OpenWeatherMap, WeatherAPI.com, Tomorrow.io and MET Norway. They receive only the location and your IP address as part of the request, never your name or other personal details.
+
+#### Home Screen Widget
+
+The widget refreshes in the background for the place you last viewed in the app. It does not access your location in the background. The last weather result is stored only on your device.
+
 ### How We Use Your Information
 
 We use the information collected for the following purposes:
@@ -32,6 +44,7 @@ We use the information collected for the following purposes:
 - **Personalization**: Customize your app experience based on your usage patterns and preferences.
 - **Communication**: Respond to your inquiries, and feedback, or provide support when needed.
 - **Analytics**: Analyze usage data to improve the app's performance, features, and user interface.
+- **Advertising**: Show ads through Google AdMob, as described above, to keep the app free.
 
 ### Data Security
 

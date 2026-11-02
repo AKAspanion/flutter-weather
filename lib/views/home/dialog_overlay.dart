@@ -8,14 +8,14 @@ class DialogOverlay extends StatefulWidget {
   final onSubmit;
   final onCancel;
 
-  DialogOverlay({this.accent, this.onSubmit, this.onCancel});
+  DialogOverlay({required this.accent, this.onSubmit, this.onCancel});
 
   @override
   _DialogOverlayState createState() => _DialogOverlayState();
 }
 
 class _DialogOverlayState extends State<DialogOverlay> {
-  String city;
+  String city = "";
 
   @override
   Widget build(BuildContext context) {

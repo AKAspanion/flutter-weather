@@ -7,8 +7,8 @@ class HourlyView extends StatelessWidget {
   final List<Weather> hourly;
 
   HourlyView({
-    this.accent,
-    this.hourly,
+    required this.accent,
+    required this.hourly,
   });
 
   @override
@@ -16,24 +16,16 @@ class HourlyView extends StatelessWidget {
     return Container(
       height: 196,
       padding: EdgeInsets.symmetric(vertical: 16),
-      child: ListView(
+      // Built lazily: only the chips on screen exist (and animate).
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        children: [
-          SizedBox(width: 24),
-          ...getHours(),
-        ],
+        padding: EdgeInsets.only(left: 24),
+        itemCount: hourly.length,
+        itemBuilder: (_, i) => HourlyDetail(
+          accent: accent,
+          detail: hourly[i],
+        ),
       ),
     );
-  }
-
-  List<Widget> getHours() {
-    return hourly
-        .map(
-          (e) => HourlyDetail(
-            accent: accent,
-            detail: e,
-          ),
-        )
-        .toList();
   }
 }

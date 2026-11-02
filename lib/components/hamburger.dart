@@ -8,7 +8,7 @@ class Hamburger extends StatelessWidget {
   final double _barHeight = 4;
   final onPressed;
 
-  Hamburger({@required this.onPressed, @required this.isDrawerOpen});
+  Hamburger({required this.onPressed, required this.isDrawerOpen});
 
   @override
   Widget build(BuildContext context) {

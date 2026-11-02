@@ -1,0 +1,7 @@
+analyzer:
+  exclude:
+    # Vendored third-party package, kept as close to upstream as possible.
+    - packages/**
+    - build/**
+    - android/**
+    - ios/**

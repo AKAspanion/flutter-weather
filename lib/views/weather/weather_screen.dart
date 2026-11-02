@@ -13,15 +13,15 @@ class LocationScreen extends StatelessWidget {
   final Animation<double> controller;
 
   LocationScreen({
-    this.location,
-    this.loading,
+    required this.location,
+    required this.loading,
     this.accent = 0,
-    this.controller,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
-    Weather weather = location.getWeather();
+    Weather? weather = location.getWeather();
     if (loading) {
       return Center(
         child: SpinKitPulse(
@@ -36,6 +36,7 @@ class LocationScreen extends StatelessWidget {
         return LocationView(
           controller: controller,
           weather: weather,
+          attribution: location.attribution,
           accent: accent,
         );
       }

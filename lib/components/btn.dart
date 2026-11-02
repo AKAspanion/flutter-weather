@@ -7,8 +7,8 @@ class Btn extends StatelessWidget {
   final onPress;
 
   Btn({
-    @required this.child,
-    @required this.onPress,
+    required this.child,
+    required this.onPress,
   });
 
   @override
