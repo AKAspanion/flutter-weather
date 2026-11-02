@@ -27,9 +27,9 @@ builds included, calls OpenWeatherMap on this key.
 
 ## Status
 
-Open. The usual fix is to rotate the key in the OpenWeatherMap console, pass the new one only through `keys.json`,
-and remove the fallback, so the provider is skipped when no key is given. Removing the literal alone doesn't help,
-since the key stays in history. Whether to do this is the developer's call.
+Open. The fix is decided: rotate the key, pass the new one only through `keys.json`, and remove the fallback
+([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md)). Removing the literal alone
+doesn't help, since the key stays in history.
 
 ## Sources
 

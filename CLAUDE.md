@@ -105,7 +105,7 @@ _Generated from `knowledge/`. Do not edit by hand._
 
 ### apps
 
-- [The Flutter app (flutterweather)](knowledge/apps/flutterweather.md) _(Application)_ — The single Flutter app: entry point, screens, platform projects and how it is built for Android and iOS.
+- [The Flutter app (flutterweather)](knowledge/apps/flutterweather.md) _(Application)_ — The single Flutter app: entry point, screens, platform projects, and its Android build (Android is the only supported platform).
 
 ### data
 
@@ -114,7 +114,11 @@ _Generated from `knowledge/`. Do not edit by hand._
 
 ### decisions
 
+- [Android is the only supported platform](knowledge/decisions/android-only.md) _(Decision)_ — The app ships on Android only; changes are built and checked for Android, and ios/ is kept but not maintained.
+- [New Dart code is formatted at 120 columns with typed callbacks](knowledge/decisions/code-style-120-typed.md) _(Decision)_ — dart format with a page width of 120, set in analysis_options.yaml, and callbacks typed as function types, as the newer services do.
 - [Publish under the new application ID in.spanion.weather](knowledge/decisions/new-application-id.md) _(Decision)_ — The app is published as a new Play listing because the original signing key was lost.
+- [The privacy policy describes only what the app collects](knowledge/decisions/privacy-policy-no-analytics.md) _(Decision)_ — The app collects no usage analytics, so privacy.md is to describe only location, the weather services and AdMob.
+- [Rotate the OpenWeatherMap key and remove the bundled fallback](knowledge/decisions/rotate-openweathermap-key.md) _(Decision)_ — The committed key is to be rotated, the new one passed only through keys.json, and the fallback removed so OpenWeatherMap is skipped without a key.
 - [Keep a patched copy of flare_flutter instead of moving to Rive](knowledge/decisions/vendored-flare-flutter.md) _(Decision)_ — The app's animations are Flare .flr files, which Rive can't load, so the discontinued flare_flutter is kept in packages/ and patched to compile.
 - [The widget refreshes the last place viewed, without background location](knowledge/decisions/widget-uses-last-place.md) _(Decision)_ — The background widget refresh reuses the last query saved by the app instead of asking for the device's location in the background.
 

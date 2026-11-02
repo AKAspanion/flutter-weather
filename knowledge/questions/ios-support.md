@@ -26,7 +26,7 @@ It decides whether a change has to be checked on iOS, whether iOS needs its own 
 
 ## Status
 
-Open, for the developer.
+Answered: Android only; iOS isn't shipped and `ios/` isn't maintained. See [Android is the only supported platform](../decisions/android-only.md).
 
 ## Sources
 

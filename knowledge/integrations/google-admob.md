@@ -28,8 +28,8 @@ status: draft
 - `ADMOB_BANNER_ID`, read in `lib/services/ads.dart`, and `ADMOB_APP_ID`, read in `android/app/build.gradle.kts`
   into the manifest's `com.google.android.gms.ads.APPLICATION_ID`. When they are blank, both fall back to Google's
   sample test IDs, which show only test ads ([environment](../operations/environment.md)).
-- `ios/Runner/Info.plist` has a `GADApplicationIdentifier` set to Google's sample iOS app ID
-  ([questions/ios-support](../questions/ios-support.md)).
+- `ios/Runner/Info.plist` has a `GADApplicationIdentifier` set to Google's sample iOS app ID. iOS isn't shipped
+  ([decisions/android-only](../decisions/android-only.md)).
 
 ## Failure modes
 

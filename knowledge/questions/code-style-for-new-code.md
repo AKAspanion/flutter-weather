@@ -27,7 +27,7 @@ can't say which style is right, and running a formatter on one file reformats co
 
 ## Status
 
-Open, for the developer.
+Answered: `dart format` at page width 120, set in `./analysis_options.yaml`, and typed callbacks. See [New Dart code is formatted at 120 columns with typed callbacks](../decisions/code-style-120-typed.md).
 
 ## Sources
 

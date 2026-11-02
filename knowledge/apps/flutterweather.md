@@ -1,7 +1,7 @@
 ---
 type: Application
 title: The Flutter app (flutterweather)
-description: The single Flutter app: entry point, screens, platform projects and how it is built for Android and iOS.
+description: The single Flutter app: entry point, screens, platform projects, and its Android build (Android is the only supported platform).
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
 status: draft
 ---
@@ -23,7 +23,8 @@ The whole product. The Dart package is named in `pubspec.yaml`. Users see it as 
   (loading pulse), and `flare_flutter` from `packages/flare_flutter` (animated icons).
 - Android: a Gradle Kotlin build in `android/app/build.gradle.kts`, which sets the application ID, compile and target
   SDK, and the signing config. The Kotlin code is in `android/app/src/main/kotlin/com/example/flutterweather/`.
-- iOS: an Xcode project in `ios/`, with its `Info.plist` at `ios/Runner/Info.plist`.
+- iOS: an Xcode project in `ios/`, with its `Info.plist` at `ios/Runner/Info.plist`. It is kept but not maintained: Android
+  is the only supported platform ([decisions/android-only](../decisions/android-only.md)).
 
 ## Entry points
 

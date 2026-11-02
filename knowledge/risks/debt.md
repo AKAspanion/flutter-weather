@@ -22,7 +22,8 @@ status: draft
   and every animation controller, and passes them down by hand. The accent and the city are read from
   SharedPreferences there, while the theme goes through `ThemeManager`.
 - **Untyped callbacks and props** in older widgets (`lib/components/btn.dart`, `lib/components/hamburger.dart`,
-  `lib/views/home/dialog_overlay.dart`); see [questions/code-style-for-new-code](../questions/code-style-for-new-code.md).
+  `lib/views/home/dialog_overlay.dart`). New code types them; these get types when next touched
+  ([decisions/code-style-120-typed](../decisions/code-style-120-typed.md)).
 - **Old-style code:** `new MainApp()` in `lib/main.dart`; `AppTheme.White` and `AppTheme.Dark` aren't lowerCamelCase
   (`lib/theme/app_theme.dart`); the `description` in `pubspec.yaml` is still Flutter's template text.
 - **Kotlin package `com.example.flutterweather`**, which differs from the application ID

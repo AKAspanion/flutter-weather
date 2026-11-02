@@ -34,11 +34,14 @@ Dart.
 How the parts fit together is in [architecture](architecture.md); how code is written here is in
 [conventions](conventions.md).
 
+Android is the only supported platform ([decision](../decisions/android-only.md)). `ios/` is kept but not maintained.
+
 ## Open
 
-- [Is the iOS app shipped?](../questions/ios-support.md)
-- [Does the app collect usage analytics, as the privacy policy says?](../questions/privacy-policy-analytics.md)
-- [An OpenWeatherMap key is committed in the code](../findings/committed-openweathermap-key.md).
+- [An OpenWeatherMap key is committed in the code](../findings/committed-openweathermap-key.md). It is to be rotated
+  and the fallback removed ([decision](../decisions/rotate-openweathermap-key.md)).
+- `privacy.md` claims analytics the app doesn't collect, and is to be reworded
+  ([decision](../decisions/privacy-policy-no-analytics.md)).
 
 ## Sources
 

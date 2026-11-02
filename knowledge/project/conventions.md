@@ -45,8 +45,10 @@ status: draft
 
 - Dart analyzer, configured by `./analysis_options.yaml`. It excludes `packages/**`, the Flare copy, and the
   platform folders.
-- No formatter config. Line width and callback typing are split between older and newer code: see
-  [questions/code-style-for-new-code](../questions/code-style-for-new-code.md).
+- New and changed code: `dart format` at page width 120, set in `./analysis_options.yaml`, and callbacks typed as
+  function types (`lib/views/forecast/forecast.dart`). Older views still use 80 columns and untyped callbacks. See
+  [decisions/code-style-120-typed](../decisions/code-style-120-typed.md).
+- Changes are built and checked for Android only ([decisions/android-only](../decisions/android-only.md)).
 
 ## Git
 
@@ -62,6 +64,11 @@ status: draft
 - Typecheck, lint-fix, format check and e2e are `none`: the repository has no source for them.
 - Read the values with `ga.mjs workflow show`.
 
+## History
+
+- 2026-11-03: line width and callback typing were an open question; now 120 columns and typed callbacks. See
+  [New Dart code is formatted at 120 columns with typed callbacks](../decisions/code-style-120-typed.md).
+
 ## Sources
 
 * `./analysis_options.yaml`
@@ -73,4 +80,5 @@ status: draft
 * `lib/services/providers/weather_provider.dart`
 * `lib/services/providers/met_norway.dart`
 * `test/weather_service_test.dart`
+* `lib/views/forecast/forecast.dart`
 * `tool/render_widget_icons_test.dart`
