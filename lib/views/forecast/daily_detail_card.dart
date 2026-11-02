@@ -235,6 +235,6 @@ class _DailyDetailState extends State<DailyDetail> {
     DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
     final int hour = zoneTime.hour > 12 ? zoneTime.hour - 12 : zoneTime.hour;
 
-    return '$hour:${zoneTime.minute}'.toUpperCase();
+    return '$hour:${zoneTime.minute.toString().padLeft(2, '0')}'.toUpperCase();
   }
 }

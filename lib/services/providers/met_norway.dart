@@ -7,7 +7,7 @@ import 'package:flutterweather/services/weather.dart';
 class MetNorwayProvider extends WeatherProvider {
   static const String _host = 'api.met.no';
   static const Map<String, String> _headers = {
-    'User-Agent': 'BeautifulWeather/4.3 https://github.com/AKAspanion/flutter-weather',
+    'User-Agent': 'BeautifulWeather/1.0 https://github.com/AKAspanion/flutter-weather',
   };
 
   @override
