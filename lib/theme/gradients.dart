@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 class GradientValues {
-  List<Gradient> _gradients = [
+  static final List<Gradient> _gradients = [
     Gradient(
       name: "A Lost Memory",
       from: Color(0xFFdd5e89),
@@ -49,7 +49,7 @@ class GradientValues {
     ),
   ];
 
-  get gradients => _gradients;
+  List<Gradient> get gradients => _gradients;
 }
 
 class Gradient {
@@ -57,7 +57,7 @@ class Gradient {
   Color _from;
   String _name;
 
-  get gradient => [_from, _to];
+  List<Color> get gradient => [_from, _to];
 
   get to => _to;
 
@@ -65,7 +65,7 @@ class Gradient {
 
   get name => _name;
 
-  Gradient({String name, Color from, Color to})
+  Gradient({required String name, required Color from, required Color to})
       : _to = to,
         _from = from,
         _name = name;

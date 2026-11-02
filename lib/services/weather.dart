@@ -1,18 +1,18 @@
 class Weather {
-  int date;
-  int sunset;
-  int sunrise;
-  String name;
-  int timezone;
-  int humidity;
-  int condition;
-  double latitude;
-  double longitude;
-  String windSpeed;
-  double tempMin;
-  double tempMax;
-  double temperature;
-  String description;
+  int? date;
+  int? sunset;
+  int? sunrise;
+  String? name;
+  int? timezone;
+  int? humidity;
+  int? condition;
+  double? latitude;
+  double? longitude;
+  String? windSpeed;
+  double? tempMin;
+  double? tempMax;
+  double? temperature;
+  String? description;
 
   Weather({
     this.name,
@@ -31,7 +31,42 @@ class Weather {
     this.description,
   });
 
-  String getIcon({String overrideNight}) {
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'date': date,
+        'sunset': sunset,
+        'sunrise': sunrise,
+        'timezone': timezone,
+        'humidity': humidity,
+        'condition': condition,
+        'latitude': latitude,
+        'longitude': longitude,
+        'windSpeed': windSpeed,
+        'tempMin': tempMin,
+        'tempMax': tempMax,
+        'temperature': temperature,
+        'description': description,
+      };
+
+  factory Weather.fromJson(Map<String, dynamic> json) => Weather(
+        name: json['name'],
+        date: json['date'],
+        sunset: json['sunset'],
+        sunrise: json['sunrise'],
+        timezone: json['timezone'],
+        humidity: json['humidity'],
+        condition: json['condition'],
+        latitude: json['latitude']?.toDouble(),
+        longitude: json['longitude']?.toDouble(),
+        windSpeed: json['windSpeed'],
+        tempMin: json['tempMin']?.toDouble(),
+        tempMax: json['tempMax']?.toDouble(),
+        temperature: json['temperature']?.toDouble(),
+        description: json['description'],
+      );
+
+  String getIcon({String? overrideNight}) {
+    final int condition = this.condition!;
     DateTime now = DateTime.now().toUtc();
     DateTime zoneTime = now.add(Duration(seconds: timezone ?? 0));
     String night = zoneTime.hour > 18 || zoneTime.hour <= 6 ? "-night" : "";

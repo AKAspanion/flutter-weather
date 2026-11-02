@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:flutterweather/services/theme_manager.dart';
+import 'package:flutterweather/views/menu/menu.dart';
 import 'package:flutterweather/views/weather/weather_screen.dart';
 import 'package:flutterweather/components/hamburger.dart';
 import 'package:provider/provider.dart';
@@ -14,26 +15,34 @@ class Home extends StatelessWidget {
   final void Function() onMorePress;
   final Animation<double> controller;
 
+  /// Space kept free at the bottom for the banner ad.
+  final double bottomInset;
+
   final DragData homeDragData = DragData();
 
   Home({
-    @required this.isDrawerOpen,
-    @required this.onMorePress,
-    @required this.onNavPress,
+    required this.isDrawerOpen,
+    required this.onMorePress,
+    required this.onNavPress,
     this.accent = 0,
-    this.controller,
-    this.location,
-    this.loading,
+    required this.controller,
+    required this.location,
+    required this.loading,
+    this.bottomInset = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final double factor = isDrawerOpen ? 0.65 : 1;
+    final double top = 120;
+    // The card is always full screen height; shrink it enough to clear the
+    // menu footer and the banner ad.
+    final double fitScale = (size.height - top - Menu.footerHeight - bottomInset) / size.height;
+    final double factor = isDrawerOpen ? fitScale.clamp(0.3, 0.65) : 1;
     Color bgColor = Provider.of<ThemeManager>(context).bgColor;
 
-    final double y = isDrawerOpen ? 120 : 0;
-    final double x = isDrawerOpen ? (size.width - size.width * 0.65) / 2 : 0;
+    final double y = isDrawerOpen ? top : 0;
+    final double x = isDrawerOpen ? (size.width - size.width * factor) / 2 : 0;
 
     return GestureDetector(
       onHorizontalDragEnd: onDragEnd,
@@ -42,7 +51,7 @@ class Home extends StatelessWidget {
       child: AnimatedContainer(
         padding: EdgeInsets.all(24),
         curve: Curves.easeOutCubic,
-        transform: Matrix4.translationValues(x, y, 0)..scale(factor),
+        transform: Matrix4.translationValues(x, y, 0)..scaleByDouble(factor, factor, factor, 1),
         duration: Duration(milliseconds: 500),
         decoration: BoxDecoration(
           color: bgColor,
@@ -73,7 +82,7 @@ class Home extends StatelessWidget {
               ),
             ),
             Container(
-              height: size.height - 112,
+              height: size.height - 112 - bottomInset,
               child: LocationScreen(
                 controller: controller,
                 location: location,

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">Current weather for your last viewed place</string>
+    <string name="widget_empty">Open the app to load the weather</string>
+    <string name="widget_updated">Updated %1$s</string>
+</resources>

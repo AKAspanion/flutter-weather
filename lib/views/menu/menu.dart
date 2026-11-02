@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/services/ads.dart';
 import 'package:flutterweather/services/theme_manager.dart';
+import 'package:flutterweather/services/weather_widget.dart';
 import 'package:flutterweather/theme/gradients.dart';
 import 'package:provider/provider.dart';
 
@@ -7,14 +9,24 @@ class Menu extends StatelessWidget {
   final int accent;
   final bool isDrawerOpen;
   final void Function() onNavPress;
-  final void Function(int) onAccentSelect;
+  final void Function(int)? onAccentSelect;
+
+  /// Space kept free at the bottom for the banner ad.
+  final double bottomInset;
+
+  static const double _actionsHeight = 48;
+
+  /// Height of the accent picker and action row, plus padding, which the
+  /// home card has to stay clear of while the drawer is open.
+  static const double footerHeight = 24 + 88 + _actionsHeight + 16;
 
   const Menu({
-    Key key,
-    @required this.isDrawerOpen,
-    @required this.onNavPress,
+    Key? key,
+    required this.isDrawerOpen,
+    required this.onNavPress,
     this.onAccentSelect,
     this.accent = 0,
+    this.bottomInset = 0,
   }) : super(key: key);
 
   @override
@@ -31,12 +43,31 @@ class Menu extends StatelessWidget {
           colors: colors,
         ),
       ),
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
       child: Column(
         verticalDirection: VerticalDirection.up,
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          SizedBox(
+            height: _actionsHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FutureBuilder<bool>(
+                  future: WeatherWidget.canPin(),
+                  builder: (_, snapshot) => snapshot.data != true
+                      ? SizedBox.shrink()
+                      : _action("ADD WIDGET", WeatherWidget.pin),
+                ),
+                ValueListenableBuilder<bool>(
+                  valueListenable: Ads.privacyOptionsRequired,
+                  builder: (_, required, __) =>
+                      !required ? SizedBox.shrink() : _action("PRIVACY", Ads.showPrivacyOptions),
+                ),
+              ],
+            ),
+          ),
           Container(
             decoration: BoxDecoration(
               color: theme.bgColor,
@@ -57,7 +88,7 @@ class Menu extends StatelessWidget {
                       duration: Duration(milliseconds: 200),
                       transform: Matrix4.translationValues(
                           getX(i, size.width), getY(i), 0)
-                        ..scale(getScale(i)),
+                        ..scaleByDouble(getScale(i), getScale(i), getScale(i), 1),
                       margin:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                       decoration: BoxDecoration(
@@ -83,26 +114,36 @@ class Menu extends StatelessWidget {
     );
   }
 
+  Widget _action(String label, void Function() onPressed) {
+    return TextButton(
+      onPressed: onPressed,
+      child: Text(
+        label,
+        style: TextStyle(color: Colors.white, letterSpacing: 2),
+      ),
+    );
+  }
+
   onAccentTap(i) {
     if (onAccentSelect != null) {
-      onAccentSelect(i);
+      onAccentSelect!(i);
     }
   }
 
   getScale(i) {
-    final current = accent ?? 0;
+    final current = accent;
     return current == i ? 1.2 : 1.0;
   }
 
   getY(i) {
-    final current = accent ?? 0;
+    final current = accent;
     return current == i ? -9.0 : 0.0;
   }
 
   getX(i, width) {
     final double boxSize = (width - 48) * 0.30;
     final double padding = (boxSize * 1.2 - boxSize) / 2;
-    final current = accent ?? 0;
+    final current = accent;
     return current == i ? -padding : 0.0;
   }
 }

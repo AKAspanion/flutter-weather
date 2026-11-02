@@ -1,4 +1,4 @@
-import 'package:flare_flutter/flare_actor.dart';
+import 'package:flutterweather/components/flare_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterweather/services/calendar.dart';
 import 'package:flutterweather/services/weather.dart';
@@ -11,12 +11,14 @@ class LocationView extends StatelessWidget {
   final Animation<double> opacity;
   final Animation<double> yTranslate;
   final Animation<double> controller;
+  final String attribution;
 
   LocationView({
-    Key key,
-    this.weather,
+    Key? key,
+    required this.weather,
     this.accent = 0,
-    this.controller,
+    required this.controller,
+    this.attribution = '',
   })  : opacity = Tween<double>(
           begin: 0.0,
           end: 1.0,
@@ -45,7 +47,7 @@ class LocationView extends StatelessWidget {
         ),
         super(key: key);
 
-  Widget _buildAnimation(BuildContext context, Widget child) {
+  Widget _buildAnimation(BuildContext context, Widget? child) {
     return Column(
       mainAxisSize: MainAxisSize.max,
       verticalDirection: VerticalDirection.down,
@@ -63,7 +65,7 @@ class LocationView extends StatelessWidget {
                   bottom: 4,
                 ),
                 child: Text(
-                  '${weather.name.toUpperCase()}',
+                  '${weather.name!.toUpperCase()}',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
@@ -92,9 +94,8 @@ class LocationView extends StatelessWidget {
             padding: EdgeInsets.only(
               bottom: 16,
             ),
-            child: FlareActor(
+            child: FlareIcon(
               "assets/animations/cloudy.flr",
-              alignment: Alignment.center,
               animation: 'cloudy-${weather.getIcon()}',
             ),
           ),
@@ -110,7 +111,7 @@ class LocationView extends StatelessWidget {
                   bottom: 16,
                 ),
                 child: Text(
-                  '${(weather.temperature - 273.15).floor()}°C',
+                  '${(weather.temperature! - 273.15).floor()}°C',
                   style: TextStyle(
                     fontSize: 56,
                     fontWeight: FontWeight.w700,
@@ -133,7 +134,7 @@ class LocationView extends StatelessWidget {
                 transform:
                     Matrix4.translationValues(0, yTranslate.value * 0.7, 0),
                 child: Text(
-                  '${weather.description.toUpperCase()}',
+                  '${weather.description!.toUpperCase()}',
                   style: TextStyle(
                     fontSize: 12,
                     letterSpacing: 2,
@@ -174,7 +175,14 @@ class LocationView extends StatelessWidget {
               ],
             ),
           ),
-        )
+        ),
+        Opacity(
+          opacity: opacity.value,
+          child: Text(
+            attribution,
+            style: TextStyle(fontSize: 10),
+          ),
+        ),
       ],
     );
   }
@@ -186,7 +194,8 @@ class LocationView extends StatelessWidget {
     );
   }
 
-  String getSunriseTime(int date, int zone) {
+  String getSunriseTime(int? date, int? zone) {
+    if (date == null) return "--";
     DateTime now =
         DateTime.fromMillisecondsSinceEpoch(date * 1000, isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
@@ -194,7 +203,7 @@ class LocationView extends StatelessWidget {
     return '$hour:${zoneTime.minute}'.toUpperCase();
   }
 
-  String getDateTime(int zone) {
+  String getDateTime(int? zone) {
     DateTime now = DateTime.now().toUtc();
     DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
 
@@ -205,7 +214,7 @@ class LocationView extends StatelessWidget {
         .toUpperCase();
   }
 
-  String getGreeting(int zone) {
+  String getGreeting(int? zone) {
     DateTime now = DateTime.now().toUtc();
     DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
 
