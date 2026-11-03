@@ -1,5 +1,7 @@
 # Settings Menu Implementation Plan
 
+**Status:** complete
+
 > **For agentic workers:** REQUIRED SUB-SKILL: the project's workflow policy names the executor (`run.executor`): ga:implement-with-subagents by default, or ga:implement. Follow the policy and this plan's Checkpoints. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace the menu's translate button with a gear that opens a settings panel holding Language, a °C/°F
@@ -125,21 +127,21 @@ class PlayStore {
   Play", `couldNotOpenPlayStore` = "Couldn't open Google Play".
 - `test/arb_files_test.dart` passes with the four new keys in all ten files.
 
-- [ ] **Step 1: Add `url_launcher` to `pubspec.yaml`, the four keys to all ten `.arb` files, and run `flutter pub get`**, so `AppLocalizations` has the new getters
-- [ ] **Step 2: Create `unit_manager.dart` and `play_store.dart` with the signatures above and empty bodies**, so the tests fail on behaviour, not on missing names
-- [ ] **Step 3: Write the failing tests** for each Acceptance case, in `test/unit_manager_test.dart` and `test/play_store_test.dart`
-- [ ] **Step 4: Run them to verify they fail**
+- [x] **Step 1: Add `url_launcher` to `pubspec.yaml`, the four keys to all ten `.arb` files, and run `flutter pub get`**, so `AppLocalizations` has the new getters
+- [x] **Step 2: Create `unit_manager.dart` and `play_store.dart` with the signatures above and empty bodies**, so the tests fail on behaviour, not on missing names
+- [x] **Step 3: Write the failing tests** for each Acceptance case, in `test/unit_manager_test.dart` and `test/play_store_test.dart`
+- [x] **Step 4: Run them to verify they fail**
 
 Run: `flutter test test/unit_manager_test.dart test/play_store_test.dart`
 Expected: FAIL on the assertions.
 
-- [ ] **Step 5: Write the minimal implementation** to the Interfaces, until they pass
-- [ ] **Step 6: Run them to verify they pass**
+- [x] **Step 5: Write the minimal implementation** to the Interfaces, until they pass
+- [x] **Step 6: Run them to verify they pass**
 
 Run: `flutter test test/unit_manager_test.dart test/play_store_test.dart test/arb_files_test.dart`
 Expected: PASS
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add pubspec.yaml pubspec.lock lib/services/unit_manager.dart lib/services/play_store.dart lib/l10n/app_en.arb lib/l10n/app_zh.arb lib/l10n/app_hi.arb lib/l10n/app_es.arb lib/l10n/app_ar.arb lib/l10n/app_fr.arb lib/l10n/app_bn.arb lib/l10n/app_pt.arb lib/l10n/app_ru.arb lib/l10n/app_ur.arb test/unit_manager_test.dart test/play_store_test.dart
@@ -195,20 +197,20 @@ static Map<String, String> payload(WeatherReport report, AppLocalizations l10n, 
   `temperatureUnit(device: Locale('fr', 'FR'))` is `celsius`.
 - `grep -rn "273.15" lib/views` finds nothing.
 
-- [ ] **Step 1: Add the `unit` parameter and `temperatureUnit` with their signatures**, the parameter not yet used, so the tests fail on behaviour
-- [ ] **Step 2: Write the failing tests** for each Acceptance case, in `test/hourly_detail_chip_test.dart` and `test/weather_widget_test.dart`
-- [ ] **Step 3: Run them to verify they fail**
+- [x] **Step 1: Add the `unit` parameter and `temperatureUnit` with their signatures**, the parameter not yet used, so the tests fail on behaviour
+- [x] **Step 2: Write the failing tests** for each Acceptance case, in `test/hourly_detail_chip_test.dart` and `test/weather_widget_test.dart`
+- [x] **Step 3: Run them to verify they fail**
 
 Run: `flutter test test/hourly_detail_chip_test.dart test/weather_widget_test.dart`
 Expected: FAIL on the assertions.
 
-- [ ] **Step 4: Write the minimal implementation**: the three views read `context.watch<UnitManager>().unit` and call `formatTemperature`; `_degrees` takes the unit and calls `formatTemperature(..., symbol: false)`; `update` passes `await temperatureUnit()` to `payload`
-- [ ] **Step 5: Run them to verify they pass**
+- [x] **Step 4: Write the minimal implementation**: the three views read `context.watch<UnitManager>().unit` and call `formatTemperature`; `_degrees` takes the unit and calls `formatTemperature(..., symbol: false)`; `update` passes `await temperatureUnit()` to `payload`
+- [x] **Step 5: Run them to verify they pass**
 
 Run: `flutter test test/hourly_detail_chip_test.dart test/weather_widget_test.dart`
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add lib/views/weather/weather_view.dart lib/views/forecast/hourly_detail_chip.dart lib/views/forecast/daily_detail_card.dart lib/services/weather_widget.dart test/hourly_detail_chip_test.dart test/weather_widget_test.dart
@@ -290,20 +292,20 @@ final void Function() onSettings;
   `Stack`; `onRate` shows `couldNotOpenPlayStore` in a snackbar when `PlayStore.openListing()` returns false;
   `onUnitChanged` pushes `WeatherCache.loadReport()` to `WeatherWidget.update` only when it is not null.
 
-- [ ] **Step 1: Rename `onLanguage` to `onSettings` and create `SettingsOverlay` with its constructor and an empty build**, so the tests fail on behaviour
-- [ ] **Step 2: Write the failing tests** for each Acceptance case, in `test/settings_overlay_test.dart` and `test/menu_buttons_test.dart`
-- [ ] **Step 3: Run them to verify they fail**
+- [x] **Step 1: Rename `onLanguage` to `onSettings` and create `SettingsOverlay` with its constructor and an empty build**, so the tests fail on behaviour
+- [x] **Step 2: Write the failing tests** for each Acceptance case, in `test/settings_overlay_test.dart` and `test/menu_buttons_test.dart`
+- [x] **Step 3: Run them to verify they fail**
 
 Run: `flutter test test/settings_overlay_test.dart test/menu_buttons_test.dart`
 Expected: FAIL on the assertions.
 
-- [ ] **Step 4: Write the minimal implementation**: the gear and its label in `MenuButtons`; the panel's rows, toggle and close button; in `main.dart` the `UnitManager` provider, `isSettingsOpen` and `toggleSettings(bool)`, the Stack order, `onRate` and `onUnitChanged`
-- [ ] **Step 5: Run them to verify they pass**
+- [x] **Step 4: Write the minimal implementation**: the gear and its label in `MenuButtons`; the panel's rows, toggle and close button; in `main.dart` the `UnitManager` provider, `isSettingsOpen` and `toggleSettings(bool)`, the Stack order, `onRate` and `onUnitChanged`
+- [x] **Step 5: Run them to verify they pass**
 
 Run: `flutter test test/settings_overlay_test.dart test/menu_buttons_test.dart`
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add lib/views/settings/settings_overlay.dart lib/views/menu/menu_buttons.dart lib/main.dart test/settings_overlay_test.dart test/menu_buttons_test.dart
