@@ -377,5 +377,21 @@
   "couldNotOpenPlayStore": "Couldn't open Google Play",
   "@couldNotOpenPlayStore": {
     "description": "Message shown when the Google Play page could not be opened"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Label of the light or dark theme choice in the settings panel"
+  },
+  "lightTheme": "Light",
+  "@lightTheme": {
+    "description": "Option that turns the light theme on"
+  },
+  "darkTheme": "Dark",
+  "@darkTheme": {
+    "description": "Option that turns the dark theme on"
+  },
+  "city": "City",
+  "@city": {
+    "description": "Label of the city row in the settings panel"
   }
 }

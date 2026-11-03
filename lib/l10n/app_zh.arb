@@ -90,5 +90,9 @@
   "settings": "设置",
   "temperature": "温度",
   "rateOnGooglePlay": "在 Google Play 上评分",
-  "couldNotOpenPlayStore": "无法打开 Google Play"
+  "couldNotOpenPlayStore": "无法打开 Google Play",
+  "theme": "主题",
+  "lightTheme": "浅色",
+  "darkTheme": "深色",
+  "city": "城市"
 }

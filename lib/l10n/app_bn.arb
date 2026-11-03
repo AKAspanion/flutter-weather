@@ -90,5 +90,9 @@
   "settings": "সেটিংস",
   "temperature": "তাপমাত্রা",
   "rateOnGooglePlay": "Google Play-তে রেট করুন",
-  "couldNotOpenPlayStore": "Google Play খোলা যায়নি"
+  "couldNotOpenPlayStore": "Google Play খোলা যায়নি",
+  "theme": "থিম",
+  "lightTheme": "হালকা",
+  "darkTheme": "গাঢ়",
+  "city": "শহর"
 }

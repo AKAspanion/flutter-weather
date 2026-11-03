@@ -90,5 +90,9 @@
   "settings": "الإعدادات",
   "temperature": "درجة الحرارة",
   "rateOnGooglePlay": "قيّم التطبيق على Google Play",
-  "couldNotOpenPlayStore": "تعذّر فتح Google Play"
+  "couldNotOpenPlayStore": "تعذّر فتح Google Play",
+  "theme": "المظهر",
+  "lightTheme": "فاتح",
+  "darkTheme": "داكن",
+  "city": "المدينة"
 }

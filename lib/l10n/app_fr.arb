@@ -90,5 +90,9 @@
   "settings": "Paramètres",
   "temperature": "Température",
   "rateOnGooglePlay": "Noter sur Google Play",
-  "couldNotOpenPlayStore": "Impossible d'ouvrir Google Play"
+  "couldNotOpenPlayStore": "Impossible d'ouvrir Google Play",
+  "theme": "Thème",
+  "lightTheme": "Clair",
+  "darkTheme": "Sombre",
+  "city": "Ville"
 }

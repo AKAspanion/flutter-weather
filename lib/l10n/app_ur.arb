@@ -90,5 +90,9 @@
   "settings": "ترتیبات",
   "temperature": "درجہ حرارت",
   "rateOnGooglePlay": "Google Play پر ریٹ کریں",
-  "couldNotOpenPlayStore": "Google Play نہیں کھل سکا"
+  "couldNotOpenPlayStore": "Google Play نہیں کھل سکا",
+  "theme": "تھیم",
+  "lightTheme": "ہلکا",
+  "darkTheme": "گہرا",
+  "city": "شہر"
 }
