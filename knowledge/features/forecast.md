@@ -18,6 +18,10 @@ The chart button on the main card opens `Forecast`, which slides up over everyth
   and maximum. Tapping a card expands it in the accent gradient with sunrise, wind and humidity.
 - The provider's attribution at the end.
 
+All text and dates follow the chosen language ([language picker](language-picker.md)): time of day in the language's own
+style ("5:00 AM", "05:00"), the weekday and the date line from `lib/l10n/dates.dart`, and descriptions from the
+condition code. In Arabic and Urdu the lists and chips run right to left.
+
 How many hours and days there are, and how far apart they are, depends on the provider that answered (see each
 integration). For example, OpenWeatherMap steps by 3 hours.
 
@@ -34,7 +38,14 @@ integration). For example, OpenWeatherMap steps by 3 hours.
   `Forecast`). It is unmounted after the panel slides away. Comments say this stops its animated icons from running
   off screen.
 - Both lists are built lazily with `ListView.builder`. Comments say this is so off-screen icons cost nothing.
+- Hourly chip text rows are forced to Montserrat's line height with a strut (`height: 1.219`). Time labels in other
+  scripts, or with intl's narrow no-break space before AM/PM, fall back to a taller system font, which overflowed the
+  chip by a few pixels; `test/hourly_detail_chip_test.dart` covers it.
 - Hourly chips pick day or night icons from their own hour, not the current time ([condition icons](../domain/condition-icons.md)).
+
+## History
+
+- 2026-11-03: text and dates were English, with a hand-written calendar (`lib/services/calendar.dart`, removed); now `intl` formats in the chosen language and chip text rows use a forced line height, because the app is translated and fallback fonts overflowed the chips. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
 
@@ -43,3 +54,5 @@ integration). For example, OpenWeatherMap steps by 3 hours.
 * `lib/views/forecast/hourly_detail_chip.dart`
 * `lib/views/forecast/daily_detail_card.dart`
 * `lib/main.dart`
+* `lib/l10n/dates.dart`
+* `test/hourly_detail_chip_test.dart`

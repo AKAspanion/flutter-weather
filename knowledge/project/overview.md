@@ -13,9 +13,10 @@ verified: human:panditankit1995@gmail.com
 Beautiful Weather shows the weather where you are, or in any city you type, with animated weather icons, accent
 gradients and a light and a dark theme that follows the system. One screen shows the current conditions. A forecast panel slides up with the
 next 48 hours and the next days. The 48 hours is the span the forecast screen promises ("Forecast for the next 48
-hours" in `lib/views/forecast/forecast.dart`); how much each provider actually returns is in
-[forecast](../features/forecast.md). On Android, a home-screen widget shows the current weather in the app's accent and refreshes in
-the background. The app is free and shows a banner ad.
+hours", `nextHoursSubtitle` in `lib/l10n/app_en.arb`); how much each provider actually returns is in
+[forecast](../features/forecast.md). On Android, a home-screen widget shows the current weather in the app's accent and refreshes
+in the background. The app is free and shows a banner ad. It is in ten languages, chosen in the app
+([language picker](../features/language-picker.md)).
 
 The weather comes from several services ([provider failover](../domain/provider-failover.md)), so the app keeps
 working when one of them fails. It has no user accounts and no backend of its own: it calls the weather services
@@ -45,11 +46,15 @@ Android is the only supported platform ([decision](../decisions/android-only.md)
 - `privacy.md` claims analytics the app doesn't collect, and is to be reworded
   ([decision](../decisions/privacy-policy-no-analytics.md)).
 
+## History
+
+- 2026-11-03: the app was English only; now ten languages, chosen in the app, because the developer wanted the Play listing translated. See [supported languages](../decisions/supported-languages.md).
+
 ## Sources
 
 * `README.md`
 * `pubspec.yaml`
 * `lib/main.dart`
-* `lib/views/forecast/forecast.dart`
+* `lib/l10n/app_en.arb`
 * `privacy.md`
 * `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`

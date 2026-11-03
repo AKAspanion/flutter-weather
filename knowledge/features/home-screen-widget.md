@@ -58,11 +58,17 @@ delay are set there. A comment says the delay is so it doesn't start a second en
 never asks for updates (`updatePeriodMillis` is 0 in the widget info). The provider also re-renders on resize
 (`onAppWidgetOptionsChanged`).
 
-**Adding it.** If the launcher supports pinning (`WeatherWidget.canPin`), a widgets button appears at the top
-centre while the menu is open. It calls `WeatherWidget.pin`, which goes through the `in.spanion.weather/widget`
+**Adding it.** If the launcher supports pinning (`WeatherWidget.canPin`), a widgets button appears in the menu's top
+button row while the menu is open. It calls `WeatherWidget.pin`, which goes through the `in.spanion.weather/widget`
 channel to `MainActivity` rather than through `home_widget`, whose pin request has no callback. `MainActivity` passes
 the launcher a callback that opens the home screen, so tapping "Add" lands the user on the widget instead of back in
 the app. On Android 14+ the callback's creator has to allow the background launch, which `MainActivity` sets.
+
+**Language.** The text the app pushes (city, description, high and low, the card title and the update line) is in the app's chosen language: `WeatherWidget.payload` builds it from `WeatherWidget.localizations()`, which
+reads `language_preference` without a `BuildContext`, so the background refresh follows the choice too
+([language picker](language-picker.md)). The title and the update line travel in the `labels` data key. The widget's own
+`strings.xml` values follow the phone's language (a `values-<code>` folder per language) and show only until the first
+update, or when a label is missing.
 
 ## Screens and routes
 
@@ -99,6 +105,7 @@ the app. On Android 14+ the callback's creator has to allow the background launc
   static PNG icons, and could not shrink below 4x2; now one Now card in three layouts, in the app's accent with an
   animated icon, down to one cell, because internal testing asked for a 2x2, no 24-hour page and an animated icon. See
   [decisions/widget-one-resizable-card](../decisions/widget-one-resizable-card.md).
+- 2026-11-03: the pushed text was English, with `3P` hour labels and the `updated` time; now translated in the app's language with a `labels` key and `3 PM` labels, and the pin button moved into the menu's button row, because the app is translated. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
 
@@ -115,3 +122,6 @@ the app. On Android 14+ the callback's creator has to allow the background launc
 * `tool/render_widget_icons_test.dart`
 * `lib/main.dart`
 * `docs/specs/2026-11-03-widget-testing-feedback.md`
+* `lib/l10n/app_en.arb`
+* `android/app/src/main/res/values/strings.xml`
+* `test/weather_widget_test.dart`

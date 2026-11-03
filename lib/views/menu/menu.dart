@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/ads.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/theme/gradients.dart';
@@ -15,9 +16,13 @@ class Menu extends StatelessWidget {
 
   static const double _actionsHeight = 48;
 
-  /// Height of the accent picker (plus the privacy row, when shown) and
-  /// padding, which the home card has to stay clear of while the drawer is open.
-  static double get footerHeight => 24 + 88 + 16 + (Ads.privacyOptionsRequired.value ? _actionsHeight : 0);
+  /// Space between the shrunken home card and the accent picker, so the two never touch.
+  static const double _cardGap = 24;
+
+  /// Height of the accent picker (plus the privacy row, when shown), its padding and the gap above it, which the
+  /// home card has to stay clear of while the drawer is open.
+  static double get footerHeight =>
+      _cardGap + 24 + 88 + 16 + (Ads.privacyOptionsRequired.value ? _actionsHeight : 0);
 
   const Menu({
     Key? key,
@@ -37,12 +42,12 @@ class Menu extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment(0.8, 0.0),
+          begin: AlignmentDirectional.centerStart,
+          end: AlignmentDirectional(0.8, 0.0),
           colors: colors,
         ),
       ),
-      padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
+      padding: EdgeInsetsDirectional.fromSTEB(24, 24, 24, 24 + bottomInset),
       child: Column(
         verticalDirection: VerticalDirection.up,
         mainAxisSize: MainAxisSize.max,
@@ -55,7 +60,7 @@ class Menu extends StatelessWidget {
                 ? SizedBox(height: 16)
                 : SizedBox(
                     height: _actionsHeight,
-                    child: Center(child: _action("PRIVACY", Ads.showPrivacyOptions)),
+                    child: Center(child: _action(AppLocalizations.of(context)!.privacy.toUpperCase(), Ads.showPrivacyOptions)),
                   ),
           ),
           Container(
@@ -88,8 +93,8 @@ class Menu extends StatelessWidget {
                           BoxShadow(color: Colors.black12, blurRadius: 6.0)
                         ],
                         gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment(0.8, 0.0),
+                          begin: AlignmentDirectional.centerStart,
+                          end: AlignmentDirectional(0.8, 0.0),
                           colors: GradientValues().gradients[i].gradient,
                         ),
                       ),

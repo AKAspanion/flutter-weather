@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">আপনার সর্বশেষ দেখা স্থানের বর্তমান আবহাওয়া, আপনার বেছে নেওয়া রঙে।</string>
+    <string name="widget_empty">আবহাওয়া লোড করতে অ্যাপ খুলুন</string>
+    <string name="widget_updated">আপডেট: %1$s</string>
+    <string name="widget_now">এখন</string>
+</resources>

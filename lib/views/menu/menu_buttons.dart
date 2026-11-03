@@ -1,0 +1,66 @@
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+import 'package:flutterweather/components/btn.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
+
+/// The menu's top row of buttons: refresh in the far start corner, close in the far end corner, and the rest spread
+/// evenly between them. The buttons shrink together on a screen too narrow for six at full size.
+class MenuButtons extends StatelessWidget {
+  static const double _maxSize = 56;
+  static const double _margin = 16;
+  static const double _minGap = 8;
+  static const double _iconSize = 32;
+
+  final void Function() onRefresh;
+  final void Function() onTheme;
+
+  /// The sun or moon icon, which the caller picks from the current theme.
+  final Widget themeIcon;
+
+  /// Null on a phone that can't pin widgets, which leaves the widget button out.
+  final void Function()? onPinWidget;
+  final void Function() onLanguage;
+  final void Function() onLocation;
+  final void Function() onClose;
+
+  const MenuButtons({
+    super.key,
+    required this.onRefresh,
+    required this.onTheme,
+    required this.themeIcon,
+    this.onPinWidget,
+    required this.onLanguage,
+    required this.onLocation,
+    required this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final languageLabel = AppLocalizations.of(context)?.language;
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        final count = onPinWidget == null ? 5 : 6;
+        final size = math.min(_maxSize, (constraints.maxWidth - 2 * _margin - _minGap * (count - 1)) / count);
+
+        Widget button(Widget icon, void Function() onPress) => Btn(size: size, onPress: onPress, child: icon);
+        Widget icon(IconData data) => Icon(data, size: _iconSize);
+
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: _margin),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              button(icon(Icons.refresh), onRefresh),
+              button(Transform.rotate(angle: math.pi / 4.5, child: themeIcon), onTheme),
+              if (onPinWidget != null) button(icon(Icons.widgets), onPinWidget!),
+              Semantics(label: languageLabel, button: true, child: button(icon(Icons.translate), onLanguage)),
+              button(icon(Icons.location_on), onLocation),
+              button(icon(Icons.close), onClose),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}

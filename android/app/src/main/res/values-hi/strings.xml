@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">आपके आख़िरी देखे गए स्थान का मौजूदा मौसम, आपके चुने हुए रंग में।</string>
+    <string name="widget_empty">मौसम लोड करने के लिए ऐप खोलें</string>
+    <string name="widget_updated">अपडेट किया गया: %1$s</string>
+    <string name="widget_now">अभी</string>
+</resources>

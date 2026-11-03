@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
 
 class ErrorView extends StatelessWidget {
   @override
@@ -6,7 +7,7 @@ class ErrorView extends StatelessWidget {
     return Center(
       child: Container(
         child: Text(
-          "Error fetching weather details".toUpperCase(),
+          AppLocalizations.of(context)!.errorFetching.toUpperCase(),
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.red[400],

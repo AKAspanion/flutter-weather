@@ -12,7 +12,7 @@ verified: human:panditankit1995@gmail.com
 
 - **Theme.** By default the theme matches the system brightness (`resolveTheme` in `lib/services/theme_manager.dart`),
   at launch and live when the system changes it (`ThemeManager` observes `didChangePlatformBrightness`). The sun/moon
-  button (shown while the menu is open) switches between `AppTheme.White` and `AppTheme.Dark` through
+  button (in the menu's button row, shown while the menu is open) switches between `AppTheme.White` and `AppTheme.Dark` through
   `ThemeManager.setTheme`. That choice is an override, saved as `theme_preference` together with the brightness it was
   made against (`theme_preference_system`). It holds, across launches too, until the system brightness changes; then it
   is cleared and the app follows the system again. A `theme_preference` saved before this had no brightness, so it
@@ -26,15 +26,16 @@ verified: human:panditankit1995@gmail.com
 ## Screens and routes
 
 - `lib/views/menu/menu.dart` (`Menu`): the drawer and the accent carousel.
-- `lib/main.dart`: the theme button, `toggleTheme`, `setAccent` and `getAccent`.
-- Opening the menu: the hamburger on the card (`lib/components/hamburger.dart`), or swiping the card sideways
-  (`onDragEnd` in `lib/views/home/home.dart`).
+- `lib/views/menu/menu_buttons.dart` and `lib/main.dart`: the theme button, `toggleTheme`, `setAccent` and `getAccent`.
+- Opening the menu: the hamburger on the card (`lib/components/hamburger.dart`), or swiping the card towards the end of the line
+  (`onDragEnd` in `lib/views/home/home.dart`: right in left-to-right languages, left in Arabic and Urdu).
 
 ## Rules
 
 - The gradients and the theme colours are in [design tokens](../design-system/tokens.md).
 - With the menu open, the card shrinks so it stays clear of the menu footer and the banner ad
-  (`Menu.footerHeight`, `fitScale` in `lib/views/home/home.dart`).
+  (`Menu.footerHeight`, `fitScale` in `lib/views/home/home.dart`). `footerHeight` includes a 24 dp gap (`_cardGap`) so
+  the shrunken card never touches the accent picker.
 - `ThemeManager` reads the system brightness when it is created, so the first frame already matches the system. A
   saved override loads asynchronously and applies once `_loadTheme` finishes, so a user whose override differs from
   the system can see the system theme briefly at launch. `selectedAccent` in `lib/main.dart` likewise starts at the
@@ -51,6 +52,10 @@ verified: human:panditankit1995@gmail.com
   internal testing asked for it in the app's accent. See
   [decisions/widget-one-resizable-card](../decisions/widget-one-resizable-card.md).
 
+## History
+
+- 2026-11-03: the card could touch the accent picker, and the menu mirrored only left to right; now a 24 dp gap sits above the picker and the layout mirrors for Arabic and Urdu, because the developer saw the card touch the picker and the app gained right-to-left languages. See [supported languages](../decisions/supported-languages.md).
+
 ## Sources
 
 * `lib/services/theme_manager.dart`
@@ -58,6 +63,7 @@ verified: human:panditankit1995@gmail.com
 * `lib/theme/gradients.dart`
 * `lib/services/weather_widget.dart`
 * `lib/views/menu/menu.dart`
+* `lib/views/menu/menu_buttons.dart`
 * `lib/views/home/home.dart`
 * `lib/components/hamburger.dart`
 * `lib/main.dart`

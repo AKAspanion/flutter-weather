@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">الطقس الحالي لآخر مكان عرضته، بلون التمييز الذي اخترته.</string>
+    <string name="widget_empty">افتح التطبيق لتحميل الطقس</string>
+    <string name="widget_updated">آخر تحديث %1$s</string>
+    <string name="widget_now">الآن</string>
+</resources>

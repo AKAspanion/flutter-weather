@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">Текущая погода для последнего просмотренного места в выбранном вами цвете.</string>
+    <string name="widget_empty">Откройте приложение, чтобы загрузить погоду</string>
+    <string name="widget_updated">Обновлено: %1$s</string>
+    <string name="widget_now">СЕЙЧАС</string>
+</resources>

@@ -1,6 +1,8 @@
 import 'package:flutterweather/components/flare_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterweather/services/calendar.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
+import 'package:flutterweather/l10n/conditions.dart';
+import 'package:flutterweather/l10n/dates.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/gradients.dart';
 
@@ -25,6 +27,8 @@ class _DailyDetailState extends State<DailyDetail> {
     final Weather weather = widget.detail;
     final int accentIndex = widget.accent;
     final size = MediaQuery.of(context).size;
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
+    final String locale = Localizations.localeOf(context).toString();
 
     return InkWell(
       onTap: toggleExpand,
@@ -70,7 +74,7 @@ class _DailyDetailState extends State<DailyDetail> {
                         children: [
                           Container(
                             child: Text(
-                              getWeekday(weather),
+                              getWeekday(weather, locale),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -80,7 +84,7 @@ class _DailyDetailState extends State<DailyDetail> {
                           ),
                           Container(
                             child: Text(
-                              "${weather.description}".toUpperCase(),
+                              describeCondition(l10n, weather.condition).toUpperCase(),
                               style: TextStyle(
                                 fontSize: 11,
                                 color: expanded ? Colors.white : Colors.black87,
@@ -97,9 +101,9 @@ class _DailyDetailState extends State<DailyDetail> {
                       Column(
                         children: [
                           Container(
-                            padding: EdgeInsets.only(right: 12, top: 2),
+                            padding: EdgeInsetsDirectional.only(end: 12, top: 2),
                             child: Text(
-                              "MIN",
+                              l10n.min.toUpperCase(),
                               style: TextStyle(
                                 fontSize: 11,
                                 color: expanded ? Colors.white : Colors.black87,
@@ -107,7 +111,7 @@ class _DailyDetailState extends State<DailyDetail> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.only(right: 12, top: 2),
+                            padding: EdgeInsetsDirectional.only(end: 12, top: 2),
                             child: Text(
                               '${(weather.tempMin! - 273.15).floor()}°C',
                               style: TextStyle(
@@ -122,9 +126,9 @@ class _DailyDetailState extends State<DailyDetail> {
                       Column(
                         children: [
                           Container(
-                            padding: EdgeInsets.only(right: 12, top: 2),
+                            padding: EdgeInsetsDirectional.only(end: 12, top: 2),
                             child: Text(
-                              "MAX",
+                              l10n.max.toUpperCase(),
                               style: TextStyle(
                                 fontSize: 11,
                                 color: expanded ? Colors.white : Colors.black87,
@@ -132,7 +136,7 @@ class _DailyDetailState extends State<DailyDetail> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.only(right: 12, top: 2),
+                            padding: EdgeInsetsDirectional.only(end: 12, top: 2),
                             child: Text(
                               '${(weather.tempMax! - 273.15).floor()}°C',
                               style: TextStyle(
@@ -164,11 +168,11 @@ class _DailyDetailState extends State<DailyDetail> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             getExpandRowItem(
-                                "sun", "sunrise", getSunrise(weather)),
+                                "sun", l10n.sunrise, getSunrise(weather, locale)),
                             getExpandRowItem(
-                                "wind", "wind", "${weather.windSpeed}m/s"),
+                                "wind", l10n.wind, "${weather.windSpeed}m/s"),
                             getExpandRowItem(
-                                "drop", "humidity", "${weather.humidity}%"),
+                                "drop", l10n.humidity, "${weather.humidity}%"),
                           ],
                         ),
                       ],
@@ -220,21 +224,16 @@ class _DailyDetailState extends State<DailyDetail> {
     );
   }
 
-  String getWeekday(Weather weather) {
-    DateTime now =
-        DateTime.fromMillisecondsSinceEpoch(weather.date! * 1000, isUtc: true);
+  String getWeekday(Weather weather, String locale) {
+    DateTime now = DateTime.fromMillisecondsSinceEpoch(weather.date! * 1000, isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
 
-    return "${CalendarHelper.weekdays[zoneTime.weekday - 1]}".toUpperCase();
+    return weekdayLabel(zoneTime, locale).toUpperCase();
   }
 
-  String getSunrise(Weather weather) {
+  String getSunrise(Weather weather, String locale) {
     if (weather.sunrise == null) return "--";
-    DateTime now = DateTime.fromMillisecondsSinceEpoch(weather.sunrise! * 1000,
-        isUtc: true);
-    DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
-    final int hour = zoneTime.hour > 12 ? zoneTime.hour - 12 : zoneTime.hour;
-
-    return '$hour:${zoneTime.minute.toString().padLeft(2, '0')}'.toUpperCase();
+    DateTime now = DateTime.fromMillisecondsSinceEpoch(weather.sunrise! * 1000, isUtc: true);
+    return timeLabel(now.add(Duration(seconds: weather.timezone ?? 0)), locale);
   }
 }

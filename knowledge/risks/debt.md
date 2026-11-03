@@ -30,8 +30,15 @@ verified: human:panditankit1995@gmail.com
   ([decisions/new-application-id](../decisions/new-application-id.md)).
 - **Unused font files.** `assets/fonts/` holds the whole Montserrat family, but `pubspec.yaml` bundles only Regular and
   Italic.
+- **Text that is still English.** The wind unit (`m/s`, written inline in `lib/views/weather/weather_view.dart`, the
+  forecast chips and `lib/services/weather_widget.dart`), each provider's attribution line (`lib/services/providers/`)
+  and the app's label "Beautiful Weather" aren't translated, and temperatures stay in °C.
 - **Flare is discontinued.** The icons depend on our patched copy ([decisions/vendored-flare-flutter](../decisions/vendored-flare-flutter.md)).
 - **The analyzer enables no lint set.** `./analysis_options.yaml` only lists excludes.
+
+## History
+
+- 2026-11-03: added the untranslated text item, because the app is now translated and these stayed English. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
 
@@ -41,6 +48,7 @@ verified: human:panditankit1995@gmail.com
 * `lib/views/forecast/daily_detail_card.dart`
 * `lib/services/providers/weather_provider.dart`
 * `lib/services/weather_widget.dart`
+* `lib/services/providers/openweathermap.dart`
 * `lib/main.dart`
 * `lib/components/btn.dart`
 * `lib/components/hamburger.dart`

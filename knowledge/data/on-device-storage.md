@@ -21,14 +21,16 @@ SDK sends ([data protection](../security/data-protection.md)).
 | `theme_preference` | the index of the `AppTheme` the theme button chose, an override; absent when following the system | `ThemeManager.setTheme` | `ThemeManager` at start-up |
 | `theme_preference_system` | the `Brightness` index the override was made against; the override ends when the system brightness differs | `ThemeManager.setTheme` | `ThemeManager` at start-up |
 | `accent_preference` | the index of the accent gradient | `setAccent` in `lib/main.dart` | `getAccent` in `lib/main.dart` |
+| `language_preference` | the chosen language code, such as `fr`; absent means System default | `LocaleManager.setLocale` | `LocaleManager.load` at start-up, and `WeatherWidget.localizations` in the background refresh |
 
 The keys are string literals at the places named, or `_reportKey` and `_queryKey` in
 `lib/services/weather_cache.dart`.
 
 The widget's data is written with `HomeWidget.saveWidgetData` in `lib/services/weather_widget.dart`: `city`, `now`
-and `updated` by `update`, and `accent` (the accent's index, an int) by `setAccent`. `WeatherWidgetProvider.kt` reads
-them from the `SharedPreferences` that `home_widget` hands it ([home-screen widget](../features/home-screen-widget.md)).
-A widget key the app no longer writes (`hours`) may remain on a device and is ignored.
+and `labels` by `update`, and `accent` (the accent's index, an int) by `setAccent`. `labels` holds the card title and
+the update line in the app's chosen language. `WeatherWidgetProvider.kt` reads them from the `SharedPreferences` that
+`home_widget` hands it ([home-screen widget](../features/home-screen-widget.md)). Keys the app no longer writes
+(`hours`, `updated`) may remain on a device: `hours` is ignored, and `updated` is only the fallback for the update line.
 
 ## Rules
 
@@ -38,11 +40,14 @@ A widget key the app no longer writes (`hours`) may remain on a device and is ig
   app version.
 - Changing the system brightness clears both theme keys (`ThemeManager._clearOverride`), also when the app was closed
   and notices at the next launch.
-- Refreshing from the top button writes an empty `city_preference`, which switches back to the device location
+- Choosing System default removes `language_preference` rather than saving an empty value; an unknown saved code is
+  read as System default ([language picker](../features/language-picker.md)).
+- Refreshing from the menu button writes an empty `city_preference`, which switches back to the device location
   ([city search](../features/city-search.md)).
 
 ## History
 
+- 2026-11-03: added `language_preference` and the widget's `labels`; `updated` is no longer written, because the widget's text now follows the app's language. See [supported languages](../decisions/supported-languages.md).
 - 2026-11-03: the widget keys were `city`, `now`, `hours` and `updated`, and `theme_preference` was the saved theme;
   now `hours` is gone, `accent` is added, and `theme_preference` is an override with `theme_preference_system`,
   because the widget became one Now card in the app's accent and the theme follows the system. See
@@ -54,5 +59,6 @@ A widget key the app no longer writes (`hours`) may remain on a device and is ig
 * `lib/services/weather_cache.dart`
 * `lib/main.dart`
 * `lib/services/theme_manager.dart`
+* `lib/services/locale_manager.dart`
 * `lib/services/weather_widget.dart`
 * `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`

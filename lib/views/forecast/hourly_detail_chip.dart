@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutterweather/components/flare_icon.dart';
-import 'package:flutterweather/services/calendar.dart';
+import 'package:flutterweather/l10n/dates.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/gradients.dart';
+
+/// Montserrat's line height as a multiple of its font size: the font's ascent (968) plus descent (251) per 1000 units.
+const double _montserratLineHeight = 1.219;
+
+/// Gives a row of text the line height of Montserrat at [fontSize], whatever font draws it. The time label's
+/// narrow no-break space (U+202F) and Arabic, Bengali, Hindi, Chinese and Urdu text aren't in Montserrat, so the
+/// system draws them in a fallback font with a taller line, which would push the chip's text past its fixed height.
+StrutStyle _montserratStrut(double fontSize) {
+  return StrutStyle(
+    fontFamily: 'Montserrat',
+    fontSize: fontSize,
+    fontWeight: FontWeight.bold,
+    height: _montserratLineHeight,
+    forceStrutHeight: true,
+  );
+}
 
 class HourlyDetail extends StatefulWidget {
   final int accent;
@@ -32,7 +48,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
         curve: Curves.easeInOutCirc,
         padding: EdgeInsets.symmetric(vertical: 16),
         duration: Duration(milliseconds: 500),
-        margin: EdgeInsets.only(right: 24, top: 12, bottom: 12),
+        margin: EdgeInsetsDirectional.only(end: 24, top: 12, bottom: 12),
         width: width,
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
@@ -51,12 +67,13 @@ class _HourlyDetailState extends State<HourlyDetail> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
-                getTime(weather),
+                getTime(weather, Localizations.localeOf(context).toString()),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
+                strutStyle: _montserratStrut(12),
                 overflow: TextOverflow.fade,
                 softWrap: false,
                 maxLines: 1,
@@ -86,18 +103,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
                         margin: EdgeInsets.only(
                           top: 20,
                         ),
-                        child: AnimatedDefaultTextStyle(
-                          child: Text(
-                            "${weather.humidity}%",
-                          ),
-                          duration: Duration(milliseconds: 500),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: expanded ? 10 : 0,
-                            fontFamily: "Montserrat",
-                            color: Colors.white,
-                          ),
-                        ),
+                        child: _DetailText("${weather.humidity}%", expanded: expanded),
                       ),
                     ],
                   ),
@@ -125,6 +131,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
+                          strutStyle: _montserratStrut(16),
                         ),
                       ),
                     ],
@@ -150,18 +157,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
                         margin: EdgeInsets.only(
                           top: 20,
                         ),
-                        child: AnimatedDefaultTextStyle(
-                          child: Text(
-                            "${weather.windSpeed}m/s",
-                          ),
-                          duration: Duration(milliseconds: 500),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: expanded ? 10 : 0,
-                            fontFamily: "Montserrat",
-                            color: Colors.white,
-                          ),
-                        ),
+                        child: _DetailText("${weather.windSpeed}m/s", expanded: expanded),
                       ),
                     ],
                   ),
@@ -180,22 +176,11 @@ class _HourlyDetailState extends State<HourlyDetail> {
     });
   }
 
-  String getTime(Weather weather) {
-    DateTime now =
-        DateTime.fromMillisecondsSinceEpoch(weather.date! * 1000, isUtc: true);
+  String getTime(Weather weather, String locale) {
+    DateTime now = DateTime.fromMillisecondsSinceEpoch(weather.date! * 1000, isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
 
-    final suffix = zoneTime.hour >= 12 ? "PM" : "AM";
-    final hours = ((zoneTime.hour + 11) % 12 + 1);
-
-    String date = "";
-
-    if (expanded) {
-      date += ", ${CalendarHelper.weekdays[zoneTime.weekday - 1]}";
-      date += "  ${zoneTime.day} ${CalendarHelper.months[zoneTime.month - 1]} ";
-    }
-
-    return "$hours $suffix$date".toUpperCase();
+    return (expanded ? dateLineLabel(zoneTime, locale) : timeLabel(zoneTime, locale)).toUpperCase();
   }
 
   String getNight(Weather weather) {
@@ -206,5 +191,34 @@ class _HourlyDetailState extends State<HourlyDetail> {
     String night = zoneTime.hour > 18 || zoneTime.hour <= 6 ? "-night" : "";
 
     return night;
+  }
+}
+
+/// The humidity or wind figure of an expanded chip: its size grows from 0 to 10 as the chip opens.
+class _DetailText extends StatelessWidget {
+  final String text;
+  final bool expanded;
+
+  const _DetailText(this.text, {required this.expanded});
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(end: expanded ? 10 : 0),
+      duration: Duration(milliseconds: 500),
+      builder: (_, double fontSize, __) => Text(
+        text,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: fontSize,
+          fontFamily: "Montserrat",
+          color: Colors.white,
+        ),
+        // A StrutStyle needs a size above 0, and text of size 0 has no glyphs to fall back for.
+        strutStyle: fontSize > 0 ? _montserratStrut(fontSize) : null,
+        softWrap: false,
+        maxLines: 1,
+      ),
+    );
   }
 }

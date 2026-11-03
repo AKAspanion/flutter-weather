@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterweather/components/ad_banner.dart';
-import 'package:flutterweather/components/btn.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/ads.dart';
+import 'package:flutterweather/services/locale_manager.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/services/providers/weather_provider.dart';
 import 'package:flutterweather/services/weather_cache.dart';
@@ -12,7 +13,9 @@ import 'package:flutterweather/theme/app_theme.dart';
 import 'package:flutterweather/views/forecast/forecast.dart';
 import 'package:flutterweather/views/home/dialog_overlay.dart';
 import 'package:flutterweather/views/home/home.dart';
+import 'package:flutterweather/views/home/language_overlay.dart';
 import 'package:flutterweather/views/menu/menu.dart';
+import 'package:flutterweather/views/menu/menu_buttons.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +32,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   bool loading = true;
   int selectedAccent = 0;
   bool isDialogOpen = false;
+  bool isLanguageOpen = false;
   bool isDrawerOpen = false;
   bool isForecastOpen = false;
   // Keeps the forecast's animated icons alive only while the panel is on screen.
@@ -127,13 +131,19 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ThemeManager(),
-      child: Consumer<ThemeManager>(builder: (_, manager, __) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeManager()),
+        ChangeNotifierProvider(create: (_) => LocaleManager()..load()),
+      ],
+      child: Consumer2<ThemeManager, LocaleManager>(builder: (_, manager, localeManager, __) {
         return MaterialApp(
           title: "Beautiful Weather",
           scaffoldMessengerKey: _messenger,
           theme: manager.themeData,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: localeManager.locale,
           home: Scaffold(
             body: Stack(
               children: [
@@ -145,83 +155,25 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   bottomInset: adHeight,
                 ),
                 Positioned(
-                  child: _translateBuilder(
-                    Btn(
-                      onPress: onRefresh,
-                      child: Icon(
-                        Icons.refresh,
-                        size: 32,
-                      ),
-                    ),
-                    amount: 0.6,
-                  ),
-                  top: 24,
-                  left: 24,
-                ),
-                Positioned(
-                  child: _translateBuilder(
-                    Btn(
-                      onPress: toggleMenu,
-                      child: Icon(
-                        Icons.close,
-                        size: 32,
-                      ),
-                    ),
-                    amount: 0.6,
-                  ),
-                  top: 24,
-                  right: 24,
-                ),
-                Positioned(
-                  child: _translateBuilder(
-                    Btn(
-                      onPress: () => toggleTheme(manager),
-                      child: Transform.rotate(
-                        angle: 3.1415926535897932 / 4.5,
-                        child: Icon(
-                          manager.theme == AppTheme.Dark
-                              ? Icons.wb_sunny
-                              : Icons.brightness_3,
-                          size: 32,
-                        ),
-                      ),
-                    ),
-                  ),
-                  top: 24,
-                  left: 98,
-                ),
-                Positioned(
-                  child: _translateBuilder(
-                    Btn(
-                      onPress: () => toggleDialog(true),
-                      child: Icon(
-                        Icons.location_on,
-                        size: 32,
-                      ),
-                    ),
-                  ),
-                  top: 24,
-                  right: 98,
-                ),
-                // Centred, which is exactly midway between the theme and location buttons.
-                Positioned(
                   top: 24,
                   left: 0,
                   right: 0,
-                  child: Center(
-                    child: FutureBuilder<bool>(
-                      future: WeatherWidget.canPin(),
-                      builder: (_, snapshot) => snapshot.data != true
-                          ? SizedBox.shrink()
-                          : _translateBuilder(
-                              Btn(
-                                onPress: WeatherWidget.pin,
-                                child: Icon(
-                                  Icons.widgets,
-                                  size: 32,
-                                ),
-                              ),
-                            ),
+                  child: FutureBuilder<bool>(
+                    future: WeatherWidget.canPin(),
+                    builder: (_, snapshot) => _translateBuilder(
+                      MenuButtons(
+                        onRefresh: onRefresh,
+                        onTheme: () => toggleTheme(manager),
+                        themeIcon: Icon(
+                          manager.theme == AppTheme.Dark ? Icons.wb_sunny : Icons.brightness_3,
+                          size: 32,
+                        ),
+                        onPinWidget: snapshot.data == true ? WeatherWidget.pin : null,
+                        onLanguage: () => toggleLanguage(true),
+                        onLocation: () => toggleDialog(true),
+                        onClose: toggleMenu,
+                      ),
+                      amount: 0.6,
                     ),
                   ),
                 ),
@@ -241,6 +193,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                         accent: selectedAccent,
                         onCancel: () => toggleDialog(false),
                         onSubmit: (city) => onSubmit(city),
+                      )
+                    : Container(),
+                isLanguageOpen
+                    ? LanguageOverlay(
+                        accent: selectedAccent,
+                        onClose: () => toggleLanguage(false),
                       )
                     : Container(),
                 Forecast(
@@ -329,6 +287,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     });
   }
 
+  void toggleLanguage(bool value) {
+    setState(() {
+      isLanguageOpen = value;
+    });
+  }
+
   void setAccent(int i) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt("accent_preference", i);
@@ -405,7 +369,8 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
       debugPrint(e.toString());
       if (location.getWeather() != null) {
         _messenger.currentState?.showSnackBar(
-          SnackBar(content: Text("Couldn't update the weather, showing the last result")),
+          // This State sits above the MaterialApp, so the text is looked up where the snackbar is built.
+          SnackBar(content: Builder(builder: (context) => Text(AppLocalizations.of(context)!.updateFailed))),
         );
       }
     } finally {

@@ -55,6 +55,7 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
     ) {
         val content = Content(
             city = widgetData.getString("city", null),
+            labels = parseObject(widgetData.getString("labels", null)),
             updated = widgetData.getString("updated", "") ?: "",
             now = parseObject(widgetData.getString("now", null)),
             accent = accentOf(widgetData),
@@ -92,6 +93,9 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
 
     private class Content(
         val city: String?,
+        /** The card titles and the update line in the app's chosen language; null before the first update. */
+        val labels: JSONObject?,
+        /** The time saved by app versions before [labels]; only the fallback update line uses it. */
         val updated: String,
         val now: JSONObject?,
         val accent: Int,
@@ -142,6 +146,7 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         }
 
         views.setTextViewText(R.id.card_city, city)
+        views.setTextViewText(R.id.card_label, label(content.labels, "now") ?: context.getString(R.string.widget_now))
         // The icon is an animated layout, swapped into the slot on every render.
         views.removeAllViews(iconSlot)
         views.addView(iconSlot, RemoteViews(context.packageName, iconLayoutFor(now.optString("icon"))))
@@ -172,7 +177,10 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
                 views.image(it, 16f, scale)
             }
         } else {
-            views.setTextViewText(R.id.card_updated, context.getString(R.string.widget_updated, content.updated))
+            views.setTextViewText(
+                R.id.card_updated,
+                label(content.labels, "updated") ?: context.getString(R.string.widget_updated, content.updated),
+            )
 
             views.text(R.id.card_city, 12f, scale)
             views.text(R.id.card_label, 12f, scale)
@@ -258,6 +266,10 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         } catch (e: ClassCastException) {
             0
         }
+
+    /** A pushed label, or null when the app hasn't pushed one yet (the caller then uses its strings.xml value). */
+    private fun label(labels: JSONObject?, key: String): String? =
+        labels?.optString(key)?.takeIf { it.isNotEmpty() }
 
     private fun parseObject(json: String?): JSONObject? =
         try {

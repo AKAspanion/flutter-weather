@@ -19,7 +19,7 @@ class HourlyView extends StatelessWidget {
       // Built lazily: only the chips on screen exist (and animate).
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.only(left: 24),
+        padding: EdgeInsetsDirectional.only(start: 24),
         itemCount: hourly.length,
         itemBuilder: (_, i) => HourlyDetail(
           accent: accent,

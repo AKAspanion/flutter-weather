@@ -11,7 +11,10 @@ verified: human:panditankit1995@gmail.com
 ## What it does
 
 The main card shows the place name, date, an animated icon, the temperature in °C, the description, and chips for
-sunrise, wind and humidity. Under them is the provider's attribution.
+sunrise, wind and humidity. Under them is the provider's attribution. The words and dates follow the chosen language
+([language picker](language-picker.md)); the description is the translated phrase for the condition code
+([condition icons](../domain/condition-icons.md)). A place that no provider or geocoder names is stored with an empty
+name (`WeatherService`), and the card shows "My location" in the user's language.
 
 1. **Launch.** `_loadCachedReport` shows the last saved report straight away, if there is one and nothing newer has
    arrived yet. Then `getLocation` fetches fresh weather. While it runs, the spinner shows only if there is no cached
@@ -26,7 +29,7 @@ sunrise, wind and humidity. Under them is the provider's attribution.
 5. **Failure.** If every provider fails or there is no position: with a report already on screen, a snackbar says
    the update failed and the last result stays. With none, `ErrorView` shows an error message.
 
-The refresh button (top left, shown while the menu is open) clears `city_preference` and fetches again. So refresh
+The refresh button (the far start corner of the menu's button row, `MenuButtons`, shown while the menu is open) clears `city_preference` and fetches again. So refresh
 always returns to the device location.
 
 ## Screens and routes
@@ -46,6 +49,10 @@ always returns to the device location.
 - The provider's attribution is always shown with its data. The doc comment on `WeatherReport.attribution` says the
   providers' terms ask for this.
 
+## History
+
+- 2026-11-03: the card's text was English only, with provider descriptions and "My location" set by `WeatherService`; now translated, with the description from the condition code and the unnamed place left empty for the screen to name, because the app is translated. See [supported languages](../decisions/supported-languages.md).
+
 ## Sources
 
 * `lib/main.dart`
@@ -56,4 +63,7 @@ always returns to the device location.
 * `lib/views/weather/weather_view.dart`
 * `lib/views/weather/weather_detail_chip.dart`
 * `lib/views/weather/weather_error.dart`
+* `lib/views/menu/menu_buttons.dart`
+* `lib/l10n/dates.dart`
+* `lib/l10n/conditions.dart`
 * `lib/services/providers/weather_provider.dart`
