@@ -1,6 +1,6 @@
 **Beautiful Weather App Privacy Policy**
 
-*Last Updated: 02/11/2026*
+*Last Updated: 03/11/2026*
 
 Welcome to Beautiful Weather, a mobile application developed by panditankit1995@gmail.com. This Privacy Policy is designed to help you understand how we collect, use, and safeguard your personal information when you use our Beautiful Weather app.
 
@@ -14,15 +14,7 @@ Beautiful Weather requires access to your device's location to provide accurate 
 
 #### Personal Information
 
-We may collect personal information such as your name, email address, or other relevant details when you voluntarily provide it, such as when you contact us for support or participate in surveys. We handle this information with the utmost confidentiality and do not share it with third parties without your consent.
-
-#### Usage Information
-
-We collect information about how you interact with Beautiful Weather, including but not limited to the features you use, the time spent in the app, and error logs. This data helps us improve the app's functionality and enhance your user experience.
-
-#### Device Information
-
-We may collect information about the device you use to access Beautiful Weather, such as the device model, operating system version, and unique device identifiers. This data helps us troubleshoot technical issues and optimize the app for different devices.
+The app has no forms or accounts, and it does not ask for your name or email address. The only personal information we receive is what you choose to send us by email when you ask for support, such as your email address and the details of your question. We handle this information with the utmost confidentiality and do not share it with third parties without your consent.
 
 #### Advertising
 
@@ -41,9 +33,7 @@ The widget refreshes in the background for the place you last viewed in the app.
 We use the information collected for the following purposes:
 
 - **Weather Forecast**: Utilize your location to provide accurate and personalized weather forecasts.
-- **Personalization**: Customize your app experience based on your usage patterns and preferences.
 - **Communication**: Respond to your inquiries, and feedback, or provide support when needed.
-- **Analytics**: Analyze usage data to improve the app's performance, features, and user interface.
 - **Advertising**: Show ads through Google AdMob, as described above, to keep the app free.
 
 ### Data Security
@@ -52,7 +42,7 @@ We employ industry-standard security measures to protect your personal informati
 
 ### Third-Party Services
 
-Beautiful Weather may use third-party services for analytics, advertising, or other functionalities. These third parties may have their privacy policies, and we encourage you to review them.
+Beautiful Weather uses Google AdMob to show ads and the weather services OpenWeatherMap, WeatherAPI.com, Tomorrow.io and MET Norway to fetch the weather, as described above. These third parties have their own privacy policies, and we encourage you to review them.
 
 ### Changes to this Privacy Policy
 
