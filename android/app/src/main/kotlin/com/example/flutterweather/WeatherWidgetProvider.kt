@@ -18,11 +18,12 @@ import org.json.JSONObject
  * Home-screen widget: one card with the current weather, drawn in the app's
  * accent. The Flutter side (lib/services/weather_widget.dart) writes the values.
  *
- * Two layouts: the full card, and a compact one for cards narrower than
- * [SMALL_WIDTH] (about 2x2). On Android 12+ the launcher reports every size the
- * widget can be shown at, and one RemoteViews is rendered per size so the host
- * picks the layout that fits; earlier versions get the layout for the size the
- * options report.
+ * Two layouts: the wide card, used from [WIDE_WIDTH] (full width), and a compact
+ * one for anything narrower, which keeps its sunrise / wind / humidity row from
+ * [DETAILS_WIDTH] (3 cells) and hides it below (2x2). On Android 12+ the
+ * launcher reports every size the widget can be shown at, and one RemoteViews is
+ * rendered per size so the host picks the layout that fits; earlier versions get
+ * the layout for the size the options report.
  */
 class WeatherWidgetProvider : HomeWidgetProvider() {
     override fun onUpdate(
@@ -96,7 +97,8 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
     )
 
     private fun widgetViews(context: Context, content: Content, size: SizeF?): RemoteViews {
-        val small = size != null && size.width < SMALL_WIDTH
+        // Without a known size, the wide layout is the default.
+        val small = size != null && size.width < WIDE_WIDTH
         val views = RemoteViews(
             context.packageName,
             if (small) R.layout.weather_widget_small else R.layout.weather_widget,
@@ -126,17 +128,27 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         views.setTextViewText(R.id.card_description, now.optString("description"))
         views.setTextViewText(R.id.card_detail, now.optString("detail"))
 
+        views.setTextViewText(R.id.card_sunrise, now.optString("sunrise"))
+        views.setTextViewText(R.id.card_wind, now.optString("wind"))
+        views.setTextViewText(R.id.card_humidity, now.optString("humidity"))
+
         val scale = scaleFor(size)
         if (small) {
+            // The details row is for 3 cells and wider; a 2x2 has no room for it.
+            val details = size != null && size.width >= DETAILS_WIDTH
+            views.setViewVisibility(R.id.card_details, if (details) View.VISIBLE else View.GONE)
+
             views.text(R.id.card_city, 12f, scale)
+            views.text(R.id.card_label, 12f, scale)
             views.text(R.id.card_temperature, 30f, scale)
             views.text(R.id.card_description, 12f, scale)
             views.text(R.id.card_detail, 12f, scale)
+            listOf(R.id.card_sunrise, R.id.card_wind, R.id.card_humidity).forEach { views.text(it, 12f, scale) }
             views.image(R.id.card_icon_slot, 40f, scale)
+            listOf(R.id.card_sunrise_icon, R.id.card_wind_icon, R.id.card_humidity_icon).forEach {
+                views.image(it, 16f, scale)
+            }
         } else {
-            views.setTextViewText(R.id.card_sunrise, now.optString("sunrise"))
-            views.setTextViewText(R.id.card_wind, now.optString("wind"))
-            views.setTextViewText(R.id.card_humidity, now.optString("humidity"))
             views.setTextViewText(R.id.card_updated, context.getString(R.string.widget_updated, content.updated))
 
             views.text(R.id.card_city, 12f, scale)
@@ -231,10 +243,16 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
 
     private companion object {
         /**
-         * Cards narrower than this (dp) use the compact layout. The full card needs about
-         * 250dp for the icon, temperature and the sunrise / wind / humidity row, so a 2x2
-         * and a 3x2 (about 180dp) fall below it.
+         * Cards at least this wide (dp) use the wide layout, which is full width (4 cells);
+         * narrower ones use the compact layout. Launchers report a 3x2 card as about 235dp
+         * (One UI) and a 4-cell one above 300dp.
          */
-        const val SMALL_WIDTH = 220f
+        const val WIDE_WIDTH = 300f
+
+        /**
+         * The compact layout shows its sunrise / wind / humidity row at least this wide (dp),
+         * which is 3 cells (about 235dp); a 2x2 (about 129dp) has no room for it.
+         */
+        const val DETAILS_WIDTH = 220f
     }
 }

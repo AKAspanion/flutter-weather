@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- The widget: one Now card, drawn in the app's accent. WeatherWidgetProvider sets
      the background of widget_root from the saved accent. Cards narrower than
-     WeatherWidgetProvider.SMALL_WIDTH use weather_widget_small.xml instead. -->
+     WeatherWidgetProvider.WIDE_WIDTH use weather_widget_small.xml instead. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
