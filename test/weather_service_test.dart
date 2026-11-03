@@ -46,6 +46,16 @@ class FakeGeocoderProvider extends FakeProvider implements Geocoder {
   Future<Place?> reverse(double lat, double lon) async => Place(name: 'Reverse', lat: lat, lon: lon);
 }
 
+class FindsNothingProvider extends FakeProvider implements Geocoder {
+  FindsNothingProvider(String name) : super(name);
+
+  @override
+  Future<Place?> search(String city) async => null;
+
+  @override
+  Future<Place?> reverse(double lat, double lon) async => null;
+}
+
 void main() {
   test('falls over to the next provider when one fails', () async {
     final a = FakeProvider('A', failing: true);
@@ -105,6 +115,15 @@ void main() {
     final report = await WeatherService([unnamed, geocoder]).fetchByCoords(1, 2);
 
     expect(report.current.name, 'Reverse');
+  });
+
+  test('leaves the name empty when nothing names the coordinates', () async {
+    final unnamed = FakeProvider('Unnamed', placeName: '');
+    final geocoder = FindsNothingProvider('Geo');
+
+    final report = await WeatherService([unnamed, geocoder]).fetchByCoords(1, 2);
+
+    expect(report.current.name, '');
   });
 
   test('skips providers without an API key', () {

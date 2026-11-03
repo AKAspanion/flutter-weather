@@ -1,0 +1,365 @@
+{
+  "@@locale": "en",
+  "greetingMorning": "Good morning",
+  "@greetingMorning": {
+    "description": "Home greeting before noon"
+  },
+  "greetingAfternoon": "Good afternoon",
+  "@greetingAfternoon": {
+    "description": "Home greeting from noon until the evening"
+  },
+  "greetingEvening": "Good evening",
+  "@greetingEvening": {
+    "description": "Home greeting in the evening"
+  },
+  "greetingNight": "Good night",
+  "@greetingNight": {
+    "description": "Home greeting at night"
+  },
+  "sunrise": "Sunrise",
+  "@sunrise": {
+    "description": "Label for the time of sunrise"
+  },
+  "wind": "Wind",
+  "@wind": {
+    "description": "Label for the wind speed"
+  },
+  "humidity": "Humidity",
+  "@humidity": {
+    "description": "Label for the air humidity"
+  },
+  "myLocation": "My location",
+  "@myLocation": {
+    "description": "Place name shown when the weather has no name for the coordinates"
+  },
+  "nextHours": "Next hours",
+  "@nextHours": {
+    "description": "Title of the hourly forecast section"
+  },
+  "nextHoursSubtitle": "Forecast for the next 48 hours",
+  "@nextHoursSubtitle": {
+    "description": "Subtitle of the hourly forecast section"
+  },
+  "nextDays": "Next days",
+  "@nextDays": {
+    "description": "Title of the daily forecast section"
+  },
+  "nextDaysSubtitle": "{count, plural, =1{Forecast for the next day} other{Forecast for the next {count} days}}",
+  "@nextDaysSubtitle": {
+    "description": "Subtitle of the daily forecast section",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "min": "Min",
+  "@min": {
+    "description": "Label for the lowest temperature of a day"
+  },
+  "max": "Max",
+  "@max": {
+    "description": "Label for the highest temperature of a day"
+  },
+  "cityName": "City name",
+  "@cityName": {
+    "description": "Hint of the city search field"
+  },
+  "privacy": "Privacy",
+  "@privacy": {
+    "description": "Menu button that opens the ad privacy choices"
+  },
+  "errorFetching": "Error fetching weather details",
+  "@errorFetching": {
+    "description": "Shown when the weather could not be loaded and there is nothing to show"
+  },
+  "updateFailed": "Couldn't update the weather, showing the last result",
+  "@updateFailed": {
+    "description": "Snackbar shown when a refresh fails but an earlier report is on screen"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Title of the language picker"
+  },
+  "systemDefault": "System default",
+  "@systemDefault": {
+    "description": "Language picker choice that follows the phone language"
+  },
+  "widgetNow": "Now",
+  "@widgetNow": {
+    "description": "Home-screen widget title for the current weather"
+  },
+  "widgetNext24Hours": "Next 24 hours",
+  "@widgetNext24Hours": {
+    "description": "Home-screen widget title for the hourly forecast"
+  },
+  "widgetUpdated": "Updated {time}",
+  "@widgetUpdated": {
+    "description": "Home-screen widget line saying when it was refreshed",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetHighLow": "H {high}  L {low}",
+  "@widgetHighLow": {
+    "description": "Home-screen widget high and low temperatures",
+    "placeholders": {
+      "high": {
+        "type": "String"
+      },
+      "low": {
+        "type": "String"
+      }
+    }
+  },
+  "conditionUnknown": "Unknown",
+  "@conditionUnknown": {
+    "description": "Weather description when the condition code is missing or unrecognised"
+  },
+  "conditionThunderstorm": "Thunderstorm",
+  "@conditionThunderstorm": {
+    "description": "Weather description for the whole group of thunderstorm codes"
+  },
+  "conditionDrizzle": "Drizzle",
+  "@conditionDrizzle": {
+    "description": "Weather description for the whole group of drizzle codes"
+  },
+  "conditionRain": "Rain",
+  "@conditionRain": {
+    "description": "Weather description for the whole group of rain codes"
+  },
+  "conditionSnow": "Snow",
+  "@conditionSnow": {
+    "description": "Weather description for the whole group of snow codes"
+  },
+  "conditionMist": "Mist",
+  "@conditionMist": {
+    "description": "Weather description for the whole group of mist codes"
+  },
+  "conditionClouds": "Clouds",
+  "@conditionClouds": {
+    "description": "Weather description for the whole group of clouds codes"
+  },
+  "condition200": "Thunderstorm with light rain",
+  "@condition200": {
+    "description": "Weather description for OpenWeatherMap condition code 200"
+  },
+  "condition201": "Thunderstorm with rain",
+  "@condition201": {
+    "description": "Weather description for OpenWeatherMap condition code 201"
+  },
+  "condition202": "Thunderstorm with heavy rain",
+  "@condition202": {
+    "description": "Weather description for OpenWeatherMap condition code 202"
+  },
+  "condition210": "Light thunderstorm",
+  "@condition210": {
+    "description": "Weather description for OpenWeatherMap condition code 210"
+  },
+  "condition211": "Thunderstorm",
+  "@condition211": {
+    "description": "Weather description for OpenWeatherMap condition code 211"
+  },
+  "condition212": "Heavy thunderstorm",
+  "@condition212": {
+    "description": "Weather description for OpenWeatherMap condition code 212"
+  },
+  "condition221": "Ragged thunderstorm",
+  "@condition221": {
+    "description": "Weather description for OpenWeatherMap condition code 221"
+  },
+  "condition230": "Thunderstorm with light drizzle",
+  "@condition230": {
+    "description": "Weather description for OpenWeatherMap condition code 230"
+  },
+  "condition231": "Thunderstorm with drizzle",
+  "@condition231": {
+    "description": "Weather description for OpenWeatherMap condition code 231"
+  },
+  "condition232": "Thunderstorm with heavy drizzle",
+  "@condition232": {
+    "description": "Weather description for OpenWeatherMap condition code 232"
+  },
+  "condition300": "Light intensity drizzle",
+  "@condition300": {
+    "description": "Weather description for OpenWeatherMap condition code 300"
+  },
+  "condition301": "Drizzle",
+  "@condition301": {
+    "description": "Weather description for OpenWeatherMap condition code 301"
+  },
+  "condition302": "Heavy intensity drizzle",
+  "@condition302": {
+    "description": "Weather description for OpenWeatherMap condition code 302"
+  },
+  "condition310": "Light intensity drizzle rain",
+  "@condition310": {
+    "description": "Weather description for OpenWeatherMap condition code 310"
+  },
+  "condition311": "Drizzle rain",
+  "@condition311": {
+    "description": "Weather description for OpenWeatherMap condition code 311"
+  },
+  "condition312": "Heavy intensity drizzle rain",
+  "@condition312": {
+    "description": "Weather description for OpenWeatherMap condition code 312"
+  },
+  "condition313": "Shower rain and drizzle",
+  "@condition313": {
+    "description": "Weather description for OpenWeatherMap condition code 313"
+  },
+  "condition314": "Heavy shower rain and drizzle",
+  "@condition314": {
+    "description": "Weather description for OpenWeatherMap condition code 314"
+  },
+  "condition321": "Shower drizzle",
+  "@condition321": {
+    "description": "Weather description for OpenWeatherMap condition code 321"
+  },
+  "condition500": "Light rain",
+  "@condition500": {
+    "description": "Weather description for OpenWeatherMap condition code 500"
+  },
+  "condition501": "Moderate rain",
+  "@condition501": {
+    "description": "Weather description for OpenWeatherMap condition code 501"
+  },
+  "condition502": "Heavy intensity rain",
+  "@condition502": {
+    "description": "Weather description for OpenWeatherMap condition code 502"
+  },
+  "condition503": "Very heavy rain",
+  "@condition503": {
+    "description": "Weather description for OpenWeatherMap condition code 503"
+  },
+  "condition504": "Extreme rain",
+  "@condition504": {
+    "description": "Weather description for OpenWeatherMap condition code 504"
+  },
+  "condition511": "Freezing rain",
+  "@condition511": {
+    "description": "Weather description for OpenWeatherMap condition code 511"
+  },
+  "condition520": "Light intensity shower rain",
+  "@condition520": {
+    "description": "Weather description for OpenWeatherMap condition code 520"
+  },
+  "condition521": "Shower rain",
+  "@condition521": {
+    "description": "Weather description for OpenWeatherMap condition code 521"
+  },
+  "condition522": "Heavy intensity shower rain",
+  "@condition522": {
+    "description": "Weather description for OpenWeatherMap condition code 522"
+  },
+  "condition531": "Ragged shower rain",
+  "@condition531": {
+    "description": "Weather description for OpenWeatherMap condition code 531"
+  },
+  "condition600": "Light snow",
+  "@condition600": {
+    "description": "Weather description for OpenWeatherMap condition code 600"
+  },
+  "condition601": "Snow",
+  "@condition601": {
+    "description": "Weather description for OpenWeatherMap condition code 601"
+  },
+  "condition602": "Heavy snow",
+  "@condition602": {
+    "description": "Weather description for OpenWeatherMap condition code 602"
+  },
+  "condition611": "Sleet",
+  "@condition611": {
+    "description": "Weather description for OpenWeatherMap condition code 611"
+  },
+  "condition612": "Light shower sleet",
+  "@condition612": {
+    "description": "Weather description for OpenWeatherMap condition code 612"
+  },
+  "condition613": "Shower sleet",
+  "@condition613": {
+    "description": "Weather description for OpenWeatherMap condition code 613"
+  },
+  "condition615": "Light rain and snow",
+  "@condition615": {
+    "description": "Weather description for OpenWeatherMap condition code 615"
+  },
+  "condition616": "Rain and snow",
+  "@condition616": {
+    "description": "Weather description for OpenWeatherMap condition code 616"
+  },
+  "condition620": "Light shower snow",
+  "@condition620": {
+    "description": "Weather description for OpenWeatherMap condition code 620"
+  },
+  "condition621": "Shower snow",
+  "@condition621": {
+    "description": "Weather description for OpenWeatherMap condition code 621"
+  },
+  "condition622": "Heavy shower snow",
+  "@condition622": {
+    "description": "Weather description for OpenWeatherMap condition code 622"
+  },
+  "condition701": "Mist",
+  "@condition701": {
+    "description": "Weather description for OpenWeatherMap condition code 701"
+  },
+  "condition711": "Smoke",
+  "@condition711": {
+    "description": "Weather description for OpenWeatherMap condition code 711"
+  },
+  "condition721": "Haze",
+  "@condition721": {
+    "description": "Weather description for OpenWeatherMap condition code 721"
+  },
+  "condition731": "Sand and dust whirls",
+  "@condition731": {
+    "description": "Weather description for OpenWeatherMap condition code 731"
+  },
+  "condition741": "Fog",
+  "@condition741": {
+    "description": "Weather description for OpenWeatherMap condition code 741"
+  },
+  "condition751": "Sand",
+  "@condition751": {
+    "description": "Weather description for OpenWeatherMap condition code 751"
+  },
+  "condition761": "Dust",
+  "@condition761": {
+    "description": "Weather description for OpenWeatherMap condition code 761"
+  },
+  "condition762": "Volcanic ash",
+  "@condition762": {
+    "description": "Weather description for OpenWeatherMap condition code 762"
+  },
+  "condition771": "Squalls",
+  "@condition771": {
+    "description": "Weather description for OpenWeatherMap condition code 771"
+  },
+  "condition781": "Tornado",
+  "@condition781": {
+    "description": "Weather description for OpenWeatherMap condition code 781"
+  },
+  "condition800": "Clear sky",
+  "@condition800": {
+    "description": "Weather description for OpenWeatherMap condition code 800"
+  },
+  "condition801": "Few clouds",
+  "@condition801": {
+    "description": "Weather description for OpenWeatherMap condition code 801"
+  },
+  "condition802": "Scattered clouds",
+  "@condition802": {
+    "description": "Weather description for OpenWeatherMap condition code 802"
+  },
+  "condition803": "Broken clouds",
+  "@condition803": {
+    "description": "Weather description for OpenWeatherMap condition code 803"
+  },
+  "condition804": "Overcast clouds",
+  "@condition804": {
+    "description": "Weather description for OpenWeatherMap condition code 804"
+  }
+}

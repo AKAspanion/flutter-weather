@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterweather/components/ad_banner.dart';
 import 'package:flutterweather/components/btn.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/ads.dart';
+import 'package:flutterweather/services/locale_manager.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/services/providers/weather_provider.dart';
 import 'package:flutterweather/services/weather_cache.dart';
@@ -127,13 +129,19 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ThemeManager(),
-      child: Consumer<ThemeManager>(builder: (_, manager, __) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeManager()),
+        ChangeNotifierProvider(create: (_) => LocaleManager()..load()),
+      ],
+      child: Consumer2<ThemeManager, LocaleManager>(builder: (_, manager, localeManager, __) {
         return MaterialApp(
           title: "Beautiful Weather",
           scaffoldMessengerKey: _messenger,
           theme: manager.themeData,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: localeManager.locale,
           home: Scaffold(
             body: Stack(
               children: [
@@ -403,7 +411,8 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
       debugPrint(e.toString());
       if (location.getWeather() != null) {
         _messenger.currentState?.showSnackBar(
-          SnackBar(content: Text("Couldn't update the weather, showing the last result")),
+          // This State sits above the MaterialApp, so the text is looked up where the snackbar is built.
+          SnackBar(content: Builder(builder: (context) => Text(AppLocalizations.of(context)!.updateFailed))),
         );
       }
     } finally {
