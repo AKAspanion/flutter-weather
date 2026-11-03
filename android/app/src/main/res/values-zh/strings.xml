@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">显示上次查看地点的当前天气和未来 24 小时天气。上下滑动可切换。</string>
+    <string name="widget_empty">打开应用以加载天气</string>
+    <string name="widget_updated">更新于 %1$s</string>
+    <string name="widget_now">现在</string>
+    <string name="widget_next_24_hours">未来 24 小时</string>
+</resources>

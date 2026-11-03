@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">O tempo atual e as próximas 24 horas do último local visto. Deslize para cima ou para baixo para alternar.</string>
+    <string name="widget_empty">Abra o app para carregar o tempo</string>
+    <string name="widget_updated">Atualizado %1$s</string>
+    <string name="widget_now">AGORA</string>
+    <string name="widget_next_24_hours">PRÓXIMAS 24 HORAS</string>
+</resources>
