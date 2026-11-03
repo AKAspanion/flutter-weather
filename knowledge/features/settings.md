@@ -19,8 +19,8 @@ setting:
   filled with the accent colour. Tapping the other one calls `ThemeManager.setTheme`, which sets the override
   [decisions/theme-follows-system](../decisions/theme-follows-system.md) describes: it holds until the system brightness
   changes ([themes and accents](themes-and-accents.md)).
-- **Language.** Shows the current language in its own script, or "System default", and opens the language picker
-  above the panel. Closing or choosing in the picker returns to the panel.
+- **Language.** Shows the current language in its own script, or "System default", in white bold on an accent-filled
+  chip drawn like the selected segment of the toggles, and opens the language picker above the panel. Closing or choosing in the picker returns to the panel.
 - **Temperature.** A °C | °F toggle; the current unit is filled with the accent colour. Tapping the other unit applies
   it at once, so the card, the forecast and the home-screen widget all change ([current weather](current-weather.md),
   [forecast](forecast.md), [widget](home-screen-widget.md)). The panel stays open so the change can be seen.
@@ -52,6 +52,8 @@ The close button in the header closes the panel; there is no close at the bottom
 
 ## History
 
+- 2026-11-03: the Language row showed its value as plain accent-coloured text; now a white bold label on an accent
+  chip like the Theme and Temperature toggles, because the developer found the accent text unreadable on the dark card.
 - 2026-11-03: the panel had Language, Temperature and Rate, its own card width and a close button at the bottom; now it
   also has the Theme row (moved out of the menu's button row) and is built on `OverlayCard` with the close in the header,
   because the developer wanted every choice in settings and one look for every overlay. See

@@ -77,7 +77,15 @@ class SettingsOverlay extends StatelessWidget {
           ),
           ListTile(
             title: Text(l10n.language, style: labelStyle()),
-            trailing: Text(languageName, style: TextStyle(color: accentColor, fontSize: 16)),
+            // Drawn like a selected SegmentedChoice segment: accent text alone was unreadable on the dark card.
+            trailing: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(color: accentColor, borderRadius: BorderRadius.circular(8)),
+              child: Text(
+                languageName,
+                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
             onTap: onLanguage,
           ),
           ListTile(
