@@ -16,9 +16,13 @@ class Menu extends StatelessWidget {
 
   static const double _actionsHeight = 48;
 
-  /// Height of the accent picker (plus the privacy row, when shown) and
-  /// padding, which the home card has to stay clear of while the drawer is open.
-  static double get footerHeight => 24 + 88 + 16 + (Ads.privacyOptionsRequired.value ? _actionsHeight : 0);
+  /// Space between the shrunken home card and the accent picker, so the two never touch.
+  static const double _cardGap = 24;
+
+  /// Height of the accent picker (plus the privacy row, when shown), its padding and the gap above it, which the
+  /// home card has to stay clear of while the drawer is open.
+  static double get footerHeight =>
+      _cardGap + 24 + 88 + 16 + (Ads.privacyOptionsRequired.value ? _actionsHeight : 0);
 
   const Menu({
     Key? key,
