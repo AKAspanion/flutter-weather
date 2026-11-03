@@ -12,6 +12,8 @@ information and analytics. The two tasks share no file and run side by side.
 
 **Spec:** `docs/specs/2026-11-03-owm-key-and-privacy.md`
 
+**Status:** complete
+
 ## Global Constraints
 
 - New Dart code is formatted at 120 columns with typed callbacks (`decisions/code-style-120-typed`).
@@ -59,21 +61,21 @@ rotated; `operations/environment`: a blank `OPENWEATHERMAP_KEY` skips OpenWeathe
 - Given `ApiKeys.openWeatherMap` is `''`, when an `OpenWeatherMapProvider` is built with it, then `isConfigured` is `false`.
 - Given `lib/config/api_keys.dart` after the change, when it is searched for a string literal assigned to `openWeatherMap`, then there is none (checked by reading the file, not by a test that holds the key).
 
-- [ ] **Step 1: Write the failing tests** for the first two Acceptance cases, in `test/api_keys_test.dart`
+- [x] **Step 1: Write the failing tests** for the first two Acceptance cases, in `test/api_keys_test.dart`
 
-- [ ] **Step 2: Run them to verify they fail**
+- [x] **Step 2: Run them to verify they fail**
 
 Run: `flutter test test/api_keys_test.dart`
 Expected: FAIL on the first case, because the fallback makes the key non-empty
 
-- [ ] **Step 3: Remove the fallback** in `lib/config/api_keys.dart`, and drop "the bundled OpenWeatherMap key" from the README's blank-value sentence
+- [x] **Step 3: Remove the fallback** in `lib/config/api_keys.dart`, and drop "the bundled OpenWeatherMap key" from the README's blank-value sentence
 
-- [ ] **Step 4: Run them to verify they pass**
+- [x] **Step 4: Run them to verify they pass**
 
 Run: `flutter test test/api_keys_test.dart`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add test/api_keys_test.dart lib/config/api_keys.dart README.md
@@ -108,24 +110,24 @@ git commit -m "Remove the bundled OpenWeatherMap key, so OpenWeatherMap is skipp
 - Given the reworded `privacy.md`, when its header is read, then it says "*Last Updated: 03/11/2026*".
 - Given the reworded `privacy.md`, when the Location, Advertising, Weather Services, Home Screen Widget, Data Security, Changes and Contact sections are compared with `master`, then their text is unchanged.
 
-- [ ] **Step 1: Search `privacy.md`** for the four removed terms and note each hit
+- [x] **Step 1: Search `privacy.md`** for the four removed terms and note each hit
 
 Run: `grep -n -i -E "analytics|usage information|device information|personalization" privacy.md`
 Expected: hits in the sections to remove
 
-- [ ] **Step 2: Edit `privacy.md`** per the Spec lines above
+- [x] **Step 2: Edit `privacy.md`** per the Spec lines above
 
-- [ ] **Step 3: Search again to verify** the removed terms are gone
+- [x] **Step 3: Search again to verify** the removed terms are gone
 
 Run: `grep -n -i -E "analytics|usage information|device information|personalization" privacy.md`
 Expected: no output
 
-- [ ] **Step 4: Compare the kept sections** with `master`
+- [x] **Step 4: Compare the kept sections** with `master`
 
 Run: `git diff master -- privacy.md`
 Expected: changes only in the header date, Personal Information, Usage and Device Information, How We Use, and Third-Party Services
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add privacy.md
