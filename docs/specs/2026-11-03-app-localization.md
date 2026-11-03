@@ -51,8 +51,11 @@ Each language shows in its own script, so a user who can't read the current lang
 
 ### 2. Strings moved to the `.arb` files
 
-- Weather view: greetings (good morning / afternoon / evening / night), the sunrise, wind and humidity chip labels,
-  and "My location" (`lib/services/weather_service.dart`).
+- Weather view: greetings (good morning / afternoon / evening / night), and the sunrise, wind and humidity chip
+  labels.
+- "My location": `WeatherService` (`lib/services/weather_service.dart`) has no locale, so it leaves the place name
+  empty when no geocoder names the coordinates, and the weather view and the widget show the translated "My location"
+  for an empty name. A report cached before this change still holds the English text until the next refresh.
 - Forecast: "Next hours", "Forecast for the next 48 hours", "Next days", "Forecast for the next {count} days" (an ICU
   plural), "Min", "Max".
 - City dialog: "City name". Menu: "Privacy". Error view: "Error fetching weather details". Snackbar: "Couldn't update
