@@ -400,3 +400,71 @@ Expected: PASS
 git add lib/services/theme_manager.dart test/theme_manager_test.dart
 git commit -m "Follow the system dark mode, with the theme button as an override until the system changes."
 ```
+
+---
+
+### Task 5: Compact layout below full width, with no ellipsis
+
+Added after testing on a Galaxy (One UI): a 3-cell card got the wide layout and ellipsized.
+
+**Files:**
+- Modify: `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`
+- Modify: `android/app/src/main/res/layout/weather_widget_small.xml`
+- Test: `test/widget_layout_resources_test.dart`
+
+**Interfaces:**
+- Consumes: the two layouts, `backgroundFor` and `scaleFor` (Task 1); `card_icon_slot` and `iconLayoutFor` (Task 2).
+- Produces:
+
+```kotlin
+// WeatherWidgetProvider companion: SMALL_WIDTH is removed.
+const val WIDE_WIDTH = 300f    // dp; at or above it weather_widget.xml, below it weather_widget_small.xml
+const val DETAILS_WIDTH = 220f // dp; the compact layout shows card_details at or above it, hides it below
+// weather_widget_small.xml gains card_details (a row with card_sunrise_icon, card_sunrise, card_wind_icon,
+// card_wind, card_humidity_icon, card_humidity); it has no card_updated.
+```
+
+**Spec:**
+- §1: "The wide layout (`weather_widget.xml`) is used only when the reported width is at least `WIDE_WIDTH = 300` dp (full width, 4 cells). Everything narrower uses the compact layout (`weather_widget_small.xml`)."
+- §1: "The compact layout: the city / NOW header; line 1 the icon and the temperature; line 2 a subtitle, the description then the high/low. No text in it ellipsizes: the city and the subtitle wrap onto another line instead."
+- §1: "The compact layout shows the sunrise / wind / humidity row while the reported width is at least `DETAILS_WIDTH = 220` dp (3 cells), and hides it below (2x2). "Updated" appears only in the wide layout."
+- §1: "`SMALL_WIDTH` goes, replaced by those two constants."
+
+**Knowledge:** `features/home-screen-widget`: the wide layout is used at `WIDE_WIDTH` and above, and narrower cards use
+the compact layout, which keeps the details row from `DETAILS_WIDTH` and never ellipsizes.
+
+**Acceptance:**
+- Given `weather_widget_small.xml`, when `test/widget_layout_resources_test.dart` reads it, then no element has an
+  `android:ellipsize` attribute, and it has `card_details` holding `card_sunrise`, `card_wind` and `card_humidity`,
+  and no `card_updated`.
+- Given `WeatherWidgetProvider.kt` read as text, then it declares `WIDE_WIDTH = 300f` and `DETAILS_WIDTH = 220f` and
+  no longer names `SMALL_WIDTH`.
+- Given the change, when `flutter build apk --debug` runs, then it succeeds.
+
+- [ ] **Step 1: Write the failing tests** for the two resource cases in `test/widget_layout_resources_test.dart`.
+
+- [ ] **Step 2: Run them to verify they fail**
+
+Run: `flutter test test/widget_layout_resources_test.dart`
+Expected: FAIL: the small layout still ellipsizes and has no `card_details`.
+
+- [ ] **Step 3: Change the compact layout and the provider** (choose the layout by `WIDE_WIDTH`, set `card_details`
+  visibility by `DETAILS_WIDTH`, fill and scale the details row in the compact layout as the wide one does).
+
+- [ ] **Step 4: Run the tests and verify they pass**
+
+Run: `flutter test test/widget_layout_resources_test.dart`
+Expected: PASS
+
+- [ ] **Step 5: Build to verify the Android side compiles**
+
+Run: `flutter build apk --debug`
+Expected: `Built build/app/outputs/flutter-apk/app-debug.apk`
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt \
+  android/app/src/main/res/layout/weather_widget_small.xml test/widget_layout_resources_test.dart
+git commit -m "Use the wide widget layout only at full width, and a compact two-line layout without ellipsis below it."
+```

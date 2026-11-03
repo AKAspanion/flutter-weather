@@ -16,8 +16,9 @@ the widget picker with its own preview, or the same widget resized.
 
 ## Decision
 
-- One widget provider, one entry in the picker. It still opens at 4x2, and resizes down to 2x2. When the card is
-  narrow it switches to a compact layout (city, icon with temperature, description, high and low).
+- One widget provider, one entry in the picker. It still opens at 4x2, and resizes down to 2x2. Below full width it
+  switches to a compact layout: the icon with the temperature, then the description and high/low as a subtitle, with
+  no ellipsis; the sunrise / wind / humidity row stays at 3 cells and goes at 2.
 - The widget shows only Now. The 24-hour page, the vertical swipe between pages, and the StackView that carried them
   go, so the card is one plain layout.
 
@@ -29,6 +30,12 @@ the 4x2 without asking which.
 - A user who wants a 2x2 card adds the widget and shrinks it; there is no separate 2x2 entry.
 - The app no longer sends the hourly entries to the widget.
 - Without the StackView, the overhang and item-id workarounds it needed are gone.
+
+## History
+
+- 2026-11-03: the compact layout was for 2x2 only, with the full layout from 3 cells; now the full layout is for full
+  width only and everything narrower is compact with no ellipsis, because on a Galaxy the 3-cell card ellipsized its
+  text. See [the spec](../../docs/specs/2026-11-03-widget-testing-feedback.md).
 
 ## Sources
 

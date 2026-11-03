@@ -41,6 +41,15 @@ refresh uses the last place viewed) and [decisions/android-only](../../knowledge
 - `render` builds one `RemoteViews` per reported size on Android 12+ (as today, `RemoteViews(Map<SizeF, RemoteViews>)`)
   and one from `portraitSize` before 12. A card narrower than a width constant in the provider (a 2-cell card is about
   110–160 dp wide, 3 cells about 200 dp) uses the small layout; the constant's value is set and commented there.
+- Amended after testing on a Galaxy (One UI), 2026-11-03: One UI reports a 3x2 card as `235.52x217.6` dp and draws it
+  scaled by `hsResizeRatio` (`0.8333`), so 3 cells got the wide layout and ellipsized. Now:
+  - The wide layout (`weather_widget.xml`) is used only when the reported width is at least `WIDE_WIDTH = 300` dp
+    (full width, 4 cells). Everything narrower uses the compact layout (`weather_widget_small.xml`).
+  - The compact layout: the city / NOW header; line 1 the icon and the temperature; line 2 a subtitle, the description
+    then the high/low. No text in it ellipsizes: the city and the subtitle wrap onto another line instead.
+  - The compact layout shows the sunrise / wind / humidity row while the reported width is at least
+    `DETAILS_WIDTH = 220` dp (3 cells), and hides it below (2x2). "Updated" appears only in the wide layout.
+  - `SMALL_WIDTH` goes, replaced by those two constants.
 - `weather_widget_info.xml`: `minResizeWidth` and `minResizeHeight` become `110dp`. `minWidth`, `minHeight` and
   `targetCellWidth`/`targetCellHeight` (4x2) stay, so the picker and the pin dialog still add a 4x2.
 - The whole card, and the empty view, open the app with `HomeWidgetLaunchIntent.getActivity`.
