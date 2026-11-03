@@ -140,11 +140,13 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
 
             views.text(R.id.card_city, 12f, scale)
             views.text(R.id.card_label, 12f, scale)
-            views.text(R.id.card_temperature, 30f, scale)
+            // The icon and the temperature fill the card's middle band, so they grow with it.
+            val compactScale = compactScaleFor(size)
+            views.text(R.id.card_temperature, 30f, compactScale)
             views.text(R.id.card_description, 12f, scale)
             views.text(R.id.card_detail, 12f, scale)
             listOf(R.id.card_sunrise, R.id.card_wind, R.id.card_humidity).forEach { views.text(it, 12f, scale) }
-            views.image(R.id.card_icon_slot, 40f, scale)
+            views.image(R.id.card_icon_slot, 40f, compactScale)
             listOf(R.id.card_sunrise_icon, R.id.card_wind_icon, R.id.card_humidity_icon).forEach {
                 views.image(it, 16f, scale)
             }
@@ -174,6 +176,15 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
     private fun scaleFor(card: SizeF?): Float {
         if (card == null) return 1f
         return minOf(card.height / 125f, card.width / 300f).coerceIn(1f, 1.6f)
+    }
+
+    /**
+     * The scale of the compact layout's icon and temperature: they grow with the card from the
+     * 2x2 size the layout is designed for, so a 3x2 (about 235 x 217 dp) gets about 1.45x.
+     */
+    private fun compactScaleFor(card: SizeF?): Float {
+        if (card == null) return 1f
+        return minOf(card.width / COMPACT_DESIGN_WIDTH, card.height / COMPACT_DESIGN_HEIGHT).coerceIn(1f, 1.6f)
     }
 
     private fun RemoteViews.text(id: Int, sp: Float, scale: Float) {
@@ -254,5 +265,9 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
          * which is 3 cells (about 235dp); a 2x2 (about 129dp) has no room for it.
          */
         const val DETAILS_WIDTH = 220f
+
+        /** The 2x2 size (dp) the compact layout is designed for; [compactScaleFor] scales from it. */
+        const val COMPACT_DESIGN_WIDTH = 130f
+        const val COMPACT_DESIGN_HEIGHT = 150f
     }
 }

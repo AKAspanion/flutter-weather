@@ -31,4 +31,14 @@ void main() {
     expect(kotlin, contains('const val DETAILS_WIDTH = 220f'));
     expect(kotlin, isNot(contains('SMALL_WIDTH')));
   });
+
+  test('the compact layout scales its icon and temperature by their own scale, not by scaleFor', () {
+    final kotlin = File(provider).readAsStringSync();
+    expect(kotlin, contains('const val COMPACT_DESIGN_WIDTH = 130f'));
+    expect(kotlin, contains('const val COMPACT_DESIGN_HEIGHT = 150f'));
+    expect(kotlin, contains('views.text(R.id.card_temperature, 30f, compactScale)'));
+    expect(kotlin, contains('views.image(R.id.card_icon_slot, 40f, compactScale)'));
+    expect(kotlin, isNot(contains('card_temperature, 30f, scale)')));
+    expect(kotlin, isNot(contains('card_icon_slot, 40f, scale)')));
+  });
 }
