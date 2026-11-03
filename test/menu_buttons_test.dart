@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterweather/components/btn.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/views/home/home.dart';
 import 'package:flutterweather/services/location.dart';
@@ -13,7 +14,7 @@ const List<IconData> _withWidget = [
   Icons.refresh,
   Icons.brightness_3,
   Icons.widgets,
-  Icons.translate,
+  Icons.settings,
   Icons.location_on,
   Icons.close,
 ];
@@ -38,6 +39,9 @@ Future<void> _pump(
     ChangeNotifierProvider<ThemeManager>(
       create: (_) => ThemeManager(),
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
         home: Directionality(
           textDirection: direction,
           child: Scaffold(
@@ -52,7 +56,7 @@ Future<void> _pump(
                     onTheme: c.call('theme'),
                     themeIcon: Icon(Icons.brightness_3),
                     onPinWidget: canPin ? c.call('widget') : null,
-                    onLanguage: c.call('language'),
+                    onSettings: c.call('settings'),
                     onLocation: c.call('location'),
                     onClose: c.call('close'),
                   ),
@@ -123,13 +127,22 @@ void main() {
     expect(tester.getTopLeft(_button(Icons.refresh)).dx, greaterThan(tester.getTopLeft(_button(Icons.close)).dx));
   });
 
-  testWidgets('tapping translate calls onLanguage once and nothing else', (tester) async {
+  testWidgets('tapping the gear calls onSettings once and nothing else', (tester) async {
     final calls = _Calls();
     await _pump(tester, width: 412, calls: calls);
 
-    await tester.tap(_button(Icons.translate));
+    await tester.tap(_button(Icons.settings));
 
-    expect(calls.names, ['language']);
+    expect(calls.names, ['settings']);
+  });
+
+  testWidgets('the gear is announced as Settings, and there is no translate button', (tester) async {
+    final handle = tester.ensureSemantics();
+    await _pump(tester, width: 412);
+
+    expect(find.bySemanticsLabel('Settings'), findsOneWidget);
+    expect(find.byIcon(Icons.translate), findsNothing);
+    handle.dispose();
   });
 
   testWidgets('Home has no translate button', (tester) async {
