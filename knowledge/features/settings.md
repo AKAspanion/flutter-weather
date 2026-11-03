@@ -1,7 +1,7 @@
 ---
 type: Feature
 title: Settings panel
-description: A gear in the menu's button row opens a panel with Language, a °C | °F temperature toggle and Rate on Google Play; every future setting is a row there.
+description: A gear in the menu's button row opens a panel with a Theme toggle, Language, a °C | °F temperature toggle and Rate on Google Play; every future setting is a row there.
 status: draft
 generated: { by: after-finish/claude-sonnet-5-5, at: 2026-11-03T14:40:00+05:30 }
 ---
@@ -11,9 +11,14 @@ generated: { by: after-finish/claude-sonnet-5-5, at: 2026-11-03T14:40:00+05:30 }
 ## What it does
 
 The gear (`Icons.settings`) in the menu's top button row, where the translate button used to be, opens `SettingsOverlay`:
-a dimmed full-screen layer with a centred card, laid out like the language list ([language picker](language-picker.md)).
-Its title is the translated "Settings" and it has one row per setting:
+built on the shared `OverlayCard` ([decision](../decisions/overlays-share-one-card.md)): a dimmed full-screen layer with
+a centred card, the translated "Settings" as its title at the start and the close button at the end. It has one row per
+setting:
 
+- **Theme.** A ☀ | ☾ toggle (`SegmentedChoice<AppTheme>`, with "Light" and "Dark" as semantic labels); the current theme is
+  filled with the accent colour. Tapping the other one calls `ThemeManager.setTheme`, which sets the override
+  [decisions/theme-follows-system](../decisions/theme-follows-system.md) describes: it holds until the system brightness
+  changes ([themes and accents](themes-and-accents.md)).
 - **Language.** Shows the current language in its own script, or "System default", and opens the language picker
   above the panel. Closing or choosing in the picker returns to the panel.
 - **Temperature.** A °C | °F toggle; the current unit is filled with the accent colour. Tapping the other unit applies
@@ -22,8 +27,7 @@ Its title is the translated "Settings" and it has one row per setting:
 - **Rate on Google Play.** Opens the app's store page; if neither address opens, a snackbar says so
   ([decision](../decisions/rate-via-play-store-page.md)).
 
-A close button closes the panel. The panel is `size.width - 64` wide, not the language list's `- 100`, because the
-label and the toggle need the room.
+The close button in the header closes the panel; there is no close at the bottom.
 
 ## Screens and routes
 
@@ -46,8 +50,17 @@ label and the toggle need the room.
 - Tapping the unit that is already chosen does nothing.
 - `°C` and `°F` are not translated.
 
+## History
+
+- 2026-11-03: the panel had Language, Temperature and Rate, its own card width and a close button at the bottom; now it
+  also has the Theme row (moved out of the menu's button row) and is built on `OverlayCard` with the close in the header,
+  because the developer wanted every choice in settings and one look for every overlay. See
+  [overlays share one card](../decisions/overlays-share-one-card.md).
+
 ## Sources
 
+* `lib/components/overlay_card.dart`
+* `lib/components/segmented_choice.dart`
 * `lib/views/settings/settings_overlay.dart`
 * `lib/views/menu/menu_buttons.dart`
 * `lib/services/unit_manager.dart`
@@ -59,3 +72,4 @@ label and the toggle need the room.
 * `test/play_store_test.dart`
 * `test/menu_buttons_test.dart`
 * `docs/specs/2026-11-03-settings-menu.md`
+* `docs/specs/2026-11-03-overlay-consistency.md`

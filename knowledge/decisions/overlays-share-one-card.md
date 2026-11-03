@@ -33,6 +33,8 @@ top right.
 ## Sources
 
 * `docs/specs/2026-11-03-overlay-consistency.md`
+* `lib/components/overlay_card.dart`
+* `lib/components/segmented_choice.dart`
 * `lib/views/home/dialog_overlay.dart`
 * `lib/views/home/language_overlay.dart`
 * `lib/views/settings/settings_overlay.dart`

@@ -18,7 +18,7 @@ SDK sends ([data protection](../security/data-protection.md)).
 | `last_report` | the last `WeatherReport`, as JSON | `WeatherCache.save` | `WeatherCache.loadReport`, at launch |
 | `last_query` | the last `WeatherQuery`, as JSON | `WeatherCache.save` | `WeatherCache.loadQuery`, in the background refresh |
 | `city_preference` | the searched city, or empty to use the device location | `setCity` in `lib/main.dart` | `getCity` in `lib/main.dart` |
-| `theme_preference` | the index of the `AppTheme` the theme button chose, an override; absent when following the system | `ThemeManager.setTheme` | `ThemeManager` at start-up |
+| `theme_preference` | the index of the `AppTheme` the settings panel's Theme row chose, an override; absent when following the system | `ThemeManager.setTheme` | `ThemeManager` at start-up |
 | `theme_preference_system` | the `Brightness` index the override was made against; the override ends when the system brightness differs | `ThemeManager.setTheme` | `ThemeManager` at start-up |
 | `accent_preference` | the index of the accent gradient | `setAccent` in `lib/main.dart` | `getAccent` in `lib/main.dart` |
 | `temperature_unit` | `celsius` or `fahrenheit`; absent means the phone's region decides | `UnitManager.setUnit` | `UnitManager.load` at start-up, and `WeatherWidget.temperatureUnit` in the background refresh |

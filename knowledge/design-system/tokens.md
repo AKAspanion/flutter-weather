@@ -28,8 +28,8 @@ inline.
 
 These values are repeated inline, not named:
 
-- Cards and buttons: rounded corners (12 for buttons, dialogs and day cards; 24 for the home card while the menu is
-  open), and a soft `BoxShadow` in `Colors.black38`. See `Btn` in `lib/components/btn.dart` (56 square unless given a `size`) and `Home` in
+- Cards and buttons: rounded corners (12 for buttons, the overlay card and day cards; 24 for the home card while the menu is
+  open), and a soft `BoxShadow` in `Colors.black38`. See `Btn` in `lib/components/btn.dart` (56 square unless given a `size`), `OverlayCard` in `lib/components/overlay_card.dart` and `Home` in
   `lib/views/home/home.dart`.
 - Screen padding of 24 around the main card, and 24 from the top for the menu's button row, which has 16 at its sides
   (`lib/main.dart`, `lib/views/home/home.dart`, `lib/views/menu/menu_buttons.dart`).
@@ -44,12 +44,17 @@ These values are repeated inline, not named:
   ([forecast](../features/forecast.md), [supported languages](../decisions/supported-languages.md)).
 - Headings are upper case and bold. Sizes are set inline per widget.
 
+## History
+
+- 2026-11-03: dialogs repeated their own radius and shadow; now the overlay card holds them once, because the three overlays share `OverlayCard`. See [overlays share one card](../decisions/overlays-share-one-card.md).
+
 ## Sources
 
 * `lib/theme/gradients.dart`
 * `lib/theme/app_theme.dart`
 * `lib/services/theme_manager.dart`
 * `lib/components/btn.dart`
+* `lib/components/overlay_card.dart`
 * `lib/views/menu/menu_buttons.dart`
 * `lib/views/home/home.dart`
 * `lib/main.dart`
