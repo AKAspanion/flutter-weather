@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/views/menu/menu.dart';
@@ -13,6 +14,7 @@ class Home extends StatelessWidget {
   final Location location;
   final void Function() onNavPress;
   final void Function() onMorePress;
+  final void Function() onLanguagePress;
   final Animation<double> controller;
 
   /// Space kept free at the bottom for the banner ad.
@@ -23,6 +25,7 @@ class Home extends StatelessWidget {
   Home({
     required this.isDrawerOpen,
     required this.onMorePress,
+    required this.onLanguagePress,
     required this.onNavPress,
     this.accent = 0,
     required this.controller,
@@ -43,9 +46,10 @@ class Home extends StatelessWidget {
 
     final double y = isDrawerOpen ? top : 0;
     final double x = isDrawerOpen ? (size.width - size.width * factor) / 2 : 0;
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
 
     return GestureDetector(
-      onHorizontalDragEnd: onDragEnd,
+      onHorizontalDragEnd: (details) => onDragEnd(details, rtl),
       onHorizontalDragStart: onDragStart,
       onHorizontalDragUpdate: onDragUpdate,
       child: AnimatedContainer(
@@ -69,6 +73,15 @@ class Home extends StatelessWidget {
                   Hamburger(
                     isDrawerOpen: isDrawerOpen,
                     onPressed: onNavPress,
+                  ),
+                  IconButton(
+                    iconSize: 36,
+                    tooltip: AppLocalizations.of(context)!.language,
+                    onPressed: loading || isDrawerOpen ? null : onLanguagePress,
+                    icon: Icon(
+                      Icons.translate,
+                      size: 36,
+                    ),
                   ),
                   IconButton(
                     iconSize: 36,
@@ -96,8 +109,10 @@ class Home extends StatelessWidget {
     );
   }
 
-  void onDragEnd(DragEndDetails details) {
+  /// The menu opens with a swipe towards the end of the line, so right to left it is a swipe to the left.
+  void onDragEnd(DragEndDetails details, bool rtl) {
     double diff = homeDragData.start - homeDragData.end;
+    if (rtl) diff = -diff;
     if ((isDrawerOpen && diff > 0) || (!isDrawerOpen && diff < 0)) {
       onNavPress();
     }

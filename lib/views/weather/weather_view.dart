@@ -1,6 +1,8 @@
 import 'package:flutterweather/components/flare_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterweather/services/calendar.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
+import 'package:flutterweather/l10n/conditions.dart';
+import 'package:flutterweather/l10n/dates.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/gradients.dart';
 import 'package:flutterweather/views/weather/weather_detail_chip.dart';
@@ -48,6 +50,8 @@ class LocationView extends StatelessWidget {
         super(key: key);
 
   Widget _buildAnimation(BuildContext context, Widget? child) {
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
+    final String locale = Localizations.localeOf(context).toString();
     return Column(
       mainAxisSize: MainAxisSize.max,
       verticalDirection: VerticalDirection.down,
@@ -65,7 +69,7 @@ class LocationView extends StatelessWidget {
                   bottom: 4,
                 ),
                 child: Text(
-                  '${weather.name!.toUpperCase()}',
+                  (weather.name?.isNotEmpty == true ? weather.name! : l10n.myLocation).toUpperCase(),
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
@@ -75,7 +79,7 @@ class LocationView extends StatelessWidget {
               Container(
                 transform: Matrix4.translationValues(0, yTranslate.value, 0),
                 child: Text(
-                  '${getDateTime(weather.timezone)}',
+                  getDateTime(weather.timezone, locale),
                   style: TextStyle(
                     fontSize: 12,
                     letterSpacing: 2,
@@ -122,7 +126,7 @@ class LocationView extends StatelessWidget {
                 transform:
                     Matrix4.translationValues(0, yTranslate.value * 0.7, 0),
                 child: Text(
-                  '${getGreeting(weather.timezone)}',
+                  getGreeting(weather.timezone, l10n),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -134,7 +138,7 @@ class LocationView extends StatelessWidget {
                 transform:
                     Matrix4.translationValues(0, yTranslate.value * 0.7, 0),
                 child: Text(
-                  '${weather.description!.toUpperCase()}',
+                  describeCondition(l10n, weather.condition).toUpperCase(),
                   style: TextStyle(
                     fontSize: 12,
                     letterSpacing: 2,
@@ -156,19 +160,19 @@ class LocationView extends StatelessWidget {
               children: [
                 WeatherDetailChip(
                   icon: "sun",
-                  text: "sunrise",
-                  value: '${getSunriseTime(weather.sunrise, weather.timezone)}',
+                  text: l10n.sunrise,
+                  value: getSunriseTime(weather.sunrise, weather.timezone, locale),
                   gradient: GradientValues().gradients[accent].gradient,
                 ),
                 WeatherDetailChip(
                   icon: "wind",
-                  text: "wind",
+                  text: l10n.wind,
                   value: '${weather.windSpeed}m/s',
                   gradient: GradientValues().gradients[accent].gradient,
                 ),
                 WeatherDetailChip(
                   icon: "drop",
-                  text: "humidity",
+                  text: l10n.humidity,
                   value: '${weather.humidity}%',
                   gradient: GradientValues().gradients[accent].gradient,
                 ),
@@ -194,40 +198,33 @@ class LocationView extends StatelessWidget {
     );
   }
 
-  String getSunriseTime(int? date, int? zone) {
+  String getSunriseTime(int? date, int? zone, String locale) {
     if (date == null) return "--";
-    DateTime now =
-        DateTime.fromMillisecondsSinceEpoch(date * 1000, isUtc: true);
-    DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
-    final int hour = zoneTime.hour > 12 ? zoneTime.hour - 12 : zoneTime.hour;
-    return '$hour:${zoneTime.minute.toString().padLeft(2, '0')}'.toUpperCase();
+    DateTime now = DateTime.fromMillisecondsSinceEpoch(date * 1000, isUtc: true);
+    return timeLabel(now.add(Duration(seconds: zone ?? 0)), locale);
   }
 
-  String getDateTime(int? zone) {
+  String getDateTime(int? zone, String locale) {
     DateTime now = DateTime.now().toUtc();
-    DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
-
-    final String ampm = zoneTime.hour >= 12 ? 'pm' : 'am';
-    int hour = zoneTime.hour > 12 ? zoneTime.hour - 12 : zoneTime.hour;
-    hour = hour == 0 ? 12 : hour;
-    return '${zoneTime.day} ${CalendarHelper.months[zoneTime.month - 1]}, ${CalendarHelper.weekdays[zoneTime.weekday - 1]} $hour $ampm'
-        .toUpperCase();
+    return dateLineLabel(now.add(Duration(seconds: zone ?? 0)), locale).toUpperCase();
   }
 
-  String getGreeting(int? zone) {
+  String getGreeting(int? zone, AppLocalizations l10n) {
     DateTime now = DateTime.now().toUtc();
     DateTime zoneTime = now.add(Duration(seconds: zone ?? 0));
 
     final int hour = zoneTime.hour;
 
+    final String greeting;
     if (hour > 19 || hour <= 5) {
-      return "GOOD NIGHT";
+      greeting = l10n.greetingNight;
     } else if (hour > 5 && hour < 12) {
-      return "GOOD MORNING";
+      greeting = l10n.greetingMorning;
     } else if (hour >= 12 && hour < 16) {
-      return "GOOD AFTERNOON";
+      greeting = l10n.greetingAfternoon;
     } else {
-      return "GOOD EVENING";
+      greeting = l10n.greetingEvening;
     }
+    return greeting.toUpperCase();
   }
 }

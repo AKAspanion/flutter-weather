@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/services/weather.dart';
@@ -87,22 +88,22 @@ class Forecast extends StatelessWidget {
                     top: 16,
                   ),
                   height: size.height - 76 - bottomInset,
-                  child: _buildList(),
+                  child: _buildList(AppLocalizations.of(context)!),
                 ),
               ],
             ),
     );
   }
 
-  Widget _buildList() {
+  Widget _buildList(AppLocalizations l10n) {
     final List<Weather> daily = location.getDaily();
     final List<Widget> header = [
       _translateBuilder(
-        _title("NEXT HOURS", top: 40),
+        _title(l10n.nextHours.toUpperCase(), top: 40),
         amount: 0.4,
       ),
       _translateBuilder(
-        _subtitle("Forecast for the next 48 hours", bottom: 16),
+        _subtitle(l10n.nextHoursSubtitle, bottom: 16),
         amount: 0.4,
       ),
       _translateBuilder(
@@ -113,11 +114,11 @@ class Forecast extends StatelessWidget {
         amount: 0.6,
       ),
       _translateBuilder(
-        _title("NEXT DAYS", top: 48),
+        _title(l10n.nextDays.toUpperCase(), top: 48),
         amount: 0.8,
       ),
       _translateBuilder(
-        _subtitle("Forecast for the next ${daily.length} days", bottom: 8),
+        _subtitle(l10n.nextDaysSubtitle(daily.length), bottom: 8),
         amount: 0.8,
       ),
     ];

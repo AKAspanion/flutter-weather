@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterweather/components/flare_icon.dart';
-import 'package:flutterweather/services/calendar.dart';
+import 'package:flutterweather/l10n/dates.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/gradients.dart';
 
@@ -32,7 +32,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
         curve: Curves.easeInOutCirc,
         padding: EdgeInsets.symmetric(vertical: 16),
         duration: Duration(milliseconds: 500),
-        margin: EdgeInsets.only(right: 24, top: 12, bottom: 12),
+        margin: EdgeInsetsDirectional.only(end: 24, top: 12, bottom: 12),
         width: width,
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
@@ -51,7 +51,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
-                getTime(weather),
+                getTime(weather, Localizations.localeOf(context).toString()),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.white,
@@ -180,22 +180,11 @@ class _HourlyDetailState extends State<HourlyDetail> {
     });
   }
 
-  String getTime(Weather weather) {
-    DateTime now =
-        DateTime.fromMillisecondsSinceEpoch(weather.date! * 1000, isUtc: true);
+  String getTime(Weather weather, String locale) {
+    DateTime now = DateTime.fromMillisecondsSinceEpoch(weather.date! * 1000, isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
 
-    final suffix = zoneTime.hour >= 12 ? "PM" : "AM";
-    final hours = ((zoneTime.hour + 11) % 12 + 1);
-
-    String date = "";
-
-    if (expanded) {
-      date += ", ${CalendarHelper.weekdays[zoneTime.weekday - 1]}";
-      date += "  ${zoneTime.day} ${CalendarHelper.months[zoneTime.month - 1]} ";
-    }
-
-    return "$hours $suffix$date".toUpperCase();
+    return (expanded ? dateLineLabel(zoneTime, locale) : timeLabel(zoneTime, locale)).toUpperCase();
   }
 
   String getNight(Weather weather) {

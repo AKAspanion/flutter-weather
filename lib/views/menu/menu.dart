@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/ads.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/theme/gradients.dart';
@@ -37,12 +38,12 @@ class Menu extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment(0.8, 0.0),
+          begin: AlignmentDirectional.centerStart,
+          end: AlignmentDirectional(0.8, 0.0),
           colors: colors,
         ),
       ),
-      padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
+      padding: EdgeInsetsDirectional.fromSTEB(24, 24, 24, 24 + bottomInset),
       child: Column(
         verticalDirection: VerticalDirection.up,
         mainAxisSize: MainAxisSize.max,
@@ -55,7 +56,7 @@ class Menu extends StatelessWidget {
                 ? SizedBox(height: 16)
                 : SizedBox(
                     height: _actionsHeight,
-                    child: Center(child: _action("PRIVACY", Ads.showPrivacyOptions)),
+                    child: Center(child: _action(AppLocalizations.of(context)!.privacy.toUpperCase(), Ads.showPrivacyOptions)),
                   ),
           ),
           Container(
@@ -88,8 +89,8 @@ class Menu extends StatelessWidget {
                           BoxShadow(color: Colors.black12, blurRadius: 6.0)
                         ],
                         gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment(0.8, 0.0),
+                          begin: AlignmentDirectional.centerStart,
+                          end: AlignmentDirectional(0.8, 0.0),
                           colors: GradientValues().gradients[i].gradient,
                         ),
                       ),

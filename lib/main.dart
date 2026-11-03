@@ -14,6 +14,7 @@ import 'package:flutterweather/theme/app_theme.dart';
 import 'package:flutterweather/views/forecast/forecast.dart';
 import 'package:flutterweather/views/home/dialog_overlay.dart';
 import 'package:flutterweather/views/home/home.dart';
+import 'package:flutterweather/views/home/language_overlay.dart';
 import 'package:flutterweather/views/menu/menu.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:geolocator/geolocator.dart';
@@ -31,6 +32,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   bool loading = true;
   int selectedAccent = 0;
   bool isDialogOpen = false;
+  bool isLanguageOpen = false;
   bool isDrawerOpen = false;
   bool isForecastOpen = false;
   // Keeps the forecast's animated icons alive only while the panel is on screen.
@@ -152,7 +154,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   onNavPress: toggleMenu,
                   bottomInset: adHeight,
                 ),
-                Positioned(
+                PositionedDirectional(
                   child: _translateBuilder(
                     Btn(
                       onPress: onRefresh,
@@ -164,9 +166,9 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                     amount: 0.6,
                   ),
                   top: 24,
-                  left: 24,
+                  start: 24,
                 ),
-                Positioned(
+                PositionedDirectional(
                   child: _translateBuilder(
                     Btn(
                       onPress: toggleMenu,
@@ -178,9 +180,9 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                     amount: 0.6,
                   ),
                   top: 24,
-                  right: 24,
+                  end: 24,
                 ),
-                Positioned(
+                PositionedDirectional(
                   child: _translateBuilder(
                     Btn(
                       onPress: () => toggleTheme(manager),
@@ -196,9 +198,9 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                     ),
                   ),
                   top: 24,
-                  left: 98,
+                  start: 98,
                 ),
-                Positioned(
+                PositionedDirectional(
                   child: _translateBuilder(
                     Btn(
                       onPress: () => toggleDialog(true),
@@ -209,7 +211,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                     ),
                   ),
                   top: 24,
-                  right: 98,
+                  end: 98,
                 ),
                 // Centred, which is exactly midway between the theme and location buttons.
                 Positioned(
@@ -237,6 +239,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   controller: _controller.view,
                   isDrawerOpen: isDrawerOpen,
                   onMorePress: toggleForecast,
+                  onLanguagePress: () => toggleLanguage(true),
                   onNavPress: toggleMenu,
                   accent: selectedAccent,
                   location: location,
@@ -249,6 +252,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                         accent: selectedAccent,
                         onCancel: () => toggleDialog(false),
                         onSubmit: (city) => onSubmit(city),
+                      )
+                    : Container(),
+                isLanguageOpen
+                    ? LanguageOverlay(
+                        accent: selectedAccent,
+                        onClose: () => toggleLanguage(false),
                       )
                     : Container(),
                 Forecast(
@@ -334,6 +343,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   void toggleDialog(bool value) {
     setState(() {
       isDialogOpen = value;
+    });
+  }
+
+  void toggleLanguage(bool value) {
+    setState(() {
+      isLanguageOpen = value;
     });
   }
 

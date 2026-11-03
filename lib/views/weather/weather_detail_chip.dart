@@ -62,12 +62,16 @@ class WeatherDetailChip extends StatelessWidget {
             ),
           ),
           Container(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: 20,
+            // "5:50 AM" is wider than the chip at this size, so it shrinks instead of wrapping.
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
               ),
             ),
           )
