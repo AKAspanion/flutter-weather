@@ -22,8 +22,7 @@ Built this app to learn and get familiar with flutter and dart.
 
 API keys and AdMob IDs are passed in at build time and kept out of git. Copy
 `keys.example.json` to `keys.json` and fill in what you have; blank values fall
-back to defaults (the bundled OpenWeatherMap key and Google's test ads), and
-providers without a key are skipped.
+back to defaults (Google's test ads), and providers without a key are skipped.
 
 ```bash
 flutter build appbundle --release --dart-define-from-file=keys.json
