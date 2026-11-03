@@ -1,36 +1,30 @@
 package com.example.flutterweather
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.util.SizeF
 import android.util.TypedValue
+import android.view.View
 import android.widget.RemoteViews
-import androidx.core.widget.RemoteViewsCompat
 import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import es.antonborri.home_widget.HomeWidgetPlugin
 import es.antonborri.home_widget.HomeWidgetProvider
-import org.json.JSONArray
 import org.json.JSONObject
-import kotlin.math.roundToInt
 
 /**
- * Home-screen widget: one card whose content changes when the user swipes up or
- * down inside it, between the current weather and the next 24 hours. (Home
- * screens keep left/right swipes for paging, so the hours are laid out side by
- * side.) The Flutter side (lib/services/weather_widget.dart) writes the values.
+ * Home-screen widget: one card with the current weather, drawn in the app's
+ * accent. The Flutter side (lib/services/weather_widget.dart) writes the values.
  *
- * The pages live in a StackView, the one widget view that snaps between items
- * on a swipe. A StackView normally looks like a fanned deck: it caps each page
- * (wrapped in a frame with [FRAME_PADDING] on every side) at 90% of its own
- * size and shifts the pages behind into the leftover space. On Android 12+,
- * where the exact card size is known, each page is sized to the card and the
- * StackView is enlarged past the card's edges so the front page lands exactly
- * on the card; the card clips to its outline, hiding the page behind.
+ * Three layouts: a mini one (just the temperature) for a card shorter than [STRIP_HEIGHT] or
+ * narrower than [MINI_WIDTH], the wide card from [WIDE_WIDTH] (full width), and a compact
+ * one for anything in between, which keeps its sunrise / wind / humidity row from
+ * [DETAILS_WIDTH] (3 cells) and hides it below (2x2). On Android 12+ the
+ * launcher reports every size the widget can be shown at, and one RemoteViews is
+ * rendered per size so the host picks the layout that fits; earlier versions get
+ * the layout for the size the options report.
  */
 class WeatherWidgetProvider : HomeWidgetProvider() {
     override fun onUpdate(
@@ -42,7 +36,7 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         appWidgetIds.forEach { render(context, appWidgetManager, it, widgetData) }
     }
 
-    // The StackView's overhang follows the card's size, so re-render on resize.
+    // The layout and text scale follow the card's size, so re-render on resize.
     override fun onAppWidgetOptionsChanged(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -64,11 +58,9 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
             labels = parseObject(widgetData.getString("labels", null)),
             updated = widgetData.getString("updated", "") ?: "",
             now = parseObject(widgetData.getString("now", null)),
-            hours = parseArray(widgetData.getString("hours", null)),
+            accent = accentOf(widgetData),
         )
 
-        // From Android 12 the launcher reports the exact sizes the widget is shown
-        // at, which the overhang needs. Earlier versions show the stacked look.
         val sizes =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 @Suppress("DEPRECATION")
@@ -80,17 +72,17 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
 
         val views =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !sizes.isNullOrEmpty()) {
-                RemoteViews(sizes.associateWith { widgetViews(context, widgetId, content, it) })
+                RemoteViews(sizes.associateWith { widgetViews(context, content, it) })
             } else {
-                widgetViews(context, widgetId, content, portraitSize(appWidgetManager, widgetId))
+                widgetViews(context, content, portraitSize(appWidgetManager, widgetId))
             }
         appWidgetManager.updateAppWidget(widgetId, views)
     }
 
     /**
      * Before Android 12 there's no list of exact sizes; the options give the
-     * portrait size as min width x max height. Only the text scale and column
-     * count use it, since sizing views needs Android 12.
+     * portrait size as min width x max height. Only the layout choice and the
+     * text scale use it, since sizing views needs Android 12.
      */
     private fun portraitSize(appWidgetManager: AppWidgetManager, widgetId: Int): SizeF? {
         val options = appWidgetManager.getAppWidgetOptions(widgetId)
@@ -106,134 +98,155 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         /** The time saved by app versions before [labels]; only the fallback update line uses it. */
         val updated: String,
         val now: JSONObject?,
-        val hours: List<JSONObject>,
+        val accent: Int,
     )
 
-    private fun widgetViews(context: Context, widgetId: Int, content: Content, size: SizeF?): RemoteViews {
-        val views = RemoteViews(context.packageName, R.layout.weather_widget).apply {
-            if (size != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) flattenStack(this, size)
-            setEmptyView(R.id.widget_stack, R.id.widget_empty)
-            setOnClickPendingIntent(
-                R.id.widget_empty,
-                HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java),
-            )
-            setPendingIntentTemplate(R.id.widget_stack, openAppTemplate(context))
+    private fun widgetViews(context: Context, content: Content, size: SizeF?): RemoteViews {
+        // The mini layout is chosen first; without a known size, the wide layout is the default.
+        val mini = size != null && (size.height < STRIP_HEIGHT || size.width < MINI_WIDTH)
+        val small = !mini && size != null && size.width < WIDE_WIDTH
+        val views = RemoteViews(
+            context.packageName,
+            when {
+                mini -> R.layout.weather_widget_mini
+                small -> R.layout.weather_widget_small
+                else -> R.layout.weather_widget
+            },
+        )
+        views.setInt(R.id.widget_root, "setBackgroundResource", backgroundFor(content.accent))
+
+        // The whole card opens the app, and so does the empty view.
+        val open = HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java)
+        views.setOnClickPendingIntent(R.id.widget_root, open)
+        views.setOnClickPendingIntent(R.id.widget_empty, open)
+
+        val city = content.city
+        val now = content.now
+        if (city == null || now == null) {
+            views.setViewVisibility(R.id.widget_content, View.GONE)
+            views.setViewVisibility(R.id.widget_empty, View.VISIBLE)
+            return views
+        }
+        views.setViewVisibility(R.id.widget_content, View.VISIBLE)
+        views.setViewVisibility(R.id.widget_empty, View.GONE)
+
+        if (mini && size != null) {
+            fillMini(context, views, now, size)
+            return views
         }
 
-        // Item ids encode the card size: the host keeps items whose id it has seen,
-        // so reusing 0 and 1 left pages sized for the old card after a resize.
-        val idBase = size?.let { (it.width.roundToInt().toLong() shl 20) or (it.height.roundToInt().toLong() shl 4) } ?: 0L
-        val items = RemoteViewsCompat.RemoteCollectionItems.Builder().setViewTypeCount(2)
-        if (content.city != null && content.now != null) {
-            items.addItem(idBase, nowCard(context, content.city, content.labels, content.updated, content.now, size).sizedTo(size))
-            if (content.hours.isNotEmpty()) {
-                items.addItem(
-                    idBase + 1,
-                    hoursCard(context, content.city, content.labels, hoursFor(content.hours, size), size).sizedTo(size),
-                )
+        // A compact card taller than it is wide stacks the icon above the temperature; the others
+        // put them side by side. The ids the provider fills are those of the arrangement it shows.
+        val tall = small && size != null && size.height > size.width
+        val iconSlot = if (tall) R.id.card_icon_slot_tall else R.id.card_icon_slot
+        val temperature = if (tall) R.id.card_temperature_tall else R.id.card_temperature
+        if (small) {
+            views.setViewVisibility(R.id.card_row, if (tall) View.GONE else View.VISIBLE)
+            views.setViewVisibility(R.id.card_stack, if (tall) View.VISIBLE else View.GONE)
+        }
+
+        views.setTextViewText(R.id.card_city, city)
+        views.setTextViewText(R.id.card_label, label(content.labels, "now") ?: context.getString(R.string.widget_now))
+        // The icon is an animated layout, swapped into the slot on every render.
+        views.removeAllViews(iconSlot)
+        views.addView(iconSlot, RemoteViews(context.packageName, iconLayoutFor(now.optString("icon"))))
+        views.setTextViewText(temperature, now.optString("temperature"))
+        views.setTextViewText(R.id.card_description, now.optString("description"))
+        views.setTextViewText(R.id.card_detail, now.optString("detail"))
+
+        views.setTextViewText(R.id.card_sunrise, now.optString("sunrise"))
+        views.setTextViewText(R.id.card_wind, now.optString("wind"))
+        views.setTextViewText(R.id.card_humidity, now.optString("humidity"))
+
+        val scale = scaleFor(size)
+        if (small) {
+            // The details row is for 3 cells and wider; a 2x2 has no room for it.
+            val details = size != null && size.width >= DETAILS_WIDTH
+            views.setViewVisibility(R.id.card_details, if (details) View.VISIBLE else View.GONE)
+
+            views.text(R.id.card_city, 12f, scale)
+            views.text(R.id.card_label, 12f, scale)
+            // The icon and the temperature fill the card's middle block, so they grow with it.
+            val compactScale = compactScaleFor(size)
+            views.text(temperature, 30f, compactScale)
+            views.text(R.id.card_description, 12f, scale)
+            views.text(R.id.card_detail, 12f, scale)
+            listOf(R.id.card_sunrise, R.id.card_wind, R.id.card_humidity).forEach { views.text(it, 12f, scale) }
+            views.image(iconSlot, 40f, compactScale)
+            listOf(R.id.card_sunrise_icon, R.id.card_wind_icon, R.id.card_humidity_icon).forEach {
+                views.image(it, 16f, scale)
+            }
+        } else {
+            views.setTextViewText(
+                R.id.card_updated,
+                label(content.labels, "updated") ?: context.getString(R.string.widget_updated, content.updated),
+            )
+
+            views.text(R.id.card_city, 12f, scale)
+            views.text(R.id.card_label, 12f, scale)
+            views.text(R.id.card_temperature, 44f, scale)
+            views.text(R.id.card_description, 13f, scale)
+            views.text(R.id.card_detail, 13f, scale)
+            listOf(R.id.card_sunrise, R.id.card_wind, R.id.card_humidity).forEach { views.text(it, 12f, scale) }
+            views.text(R.id.card_updated, 10f, scale)
+            views.image(R.id.card_icon_slot, 64f, scale)
+            listOf(R.id.card_sunrise_icon, R.id.card_wind_icon, R.id.card_humidity_icon).forEach {
+                views.image(it, 16f, scale)
             }
         }
-        RemoteViewsCompat.setRemoteAdapter(context, views, widgetId, R.id.widget_stack, items.build())
         return views
     }
 
     /**
-     * Enlarges the StackView so a card-sized page fits inside its 90% cap with
-     * [SLACK] to spare. With spare room StackView offsets the front page by
-     * exactly (stack height - framed page height), which keeps the maths
-     * independent of pixel rounding, and the margins place that page on the card.
+     * The mini layout: only the temperature, centred, sized to the card, with the icon before it
+     * from [MINI_WIDTH]. The temperature grows with the card's height (about half of it) but is
+     * held to what fits the width, so "-12°" is never clipped in a 1x1.
      */
-    private fun flattenStack(views: RemoteViews, card: SizeF) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
-        val stackWidth = (card.width + 2 * FRAME_PADDING) / 0.9f + SLACK
-        val stackHeight = (card.height + 2 * FRAME_PADDING) / 0.9f + SLACK
-        fun margin(type: Int, value: Float) =
-            views.setViewLayoutMargin(R.id.widget_stack, type, value, TypedValue.COMPLEX_UNIT_DIP)
-        margin(RemoteViews.MARGIN_START, -FRAME_PADDING)
-        margin(RemoteViews.MARGIN_BOTTOM, -FRAME_PADDING)
-        margin(RemoteViews.MARGIN_TOP, -(stackHeight - card.height - FRAME_PADDING))
-        margin(RemoteViews.MARGIN_END, -(stackWidth - card.width - FRAME_PADDING))
-    }
+    private fun fillMini(context: Context, views: RemoteViews, now: JSONObject, size: SizeF) {
+        val icon = size.width >= MINI_WIDTH
+        val widthForText = size.width - 2 * MINI_PADDING - if (icon) MINI_ICON_GAP else 0f
+        val ems = MINI_TEXT_EMS + if (icon) MINI_ICON_EMS else 0f
+        val textSp = minOf(size.height * MINI_TEXT_HEIGHT_RATIO, widthForText / ems)
 
-    /** Pages must be exactly the card's size for [flattenStack]; the root is the page's first view. */
-    private fun RemoteViews.sizedTo(card: SizeF?) = apply {
-        if (card == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return@apply
-        val root = if (layoutId == R.layout.weather_widget_item) R.id.card_root else R.id.hours_root
-        setViewLayoutWidth(root, card.width, TypedValue.COMPLEX_UNIT_DIP)
-        setViewLayoutHeight(root, card.height, TypedValue.COMPLEX_UNIT_DIP)
-    }
+        views.setTextViewText(R.id.card_temperature, now.optString("temperature"))
+        views.setTextViewTextSize(R.id.card_temperature, TypedValue.COMPLEX_UNIT_SP, textSp)
 
-    private fun nowCard(context: Context, city: String, labels: JSONObject?, updated: String, now: JSONObject, card: SizeF?) =
-        RemoteViews(context.packageName, R.layout.weather_widget_item).apply {
-            setTextViewText(R.id.card_city, city)
-            setImageViewResource(R.id.card_icon, iconFor(now.optString("icon")))
-            setTextViewText(R.id.card_temperature, now.optString("temperature"))
-            setTextViewText(R.id.card_description, now.optString("description"))
-            setTextViewText(R.id.card_detail, now.optString("detail"))
-            setTextViewText(R.id.card_sunrise, now.optString("sunrise"))
-            setTextViewText(R.id.card_wind, now.optString("wind"))
-            setTextViewText(R.id.card_humidity, now.optString("humidity"))
-            setTextViewText(R.id.card_label, label(labels, "now") ?: context.getString(R.string.widget_now))
-            setTextViewText(R.id.card_updated, label(labels, "updated") ?: context.getString(R.string.widget_updated, updated))
-            setOnClickFillInIntent(R.id.card_root, Intent())
-
-            val scale = scaleFor(card)
-            text(R.id.card_city, 12f, scale)
-            text(R.id.card_label, 12f, scale)
-            text(R.id.card_temperature, 44f, scale)
-            text(R.id.card_description, 13f, scale)
-            text(R.id.card_detail, 13f, scale)
-            listOf(R.id.card_sunrise, R.id.card_wind, R.id.card_humidity).forEach { text(it, 12f, scale) }
-            text(R.id.card_updated, 10f, scale)
-            image(R.id.card_icon, 64f, scale)
-            listOf(R.id.card_sunrise_icon, R.id.card_wind_icon, R.id.card_humidity_icon).forEach { image(it, 16f, scale) }
-        }
-
-    private fun hoursCard(context: Context, city: String, labels: JSONObject?, hours: List<JSONObject>, card: SizeF?) =
-        RemoteViews(context.packageName, R.layout.weather_widget_hours).apply {
-            val scale = scaleFor(card)
-            setTextViewText(R.id.hours_city, city)
-            setTextViewText(
-                R.id.hours_label,
-                label(labels, "next24Hours") ?: context.getString(R.string.widget_next_24_hours),
-            )
-            text(R.id.hours_city, 12f, scale)
-            text(R.id.hours_label, 12f, scale)
-            removeAllViews(R.id.hours_row)
-            hours.forEach { hour ->
-                addView(
-                    R.id.hours_row,
-                    RemoteViews(context.packageName, R.layout.weather_widget_hour).apply {
-                        setTextViewText(R.id.hour_label, hour.optString("label"))
-                        setImageViewResource(R.id.hour_icon, iconFor(hour.optString("icon")))
-                        setTextViewText(R.id.hour_temperature, hour.optString("temperature"))
-                        text(R.id.hour_label, 11f, scale)
-                        text(R.id.hour_temperature, 14f, scale)
-                        image(R.id.hour_icon, 30f, scale)
-                    },
-                )
+        views.setViewVisibility(R.id.card_icon_slot, if (icon) View.VISIBLE else View.GONE)
+        if (icon) {
+            views.removeAllViews(R.id.card_icon_slot)
+            views.addView(R.id.card_icon_slot, RemoteViews(context.packageName, iconLayoutFor(now.optString("icon"))))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                views.setViewLayoutWidth(R.id.card_icon_slot, textSp * MINI_ICON_EMS, TypedValue.COMPLEX_UNIT_DIP)
+                views.setViewLayoutHeight(R.id.card_icon_slot, textSp * MINI_ICON_EMS, TypedValue.COMPLEX_UNIT_DIP)
             }
-            setOnClickFillInIntent(R.id.hours_root, Intent())
         }
-
-    /**
-     * The app sends 8 entries 3 hours apart. A squarish card (e.g. 4x3) has
-     * room for 4 columns, so it shows every other entry: still the next 24
-     * hours, 6 hours apart. Wider cards (4x2, 3x2) show all 8.
-     */
-    private fun hoursFor(hours: List<JSONObject>, card: SizeF?): List<JSONObject> {
-        val square = card != null && card.width / card.height < SQUARE_RATIO
-        return if (square) hours.filterIndexed { i, _ -> i % 2 == 0 } else hours
     }
 
     /**
-     * How much to enlarge the pages' text and icons so they fill a bigger card.
-     * The layouts are designed for the minimum size (about 250 x 110 dp); the
-     * scale is capped by both dimensions so nothing overflows.
+     * How much to enlarge the text and icons so they fill a bigger card. The
+     * layouts are designed for the minimum size (about 250 x 110 dp); the scale
+     * is capped by both dimensions so nothing overflows.
      */
     private fun scaleFor(card: SizeF?): Float {
         if (card == null) return 1f
         return minOf(card.height / 125f, card.width / 300f).coerceIn(1f, 1.6f)
+    }
+
+    /**
+     * The scale of the compact layout's icon and temperature, which grow with the card. A card at
+     * least as wide as it is tall (side by side) is capped by both dimensions, and a 3x2 (about
+     * 235 x 217 dp) reaches the 1.6x cap; a taller one (stacked, a 2x2 of about 150 x 217 dp) uses
+     * its own design size and gets about 1.45x.
+     */
+    private fun compactScaleFor(card: SizeF?): Float {
+        if (card == null) return 1f
+        val scale =
+            if (card.height > card.width) {
+                minOf(card.width / TALL_DESIGN_WIDTH, card.height / TALL_DESIGN_HEIGHT)
+            } else {
+                minOf(card.width / COMPACT_DESIGN_WIDTH, card.height / COMPACT_DESIGN_HEIGHT)
+            }
+        return scale.coerceIn(1f, 1.6f)
     }
 
     private fun RemoteViews.text(id: Int, sp: Float, scale: Float) {
@@ -246,13 +259,13 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         setViewLayoutHeight(id, dp * scale, TypedValue.COMPLEX_UNIT_DIP)
     }
 
-    /** Collection items can't have their own PendingIntents, only fill-ins for this template. */
-    private fun openAppTemplate(context: Context): PendingIntent {
-        val intent = Intent(context, MainActivity::class.java).setAction(HomeWidgetLaunchIntent.HOME_WIDGET_LAUNCH_ACTION)
-        var flags = PendingIntent.FLAG_UPDATE_CURRENT
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) flags = flags or PendingIntent.FLAG_MUTABLE
-        return PendingIntent.getActivity(context, 1, intent, flags)
-    }
+    /** The accent index the app saved; a missing or non-integer value counts as the first accent. */
+    private fun accentOf(widgetData: SharedPreferences): Int =
+        try {
+            widgetData.getInt("accent", 0)
+        } catch (e: ClassCastException) {
+            0
+        }
 
     /** A pushed label, or null when the app hasn't pushed one yet (the caller then uses its strings.xml value). */
     private fun label(labels: JSONObject?, key: String): String? =
@@ -265,43 +278,91 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
             null
         }
 
-    private fun parseArray(json: String?): List<JSONObject> {
-        if (json == null) return emptyList()
-        return try {
-            val array = JSONArray(json)
-            (0 until array.length()).map { array.getJSONObject(it) }
-        } catch (e: Exception) {
-            emptyList()
+    /**
+     * The card's background for an accent index, in the order of GradientValues
+     * in lib/theme/gradients.dart. Mapped explicitly (not by name lookup) so
+     * resource shrinking keeps the drawables; an unknown index uses the first.
+     */
+    private fun backgroundFor(index: Int): Int =
+        when (index) {
+            1 -> R.drawable.widget_background_1
+            2 -> R.drawable.widget_background_2
+            3 -> R.drawable.widget_background_3
+            4 -> R.drawable.widget_background_4
+            5 -> R.drawable.widget_background_5
+            6 -> R.drawable.widget_background_6
+            7 -> R.drawable.widget_background_7
+            8 -> R.drawable.widget_background_8
+            else -> R.drawable.widget_background_0
         }
-    }
 
     /**
-     * Icons rendered from the app's Flare animations by tool/render_widget_icons_test.dart.
-     * Mapped explicitly (not by name lookup) so resource shrinking keeps them.
+     * The animated icon for a condition: a ProgressBar playing frames that
+     * tool/render_widget_icons_test.dart rendered from the app's Flare loops
+     * (ICON_LOOPS=1). Mapped explicitly (not by name lookup) so resource shrinking
+     * keeps the layouts; an unknown name uses the "few" icon.
      */
-    private fun iconFor(name: String) =
+    private fun iconLayoutFor(name: String) =
         when (name) {
-            "clear" -> R.drawable.widget_icon_clear
-            "clear-night" -> R.drawable.widget_icon_clear_night
-            "sunny" -> R.drawable.widget_icon_sunny
-            "sunny-night" -> R.drawable.widget_icon_sunny_night
-            "few-night" -> R.drawable.widget_icon_few_night
-            "broken" -> R.drawable.widget_icon_broken
-            "rain" -> R.drawable.widget_icon_rain
-            "snow" -> R.drawable.widget_icon_snow
-            "thunder" -> R.drawable.widget_icon_thunder
-            "foggy" -> R.drawable.widget_icon_foggy
-            else -> R.drawable.widget_icon_few
+            "clear" -> R.layout.widget_icon_clear
+            "clear-night" -> R.layout.widget_icon_clear_night
+            "sunny" -> R.layout.widget_icon_sunny
+            "sunny-night" -> R.layout.widget_icon_sunny_night
+            "few" -> R.layout.widget_icon_few
+            "few-night" -> R.layout.widget_icon_few_night
+            "broken" -> R.layout.widget_icon_broken
+            "rain" -> R.layout.widget_icon_rain
+            "snow" -> R.layout.widget_icon_snow
+            "thunder" -> R.layout.widget_icon_thunder
+            "foggy" -> R.layout.widget_icon_foggy
+            else -> R.layout.widget_icon_few
         }
 
     private companion object {
-        /** StackView wraps each page in a frame with this padding (dp), see StackView.FRAME_PADDING. */
-        const val FRAME_PADDING = 4f
+        /**
+         * Cards at least this wide (dp) use the wide layout, which is full width (4 cells);
+         * narrower ones use the compact layout. Launchers report a 3x2 card as about 235dp
+         * (One UI) and a 4-cell one above 300dp.
+         */
+        const val WIDE_WIDTH = 300f
 
-        /** Extra stack size (dp) beyond the 90% cap, so StackView spreads the pages predictably. */
-        const val SLACK = 2f
+        /**
+         * The compact layout shows its sunrise / wind / humidity row at least this wide (dp),
+         * which is 3 cells (about 235dp); a 2x2 (about 129dp) has no room for it.
+         */
+        const val DETAILS_WIDTH = 220f
 
-        /** Cards narrower than this width-to-height ratio count as square for the hours page. */
-        const val SQUARE_RATIO = 1.3f
+        /**
+         * The size (dp) the side-by-side compact layout is designed for; [compactScaleFor] scales
+         * from it. The height is lower than a 2x2's so a 3x2 (about 235 x 217 dp) reaches the cap.
+         */
+        const val COMPACT_DESIGN_WIDTH = 130f
+        const val COMPACT_DESIGN_HEIGHT = 135f
+
+        /** The size (dp) the stacked compact layout (a card taller than wide, a 2x2) is designed for. */
+        const val TALL_DESIGN_WIDTH = 100f
+        const val TALL_DESIGN_HEIGHT = 150f
+
+        /** A card shorter than this (dp) is one row (1x2, 1x3, 1x4) and uses weather_widget_mini.xml. */
+        const val STRIP_HEIGHT = 150f
+
+        /**
+         * A card narrower than this (dp) is one cell (1x1) and uses weather_widget_mini.xml; the mini
+         * layout shows the icon from this width.
+         */
+        const val MINI_WIDTH = 110f
+
+        /** The mini layout's padding and the gap before its temperature (dp); match weather_widget_mini.xml. */
+        const val MINI_PADDING = 8f
+        const val MINI_ICON_GAP = 4f
+
+        /** The mini temperature's size (sp) as a share of the card's height: it fills about half of it. */
+        const val MINI_TEXT_HEIGHT_RATIO = 0.45f
+
+        /** The width of "-12°" in sans-serif-medium, in ems (about 1.85, rounded up), so it never clips. */
+        const val MINI_TEXT_EMS = 2.1f
+
+        /** The mini icon's size, in ems of the temperature's size, so the icon grows with the text. */
+        const val MINI_ICON_EMS = 1.1f
     }
 }

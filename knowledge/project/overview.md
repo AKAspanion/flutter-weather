@@ -11,11 +11,11 @@ verified: human:panditankit1995@gmail.com
 ## Purpose
 
 Beautiful Weather shows the weather where you are, or in any city you type, with animated weather icons, accent
-gradients and a light and a dark theme. One screen shows the current conditions. A forecast panel slides up with the
+gradients and a light and a dark theme that follows the system. One screen shows the current conditions. A forecast panel slides up with the
 next 48 hours and the next days. The 48 hours is the span the forecast screen promises ("Forecast for the next 48
 hours", `nextHoursSubtitle` in `lib/l10n/app_en.arb`); how much each provider actually returns is in
-[forecast](../features/forecast.md). On Android, a home-screen widget shows the same weather and refreshes in the
-background. The app is free and shows a banner ad. It is in ten languages, chosen in the app
+[forecast](../features/forecast.md). On Android, a home-screen widget shows the current weather in the app's accent and refreshes
+in the background. The app is free and shows a banner ad. It is in ten languages, chosen in the app
 ([language picker](../features/language-picker.md)), and shows temperatures in °C or °F ([settings](../features/settings.md)).
 
 The weather comes from several services ([provider failover](../domain/provider-failover.md)), so the app keeps

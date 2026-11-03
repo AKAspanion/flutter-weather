@@ -18,24 +18,31 @@ verified: human:panditankit1995@gmail.com
   there fall through to `few`. That includes some rain codes (511 and the 520s) and every 7xx atmosphere code except
   fog (741). See [debt](../risks/debt.md).
 - **Night.** It is night when the local hour at the place is after 18 or at most 6. With no override, `getIcon` uses
-  the current time at the place's `timezone`. Forecast chips and the widget's hour columns pass `overrideNight`
-  computed from the reading's own time instead (`getNight` in `lib/views/forecast/hourly_detail_chip.dart`,
-  `_isNight` in `lib/services/weather_widget.dart`). Daily cards always use the day icon (`overrideNight: ""` in
+  the current time at the place's `timezone`. Forecast chips pass `overrideNight`
+  computed from the reading's own time instead (`getNight` in `lib/views/forecast/hourly_detail_chip.dart`). Daily cards always use the day icon (`overrideNight: ""` in
   `lib/views/forecast/daily_detail_card.dart`).
 - **Description.** The words shown for a condition come from the code too, not from the provider's English text:
   `describeCondition(l10n, code)` in `lib/l10n/conditions.dart` returns the translated phrase for the code, else its
   group's phrase (by hundreds), else "Unknown" ([decision](../decisions/descriptions-by-condition-code.md)).
 - **Where the names are used.** In the app, the icon name picks a Flare animation in
-  `assets/animations/cloudy.flr`. On the widget, it picks a PNG through `iconFor` in `WeatherWidgetProvider.kt`
+  `assets/animations/cloudy.flr`. On the widget, it picks an animated layout through `iconLayoutFor` in `WeatherWidgetProvider.kt`
   ([home-screen widget](../features/home-screen-widget.md)). `tool/render_widget_icons_test.dart` holds the list of
-  names it renders. A new icon name has to be added in all three places.
+  names it renders. A new icon name needs its Flare animation, then its frames, `widget_anim_<name>` list and
+  `widget_icon_<name>` layout rendered with `ICON_LOOPS=1` ([run locally](../operations/run-locally.md)), and an
+  `iconLayoutFor` entry; `test/widget_icon_resources_test.dart` checks the list, the layout and the entry.
 
 ## Where it is enforced
 
 - `lib/services/weather.dart` (`getIcon`)
 - `_conditionCode` in `lib/services/providers/weather_api.dart`, `lib/services/providers/tomorrow_io.dart` and
   `lib/services/providers/met_norway.dart`. OpenWeatherMap's codes are used as they come.
-- `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt` (`iconFor`)
+- `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt` (`iconLayoutFor`)
+
+## History
+
+- 2026-11-03: the widget picked a static PNG through `iconFor`, and its hour columns passed `overrideNight`; now it picks
+  an animated layout through `iconLayoutFor` and has no hour columns, because the widget became one animated Now card.
+  See [decisions/widget-animated-icons](../decisions/widget-animated-icons.md).
 
 ## History
 
@@ -54,3 +61,4 @@ verified: human:panditankit1995@gmail.com
 * `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`
 * `tool/render_widget_icons_test.dart`
 * `assets/animations/cloudy.flr`
+* `test/widget_icon_resources_test.dart`

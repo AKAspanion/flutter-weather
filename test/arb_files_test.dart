@@ -22,7 +22,6 @@ const List<String> _widgetStrings = [
   'widget_empty',
   'widget_updated',
   'widget_now',
-  'widget_next_24_hours',
 ];
 
 Map<String, dynamic> _readArb(String code) {
@@ -79,7 +78,7 @@ void main() {
       });
     });
 
-    test('values-$code/strings.xml has the five widget strings and keeps %1\$s', () {
+    test('values-$code/strings.xml has the four widget strings and keeps %1\$s', () {
       final String path = 'android/app/src/main/res/values-$code/strings.xml';
       expect(_stringNames(path), _widgetStrings);
       expect(_stringNames('android/app/src/main/res/values/strings.xml'), _widgetStrings);

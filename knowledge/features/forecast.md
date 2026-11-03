@@ -42,7 +42,7 @@ integration). For example, OpenWeatherMap steps by 3 hours.
 - Hourly chip text rows are forced to Montserrat's line height with a strut (`height: 1.219`). Time labels in other
   scripts, or with intl's narrow no-break space before AM/PM, fall back to a taller system font, which overflowed the
   chip by a few pixels; `test/hourly_detail_chip_test.dart` covers it.
-- Hourly chips use the same night rule as the widget ([condition icons](../domain/condition-icons.md)).
+- Hourly chips pick day or night icons from their own hour, not the current time ([condition icons](../domain/condition-icons.md)).
 
 ## History
 
