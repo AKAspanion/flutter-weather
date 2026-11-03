@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The app's default "A Lost Memory" accent gradient. -->
+<!-- The app's "Sea Blue" accent gradient: index 8 in lib/theme/gradients.dart. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
     <corners android:radius="20dp" />
     <gradient
         android:angle="315"
-        android:endColor="#FFF7BB97"
-        android:startColor="#FFDD5E89" />
+        android:endColor="#FF4E4376"
+        android:startColor="#FF2B5876" />
 </shape>

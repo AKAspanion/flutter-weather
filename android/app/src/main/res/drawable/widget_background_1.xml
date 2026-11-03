@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Widget page. Before Android 12 the pages show as a visible stack, so they keep rounded corners. -->
+<!-- The app's "Lush" accent gradient: index 1 in lib/theme/gradients.dart. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
     <corners android:radius="20dp" />
     <gradient
         android:angle="315"
-        android:endColor="#FFF7BB97"
-        android:startColor="#FFDD5E89" />
+        android:endColor="#FFA8E063"
+        android:startColor="#FF56AB2F" />
 </shape>

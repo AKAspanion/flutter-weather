@@ -1,6 +1,9 @@
 import 'dart:ui';
 
 class GradientValues {
+  /// The home-screen widget maps these same indexes to its own drawables
+  /// (`widget_background_<index>.xml`, WeatherWidgetProvider.kt), so the order
+  /// must not change; add new gradients at the end, with a drawable.
   static final List<Gradient> _gradients = [
     Gradient(
       name: "A Lost Memory",

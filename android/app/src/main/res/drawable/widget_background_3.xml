@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The app's "50 Shades of Grey" accent gradient: index 3 in lib/theme/gradients.dart. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="20dp" />
+    <gradient
+        android:angle="315"
+        android:endColor="#FFBDC3C7"
+        android:startColor="#FF2C3E50" />
+</shape>

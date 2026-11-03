@@ -16,9 +16,16 @@ class WeatherWidget {
 
   static bool get _supported => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
-  /// The second widget card shows the next 24 hours as 8 columns, 3 hours apart.
-  static const int _hourColumns = 8;
-  static const int _hourStep = 3 * 3600;
+  /// Colours the widget with the accent at [index] in `GradientValues`; the widget maps the same indexes.
+  static Future<void> setAccent(int index) async {
+    if (!_supported) return;
+    try {
+      await HomeWidget.saveWidgetData<int>('accent', index);
+      await HomeWidget.updateWidget(qualifiedAndroidName: _androidName);
+    } catch (e) {
+      debugPrint('Widget accent update failed: $e');
+    }
+  }
 
   static Future<void> update(WeatherReport report) async {
     if (!_supported) return;
@@ -41,7 +48,6 @@ class WeatherWidget {
             'humidity': '${now.humidity ?? '--'}%',
           }),
         ),
-        HomeWidget.saveWidgetData<String>('hours', jsonEncode(_nextDay(report.hourly, updated))),
         HomeWidget.saveWidgetData<String>(
           'updated',
           '${updated.hour.toString().padLeft(2, '0')}:${updated.minute.toString().padLeft(2, '0')}',
@@ -53,27 +59,6 @@ class WeatherWidget {
     }
   }
 
-  /// Picks forecast entries at least 3 hours apart across the next 24 hours.
-  /// OpenWeatherMap already steps by 3 hours; hourly providers get thinned out.
-  static List<Map<String, String>> _nextDay(List<Weather> hourly, DateTime from) {
-    final int start = from.millisecondsSinceEpoch ~/ 1000;
-    final List<Map<String, String>> picked = [];
-    int? last;
-    for (final Weather w in hourly) {
-      final int date = w.date ?? 0;
-      if (date <= start || date > start + Duration.secondsPerDay) continue;
-      if (last != null && date - last < _hourStep - 60) continue;
-      picked.add({
-        'label': _hourLabel(w),
-        'icon': w.getIcon(overrideNight: _isNight(w) ? '-night' : ''),
-        'temperature': _degrees(w.temperature),
-      });
-      last = date;
-      if (picked.length == _hourColumns) break;
-    }
-    return picked;
-  }
-
   /// Same format as the app's sunrise chip, e.g. "5:50".
   static String _clock(int? epochSeconds, int? timezone) {
     if (epochSeconds == null) return '--';
@@ -81,21 +66,6 @@ class WeatherWidget {
         DateTime.fromMillisecondsSinceEpoch(epochSeconds * 1000, isUtc: true).add(Duration(seconds: timezone ?? 0));
     final int hour = time.hour > 12 ? time.hour - 12 : time.hour;
     return '$hour:${time.minute.toString().padLeft(2, '0')}';
-  }
-
-  static DateTime _localTime(Weather w) =>
-      DateTime.fromMillisecondsSinceEpoch(w.date! * 1000, isUtc: true).add(Duration(seconds: w.timezone ?? 0));
-
-  /// Compact hour for a narrow column: "12P", "3A".
-  static String _hourLabel(Weather w) {
-    final DateTime time = _localTime(w);
-    return '${(time.hour + 11) % 12 + 1}${time.hour >= 12 ? 'P' : 'A'}';
-  }
-
-  // Same rule as the hourly forecast chips.
-  static bool _isNight(Weather w) {
-    final int hour = _localTime(w).hour;
-    return hour > 18 || hour <= 6;
   }
 
   static Future<bool>? _canPin;
@@ -137,7 +107,6 @@ class WeatherWidget {
   }
 
   static String _degrees(double? kelvin) => kelvin == null ? '--' : '${(kelvin - kelvinOffset).floor()}°';
-
 }
 
 /// Runs in a background isolate started by WorkManager.
