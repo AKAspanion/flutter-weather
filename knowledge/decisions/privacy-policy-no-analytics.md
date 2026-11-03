@@ -22,9 +22,14 @@ only location, the weather services and AdMob, and to drop the usage, device-inf
 
 ## Consequences
 
-- `privacy.md` must describe only what the app collects: no usage, device-information or analytics sections.
-- Play's Data safety answers should match the reworded policy.
+- `privacy.md` was reworded on 2026-11-03 (commit `0e25699`) and now describes only what the app collects: location,
+  the weather services and AdMob, with no usage, device-information or analytics sections.
+- Play's Data safety answers still have to be checked against the reworded policy.
 - Adding analytics or crash reporting later means updating the policy first, as a new decision replacing this one.
+
+## History
+
+- 2026-11-03: Consequences updated, not the decision: `privacy.md` was reworded (commit `0e25699`).
 
 ## Sources
 

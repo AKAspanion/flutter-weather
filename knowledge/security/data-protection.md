@@ -28,11 +28,14 @@ The app has no sign-in, no accounts and no backend of its own. What needs protec
   ([decisions/widget-uses-last-place](../decisions/widget-uses-last-place.md)).
 - **What the weather services receive.** Only the coordinates or the city name, over HTTPS (every provider builds
   `Uri.https`), plus the API key where one is needed. MET Norway also gets the app's `User-Agent`. `privacy.md`
-  describes the same.
+  describes only this, location and AdMob: it no longer mentions usage, device-information or analytics collection,
+  since the app collects none
+  ([decisions/privacy-policy-no-analytics](../decisions/privacy-policy-no-analytics.md)).
 - **Keys stay out of git,** passed at build time with `--dart-define-from-file=keys.json`. `keys.json` is in
-  `./.gitignore`. This doesn't hold for OpenWeatherMap: see
-  [findings/committed-openweathermap-key](../findings/committed-openweathermap-key.md). Rotating the key and removing
-  the fallback is decided ([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md)). Values read with
+  `./.gitignore`. No key is written in the code any more: the
+  OpenWeatherMap fallback was removed, though the old key is still in git history and has to be deleted in the
+  OpenWeatherMap console ([findings/committed-openweathermap-key](../findings/committed-openweathermap-key.md),
+  [decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md)). Values read with
   `String.fromEnvironment` are compiled into the app, so anyone with the APK can read them. Build-time keys keep keys
   out of the repository, not away from users.
 - **Ad consent.** AdMob starts only once Google's UMP consent allows ads (`Ads._startIfAllowed` in
@@ -43,6 +46,10 @@ The app has no sign-in, no accounts and no backend of its own. What needs protec
   foreground-service declaration.
 - **Release signing** reads `android/key.properties`, which `android/.gitignore` keeps out of the repository
   ([environment](../operations/environment.md)).
+
+## History
+
+- 2026-11-03: was the OpenWeatherMap key as an exception to keys staying out of git, and `privacy.md` as written; now the fallback is removed and `privacy.md` covers only location, the weather services and AdMob, because of the two decisions. See [decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md) and [decisions/privacy-policy-no-analytics](../decisions/privacy-policy-no-analytics.md).
 
 ## Sources
 

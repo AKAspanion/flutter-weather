@@ -22,7 +22,7 @@ has to fit what the policy promises.
 
 ## Status
 
-Answered: the app collects no analytics; `privacy.md` is to describe only location, the weather services and AdMob. See [The privacy policy describes only what the app collects](../decisions/privacy-policy-no-analytics.md).
+Answered: the app collects no analytics; `privacy.md` is and `privacy.md` now describes only location, the weather services and AdMob (reworded 2026-11-03, commit `0e25699`). See [The privacy policy describes only what the app collects](../decisions/privacy-policy-no-analytics.md).
 
 ## Sources
 

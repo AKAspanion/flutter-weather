@@ -29,8 +29,13 @@ The developer decided on 2026-11-03:
   because MET Norway needs a geocoder ([MET Norway](../integrations/met-norway.md)). Developers need a `keys.json`
   to work on city search.
 - Release builds must pass `OPENWEATHERMAP_KEY`, or the shipped app loses its first provider and its geocoder.
-- The README's "blank values fall back to … the bundled OpenWeatherMap key" changes with the code.
-- The finding stays open until the code change lands.
+- The README's "bundled OpenWeatherMap key" wording was changed with the code (commit `e616356`).
+- The fallback is removed in the code (commit `e616356`), and the finding is fixed in code. Deleting the old key in the
+  OpenWeatherMap console (step 1) is still the developer's to do.
+
+## History
+
+- 2026-11-03: Consequences updated, not the decision: the fallback is removed (commit `e616356`) and the finding is fixed in code.
 
 ## Sources
 

@@ -2,6 +2,6 @@
 
 <!-- GA-GENERATED:index -->
 
-- [An OpenWeatherMap API key is committed in the code](committed-openweathermap-key.md) - lib/config/api_keys.dart falls back to a hard-coded OpenWeatherMap key, in git history since 2020, though the README says keys are kept out of git.
+- [Fixed: An OpenWeatherMap API key was committed in the code](committed-openweathermap-key.md) - lib/config/api_keys.dart fell back to a hard-coded OpenWeatherMap key, still in git history since 2020; the fallback was removed, but deleting the old key in the OpenWeatherMap console was left to the developer.
 
 <!-- GA-GENERATED:END -->

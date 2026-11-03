@@ -13,15 +13,17 @@ template is `keys.example.json`. `keys.json` is ignored by `./.gitignore`. `READ
 
 ## Variables
 
-- `OPENWEATHERMAP_KEY`: [OpenWeatherMap](../integrations/openweathermap.md). When blank, a key written in the code
-  is used ([finding](../findings/committed-openweathermap-key.md)); removing it is decided
-  ([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md)).
+- `OPENWEATHERMAP_KEY`: [OpenWeatherMap](../integrations/openweathermap.md). When blank, the provider is skipped, as for the
+  other two. No key is written in the code
+  ([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md),
+  [finding](../findings/committed-openweathermap-key.md)). Without it, city search stops working
+  ([MET Norway](../integrations/met-norway.md) needs a geocoder).
 - `WEATHERAPI_KEY`: [WeatherAPI.com](../integrations/weatherapi.md). When blank, the provider is skipped.
 - `TOMORROW_IO_KEY`: [Tomorrow.io](../integrations/tomorrow-io.md). When blank, the provider is skipped.
 - `ADMOB_APP_ID`: the AdMob app ID in the Android manifest. When blank, Google's test app ID is used.
 - `ADMOB_BANNER_ID`: the banner unit. When blank, Google's test banner is used.
 
-MET Norway needs no key.
+MET Norway needs no key, so an app built with no keys at all still shows weather from MET Norway.
 
 **Signing.** Release builds sign with `android/key.properties` (alias, passwords and keystore path). When the file
 is absent, they fall back to the debug keys. A comment says this is so local release builds still run. The file is
@@ -37,6 +39,10 @@ ignored by `android/.gitignore`.
   Gradle, into `manifestPlaceholders["admobAppId"]`. The manifest uses it in
   `android/app/src/main/AndroidManifest.xml`.
 - `android/key.properties`: `keystoreProperties` in `android/app/build.gradle.kts`.
+
+## History
+
+- 2026-11-03: was a blank `OPENWEATHERMAP_KEY` used a key written in the code; now the provider is skipped, because the fallback was removed. See [decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md).
 
 ## Sources
 

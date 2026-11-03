@@ -14,8 +14,9 @@ verified: human:panditankit1995@gmail.com
   is in `./.metadata`. Commit `01da471` describes the Flutter, Gradle, Kotlin and NDK upgrade.
 - An Android SDK for the compile and target SDK in `android/app/build.gradle.kts`, and Xcode for `ios/`.
 - Optionally, a `keys.json` copied from `keys.example.json` ([environment](environment.md)). Without it, the app
-  runs on the code's OpenWeatherMap key, MET Norway and test ads. Removing that key is decided
-  ([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md)).
+  runs on MET Norway alone, with no city search, and test ads
+  ([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md)). Set `OPENWEATHERMAP_KEY` to
+  work on city search.
 
 ## Steps
 
@@ -32,6 +33,10 @@ verified: human:panditankit1995@gmail.com
   `assets/icon/icon.png`.
 - **Store listing:** the Play Store images are in `store/` (`store/feature_graphic.png` and `store/phone/`). The
   privacy policy is `privacy.md`.
+
+## History
+
+- 2026-11-03: was keyless runs used the code's OpenWeatherMap key; now they run on MET Norway alone, because the fallback was removed. See [decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md).
 
 ## Sources
 

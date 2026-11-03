@@ -40,10 +40,15 @@ Android is the only supported platform ([decision](../decisions/android-only.md)
 
 ## Open
 
-- [An OpenWeatherMap key is committed in the code](../findings/committed-openweathermap-key.md). It is to be rotated
-  and the fallback removed ([decision](../decisions/rotate-openweathermap-key.md)).
-- `privacy.md` claims analytics the app doesn't collect, and is to be reworded
+- The old OpenWeatherMap key, once committed in the code, still has to be deleted in the OpenWeatherMap console and
+  stays in git history; the fallback is removed
+  ([finding](../findings/committed-openweathermap-key.md), [decision](../decisions/rotate-openweathermap-key.md)).
+- Play's Data safety answers have to match the reworded `privacy.md`
   ([decision](../decisions/privacy-policy-no-analytics.md)).
+
+## History
+
+- 2026-11-03: was two open items, the committed key and the privacy policy's analytics claim; now what remains is deleting the old key and checking Play's Data safety answers, because both fixes landed in code.
 
 ## Sources
 

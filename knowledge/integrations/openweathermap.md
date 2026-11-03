@@ -23,10 +23,10 @@ verified: human:panditankit1995@gmail.com
 
 ## Configuration
 
-- Key: `OPENWEATHERMAP_KEY`, read in `lib/config/api_keys.dart` ([environment](../operations/environment.md)). When
-  it is blank, a key written in that file is used instead, so this provider is always configured. See
-  [findings/committed-openweathermap-key](../findings/committed-openweathermap-key.md). Removing the fallback is
-  decided ([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md)).
+- Key: `OPENWEATHERMAP_KEY`, read in `lib/config/api_keys.dart` ([environment](../operations/environment.md)). The provider
+  is configured only when it is set; when blank it is skipped, like the other keyed providers. No fallback key is
+  written in the code ([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md),
+  [findings/committed-openweathermap-key](../findings/committed-openweathermap-key.md)).
 - Attribution text: `attribution` in the provider.
 
 ## Failure modes
@@ -34,8 +34,13 @@ verified: human:panditankit1995@gmail.com
 - A non-200 status or a timeout throws `ProviderException` (`getJson`), and the service moves on.
 - Geocoding that finds nothing returns null, and the service tries the next geocoder.
 
+## History
+
+- 2026-11-03: was always configured through a key written in the code; now configured only when `OPENWEATHERMAP_KEY` is set, because the fallback was removed. See [decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md).
+
 ## Sources
 
 * `lib/services/providers/openweathermap.dart`
 * `lib/services/providers/weather_provider.dart`
 * `lib/config/api_keys.dart`
+* `test/api_keys_test.dart`

@@ -19,6 +19,9 @@ verified: human:panditankit1995@gmail.com
 - `dailyFromSeries` grouping readings by local day.
 - `WeatherReport` surviving a round trip through the cache's JSON format.
 
+`test/api_keys_test.dart` checks that `ApiKeys.openWeatherMap` is empty without `OPENWEATHERMAP_KEY` and that an
+`OpenWeatherMapProvider` built with it is not configured.
+
 The tests cover the service layer. The views, the providers' parsing of real responses, the widget and ads are
 not covered by them.
 
@@ -33,5 +36,6 @@ The policy's `checks.commands.test` (`ga.mjs workflow show`), run by hand.
 ## Sources
 
 * `test/weather_service_test.dart`
+* `test/api_keys_test.dart`
 * `tool/render_widget_icons_test.dart`
 * `pubspec.yaml`
