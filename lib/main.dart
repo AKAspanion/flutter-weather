@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterweather/components/ad_banner.dart';
-import 'package:flutterweather/components/btn.dart';
 import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/ads.dart';
 import 'package:flutterweather/services/locale_manager.dart';
@@ -16,6 +15,7 @@ import 'package:flutterweather/views/home/dialog_overlay.dart';
 import 'package:flutterweather/views/home/home.dart';
 import 'package:flutterweather/views/home/language_overlay.dart';
 import 'package:flutterweather/views/menu/menu.dart';
+import 'package:flutterweather/views/menu/menu_buttons.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -154,84 +154,26 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   onNavPress: toggleMenu,
                   bottomInset: adHeight,
                 ),
-                PositionedDirectional(
-                  child: _translateBuilder(
-                    Btn(
-                      onPress: onRefresh,
-                      child: Icon(
-                        Icons.refresh,
-                        size: 32,
-                      ),
-                    ),
-                    amount: 0.6,
-                  ),
-                  top: 24,
-                  start: 24,
-                ),
-                PositionedDirectional(
-                  child: _translateBuilder(
-                    Btn(
-                      onPress: toggleMenu,
-                      child: Icon(
-                        Icons.close,
-                        size: 32,
-                      ),
-                    ),
-                    amount: 0.6,
-                  ),
-                  top: 24,
-                  end: 24,
-                ),
-                PositionedDirectional(
-                  child: _translateBuilder(
-                    Btn(
-                      onPress: () => toggleTheme(manager),
-                      child: Transform.rotate(
-                        angle: 3.1415926535897932 / 4.5,
-                        child: Icon(
-                          manager.theme == AppTheme.Dark
-                              ? Icons.wb_sunny
-                              : Icons.brightness_3,
-                          size: 32,
-                        ),
-                      ),
-                    ),
-                  ),
-                  top: 24,
-                  start: 98,
-                ),
-                PositionedDirectional(
-                  child: _translateBuilder(
-                    Btn(
-                      onPress: () => toggleDialog(true),
-                      child: Icon(
-                        Icons.location_on,
-                        size: 32,
-                      ),
-                    ),
-                  ),
-                  top: 24,
-                  end: 98,
-                ),
-                // Centred, which is exactly midway between the theme and location buttons.
                 Positioned(
                   top: 24,
                   left: 0,
                   right: 0,
-                  child: Center(
-                    child: FutureBuilder<bool>(
-                      future: WeatherWidget.canPin(),
-                      builder: (_, snapshot) => snapshot.data != true
-                          ? SizedBox.shrink()
-                          : _translateBuilder(
-                              Btn(
-                                onPress: WeatherWidget.pin,
-                                child: Icon(
-                                  Icons.widgets,
-                                  size: 32,
-                                ),
-                              ),
-                            ),
+                  child: FutureBuilder<bool>(
+                    future: WeatherWidget.canPin(),
+                    builder: (_, snapshot) => _translateBuilder(
+                      MenuButtons(
+                        onRefresh: onRefresh,
+                        onTheme: () => toggleTheme(manager),
+                        themeIcon: Icon(
+                          manager.theme == AppTheme.Dark ? Icons.wb_sunny : Icons.brightness_3,
+                          size: 32,
+                        ),
+                        onPinWidget: snapshot.data == true ? WeatherWidget.pin : null,
+                        onLanguage: () => toggleLanguage(true),
+                        onLocation: () => toggleDialog(true),
+                        onClose: toggleMenu,
+                      ),
+                      amount: 0.6,
                     ),
                   ),
                 ),
@@ -239,7 +181,6 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   controller: _controller.view,
                   isDrawerOpen: isDrawerOpen,
                   onMorePress: toggleForecast,
-                  onLanguagePress: () => toggleLanguage(true),
                   onNavPress: toggleMenu,
                   accent: selectedAccent,
                   location: location,

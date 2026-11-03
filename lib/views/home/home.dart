@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/views/menu/menu.dart';
@@ -14,7 +13,6 @@ class Home extends StatelessWidget {
   final Location location;
   final void Function() onNavPress;
   final void Function() onMorePress;
-  final void Function() onLanguagePress;
   final Animation<double> controller;
 
   /// Space kept free at the bottom for the banner ad.
@@ -25,7 +23,6 @@ class Home extends StatelessWidget {
   Home({
     required this.isDrawerOpen,
     required this.onMorePress,
-    required this.onLanguagePress,
     required this.onNavPress,
     this.accent = 0,
     required this.controller,
@@ -73,15 +70,6 @@ class Home extends StatelessWidget {
                   Hamburger(
                     isDrawerOpen: isDrawerOpen,
                     onPressed: onNavPress,
-                  ),
-                  IconButton(
-                    iconSize: 36,
-                    tooltip: AppLocalizations.of(context)!.language,
-                    onPressed: loading || isDrawerOpen ? null : onLanguagePress,
-                    icon: Icon(
-                      Icons.translate,
-                      size: 36,
-                    ),
                   ),
                   IconButton(
                     iconSize: 36,

@@ -5,10 +5,12 @@ import 'package:provider/provider.dart';
 class Btn extends StatelessWidget {
   final Widget child;
   final onPress;
+  final double size;
 
   Btn({
     required this.child,
     required this.onPress,
+    this.size = 56,
   });
 
   @override
@@ -18,8 +20,8 @@ class Btn extends StatelessWidget {
     return GestureDetector(
       onTap: onPress,
       child: Container(
-        width: 56,
-        height: 56,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           color: theme.bgColor,
           boxShadow: [BoxShadow(color: Colors.black38, blurRadius: 40.0)],
