@@ -24,6 +24,9 @@ verified: human:panditankit1995@gmail.com
   (`WeatherQuery` next to `WeatherCache` in `lib/services/weather_cache.dart`).
   Weather APIs: `lib/services/providers/`.
 - Theme values: `lib/theme/`. Build-time config: `lib/config/`.
+- Translations: `lib/l10n/` holds one `app_<code>.arb` per language plus the hand-written `conditions.dart` and
+  `dates.dart`; `AppLocalizations` is generated from the `.arb` files and git-ignored. Text a user sees goes in
+  `app_en.arb` and every other `.arb`, not into Dart ([language picker](../features/language-picker.md)).
 - Android-native code: `android/app/src/main/kotlin/com/example/flutterweather/`.
 - Unit tests: `test/`. Dev tools that need the Flutter test harness: `tool/` (`tool/render_widget_icons_test.dart`).
 
@@ -38,8 +41,8 @@ verified: human:panditankit1995@gmail.com
 
 ## Tests
 
-- One `<subject>_test.dart` per service under test, with fakes defined in the same file
-  (`test/weather_service_test.dart`).
+- One `<subject>_test.dart` per service or widget under test, with fakes defined in the same file
+  (`test/weather_service_test.dart`). Widget tests live there too (`test/menu_buttons_test.dart`).
 - Test the services against fakes. Real network calls stay out of tests.
 
 ## Lint and format
@@ -67,6 +70,7 @@ verified: human:panditankit1995@gmail.com
 
 ## History
 
+- 2026-11-03: added the `lib/l10n/` folder and its generated, ignored files, and widget tests under `test/`, because the app was translated. See [gen_l10n decision](../decisions/app-localization-gen-l10n.md).
 - 2026-11-03: line width and callback typing were an open question; now 120 columns and typed callbacks. See
   [New Dart code is formatted at 120 columns with typed callbacks](../decisions/code-style-120-typed.md).
 
@@ -81,5 +85,8 @@ verified: human:panditankit1995@gmail.com
 * `lib/services/providers/weather_provider.dart`
 * `lib/services/providers/met_norway.dart`
 * `test/weather_service_test.dart`
+* `test/menu_buttons_test.dart`
+* `lib/l10n/conditions.dart`
+* `.gitignore`
 * `lib/views/forecast/forecast.dart`
 * `tool/render_widget_icons_test.dart`

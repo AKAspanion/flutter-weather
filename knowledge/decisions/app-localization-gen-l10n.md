@@ -27,17 +27,29 @@ Two ways were weighed:
 
 The developer chose `gen_l10n` on 2026-11-03. English (`app_en.arb`) is the source. Claude drafts the other languages
 ([supported languages](supported-languages.md)); each drafted file stays marked unreviewed until a native speaker
-checks it.
+checks it: the nine files carry `"@@x-reviewed": false` as their second entry, and a native speaker's review is to
+flip it. `test/arb_files_test.dart` checks the marker, the keys and the placeholders of every file.
 
 ## Consequences
 
+- The drafted Russian `nextDaysSubtitle` has no `=1` form: gen_l10n folds `=1` into `one`, so one day reads
+  "Прогноз на 1 день".
+- The generated `AppLocalizations` files (`app_localizations` plus the language, in `lib/l10n/`) are git-ignored (`./.gitignore`) and come from `flutter pub get` or
+  `flutter gen-l10n`; `l10n.yaml` and `generate: true` in `pubspec.yaml` set it up.
 - A new language is one more `.arb` file plus its entry in the language picker.
 - Play's notice keeps saying the app text isn't automatically translated, except for the widget's own `strings.xml`,
   which gets a translation per language.
 - The background widget refresh has no `BuildContext`, so it looks strings up by locale with the generated
   `lookupAppLocalizations`.
 
+## History
+
+- 2026-11-03: now records the `@@x-reviewed` marker, Russian's missing `=1` form and the git-ignored generated files, because they were settled while building. See [language picker](../features/language-picker.md).
+
 ## Sources
 
 * `docs/specs/2026-11-03-app-localization.md`
 * `android/app/src/main/res/values/strings.xml`
+* `l10n.yaml`
+* `lib/l10n/app_fr.arb`
+* `test/arb_files_test.dart`

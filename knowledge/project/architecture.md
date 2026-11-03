@@ -17,18 +17,21 @@ The app is a single Flutter app, with all Dart code in `lib/`:
 - **Services** (`lib/services/`) hold everything that isn't drawing. `WeatherService` picks a weather provider
   ([provider failover](../domain/provider-failover.md)). `WeatherCache` stores the last report. `Location` asks
   for the device position and wraps the report the views show. `WeatherWidget` feeds the Android widget. `Ads`
-  handles AdMob consent and start-up. `ThemeManager` holds the theme.
+  handles AdMob consent and start-up. `ThemeManager` holds the theme and `LocaleManager` the chosen language.
 - **Providers** (`lib/services/providers/`) each call one weather service and turn its answer into a
   `WeatherReport` ([data model](../data/model.md)). They all extend `WeatherProvider` in
   `lib/services/providers/weather_provider.dart`, and some also implement `Geocoder`.
 
 **State.** Almost all screen state lives in `_MainAppState` in `lib/main.dart`, held in fields and changed with
 `setState`: the current `Location`, the accent, and whether the menu, forecast and city dialog are open. It is passed
-down to the views as constructor arguments and callbacks. Only the theme is shared through the `provider` package:
-`ThemeManager` is a `ChangeNotifier` that `MainApp` provides, and widgets read it with `Provider.of<ThemeManager>`.
+down to the views as constructor arguments and callbacks. The theme and the language are shared through the `provider` package:
+`ThemeManager` and `LocaleManager` are `ChangeNotifier`s that `MainApp` provides, and widgets read them with
+`Provider.of`. `MaterialApp` takes its `locale` from `LocaleManager`. Strings come from the generated
+`AppLocalizations`, built from `lib/l10n/*.arb`; code with no `BuildContext` looks them up by locale with
+`lookupAppLocalizations` ([language picker](../features/language-picker.md)).
 
 **Screen structure.** There is one route. `MainApp` builds a single `Scaffold` whose body is a `Stack`: the
-`Menu`, the top buttons, the `Home` card, the `DialogOverlay`, the `Forecast` panel and the `AdBanner`. Opening the
+`Menu`, the top buttons (`MenuButtons`), the `Home` card, the `DialogOverlay`, the `LanguageOverlay`, the `Forecast` panel and the `AdBanner`. Opening the
 menu or the forecast moves and scales these layers with `AnimationController`s; nothing is pushed on a navigator.
 
 ## Jobs and queues
@@ -36,7 +39,7 @@ menu or the forecast moves and scales these layers with `AnimationController`s; 
 - **Widget refresh.** `WeatherWidget.scheduleRefresh` in `lib/services/weather_widget.dart` registers a periodic
   WorkManager task. WorkManager runs `widgetRefreshDispatcher` in a background isolate. That isolate builds its own
   `WeatherService.withDefaultProviders()`, fetches the last saved `WeatherQuery`, saves the report and updates the
-  widget. The task's frequency and start delay are set in `scheduleRefresh`. See
+  widget, in the language saved by the app (`WeatherWidget.localizations`). The task's frequency and start delay are set in `scheduleRefresh`. See
   [home-screen widget](../features/home-screen-widget.md).
 - **Ads start-up** waits until after the first frame (`addPostFrameCallback` in `lib/main.dart`). A comment there
   says this keeps the heavy ads SDK from slowing launch.
@@ -55,6 +58,10 @@ menu or the forecast moves and scales these layers with `AnimationController`s; 
 
 The background refresh runs steps 3 to 5 from the saved query, without asking for location.
 
+## History
+
+- 2026-11-03: only the theme was shared through `provider`; now the language is too, and strings come from generated `AppLocalizations`, because the app is translated. See [gen_l10n decision](../decisions/app-localization-gen-l10n.md).
+
 ## Sources
 
 * `lib/main.dart`
@@ -64,5 +71,7 @@ The background refresh runs steps 3 to 5 from the saved query, without asking fo
 * `lib/services/weather_widget.dart`
 * `lib/services/ads.dart`
 * `lib/services/theme_manager.dart`
+* `lib/services/locale_manager.dart`
+* `lib/views/menu/menu_buttons.dart`
 * `lib/services/providers/weather_provider.dart`
 * `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`

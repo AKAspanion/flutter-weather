@@ -103,89 +103,30 @@ Never configurable, whatever the project sets:
 
 _Generated from `knowledge/`. Do not edit by hand._
 
+_41 concepts, so sections other than project/ and apps/ show counts. Follow `knowledge/index.md` into them._
+
+- [data/](knowledge/data/) — 2 concepts
+- [decisions/](knowledge/decisions/) — 10 concepts
+- [design-system/](knowledge/design-system/) — 2 concepts
+- [domain/](knowledge/domain/) — 2 concepts
+- [features/](knowledge/features/) — 6 concepts
+- [findings/](knowledge/findings/) — 1 concept
+- [integrations/](knowledge/integrations/) — 5 concepts
+- [operations/](knowledge/operations/) — 2 concepts
+- [packages/](knowledge/packages/) — 1 concept
+- [quality/](knowledge/quality/) — 1 concept
+- [questions/](knowledge/questions/) — 3 concepts
+- [risks/](knowledge/risks/) — 1 concept
+- [security/](knowledge/security/) — 1 concept
+
 ### apps
 
 - [The Flutter app (flutterweather)](knowledge/apps/flutterweather.md) _(Application)_ — The single Flutter app: entry point, screens, platform projects, and its Android build (Android is the only supported platform).
-
-### data
-
-- [Weather data model](knowledge/data/model.md) _(Data Model)_ — Weather, WeatherReport, Place and WeatherQuery, and the normalised units every provider converts to.
-- [What the app stores on the device](knowledge/data/on-device-storage.md) _(Data Model)_ — The SharedPreferences keys the app and the widget read and write, and what each holds.
-
-### decisions
-
-- [Android is the only supported platform](knowledge/decisions/android-only.md) _(Decision)_ — The app ships on Android only; changes are built and checked for Android, and ios/ is kept but not maintained.
-- [Translate the app with Flutter gen_l10n and drafted .arb files](knowledge/decisions/app-localization-gen-l10n.md) _(Decision)_ — In-app text lives in .arb files compiled by gen_l10n; Claude drafts the translations and they stay marked unreviewed until a native speaker checks them.
-- [New Dart code is formatted at 120 columns with typed callbacks](knowledge/decisions/code-style-120-typed.md) _(Decision)_ — dart format with a page width of 120, set in analysis_options.yaml, and callbacks typed as function types, as the newer services do.
-- [Weather descriptions are shown from the condition code, translated](knowledge/decisions/descriptions-by-condition-code.md) _(Decision)_ — The description on screen and on the widget is a translated phrase per OpenWeatherMap condition code, not the provider's English text.
-- [Publish under the new application ID in.spanion.weather](knowledge/decisions/new-application-id.md) _(Decision)_ — The app is published as a new Play listing because the original signing key was lost.
-- [The privacy policy describes only what the app collects](knowledge/decisions/privacy-policy-no-analytics.md) _(Decision)_ — The app collects no usage analytics, so privacy.md is to describe only location, the weather services and AdMob.
-- [Rotate the OpenWeatherMap key and remove the bundled fallback](knowledge/decisions/rotate-openweathermap-key.md) _(Decision)_ — The committed key is to be rotated, the new one passed only through keys.json, and the fallback removed so OpenWeatherMap is skipped without a key.
-- [The app speaks the ten most spoken languages, chosen in the app](knowledge/decisions/supported-languages.md) _(Decision)_ — English, Chinese, Hindi, Spanish, Arabic, French, Bengali, Portuguese, Russian and Urdu, plus System default, picked from a language button on the home screen.
-- [Keep a patched copy of flare_flutter instead of moving to Rive](knowledge/decisions/vendored-flare-flutter.md) _(Decision)_ — The app's animations are Flare .flr files, which Rive can't load, so the discontinued flare_flutter is kept in packages/ and patched to compile.
-- [The widget refreshes the last place viewed, without background location](knowledge/decisions/widget-uses-last-place.md) _(Decision)_ — The background widget refresh reuses the last query saved by the app instead of asking for the device's location in the background.
-
-### design-system
-
-- [Shared widgets](knowledge/design-system/components.md) _(Component Inventory)_ — Btn, FlareIcon, Hamburger and AdBanner in lib/components, plus the detail chips and cards the weather and forecast views reuse.
-- [Colours, shapes and type](knowledge/design-system/tokens.md) _(Design Tokens)_ — Accent gradients, the two theme colours, the Montserrat font, and the radius and shadow values the screens repeat.
-
-### domain
-
-- [Condition codes, icons and night](knowledge/domain/condition-icons.md) _(Business Rule)_ — Every provider maps its conditions to OpenWeatherMap codes; Weather.getIcon turns a code into one of a fixed set of icon names, with a night variant by local hour.
-- [Weather provider failover](knowledge/domain/provider-failover.md) _(Business Rule)_ — WeatherService tries the providers in turn, the last one that worked first, parks failing ones for a cooldown, skips unconfigured ones, and geocodes cities for providers that need coordinates.
-
-### features
-
-- [Look up a city](knowledge/features/city-search.md) _(Feature)_ — The location button opens a dialog where the user types a city; the app remembers it until refresh switches back to the device location.
-- [See the current weather](knowledge/features/current-weather.md) _(Feature)_ — At launch the app shows the last report at once, then fetches fresh weather for the device location or the saved city; refresh does the same.
-- [See the forecast](knowledge/features/forecast.md) _(Feature)_ — A panel that slides up with the next 48 hours as expandable chips and the next days as expandable cards.
-- [Android home-screen widget](knowledge/features/home-screen-widget.md) _(Feature)_ — One flat card that snaps between Now and the next 24 hours on a vertical swipe, fed by the app and refreshed in the background for the last place viewed.
-- [Choose a theme and an accent](knowledge/features/themes-and-accents.md) _(Feature)_ — A light and a dark theme, toggled from the menu, and accent gradients picked from a carousel; both are remembered.
-
-### findings
-
-- [An OpenWeatherMap API key is committed in the code](knowledge/findings/committed-openweathermap-key.md) _(Finding)_ — lib/config/api_keys.dart falls back to a hard-coded OpenWeatherMap key, in git history since 2020, though the README says keys are kept out of git.
-
-### integrations
-
-- [Google AdMob and consent](knowledge/integrations/google-admob.md) _(Integration)_ — An anchored adaptive banner on Android, started only after Google UMP consent allows ads, with a privacy button where the user must be able to change their choice.
-- [MET Norway](knowledge/integrations/met-norway.md) _(Integration)_ — Last provider by default and the only keyless one; locationforecast plus the sunrise API, by coordinates only.
-- [OpenWeatherMap](knowledge/integrations/openweathermap.md) _(Integration)_ — First provider by default; current weather plus the 5-day / 3-hour forecast, city search, and geocoding both ways.
-- [Tomorrow.io](knowledge/integrations/tomorrow-io.md) _(Integration)_ — Third provider by default; hourly and daily forecast in one call, city search by name. Needs TOMORROW_IO_KEY.
-- [WeatherAPI.com](knowledge/integrations/weatherapi.md) _(Integration)_ — Second provider by default; current weather and a 3-day hourly forecast in one call, city search and geocoding. Needs WEATHERAPI_KEY.
-
-### operations
-
-- [Build-time keys and signing](knowledge/operations/environment.md) _(Runbook)_ — The dart-define keys in keys.example.json, where each is read, what a blank value does, and the Android signing file.
-- [Run, build and release](knowledge/operations/run-locally.md) _(Runbook)_ — Running the app with its keys, building the Play bundle, regenerating widget icons and launcher icons, and the store listing images.
-
-### packages
-
-- [flare_flutter, our patched copy](knowledge/packages/flare_flutter.md) _(Package)_ — A copy of the discontinued flare_flutter 3.0.2, kept in packages/ and patched to compile, which plays the app's .flr weather animations.
 
 ### project
 
 - [How the app is put together](knowledge/project/architecture.md) _(Architecture)_ — One Flutter app in three layers (views, services, weather providers), a background refresh isolate, and a Kotlin widget fed through home_widget.
 - [How code is written here](knowledge/project/conventions.md) _(Conventions)_ — Folder layout, naming, error handling and tests as the code shows them, the analyzer config, and where the git and check settings live.
 - [Beautiful Weather, an animated weather app built with Flutter](knowledge/project/overview.md) _(Project Overview)_ — Shows the current weather and a 48-hour and multi-day forecast for your location or a city, with an Android home-screen widget.
-
-### quality
-
-- [Tests](knowledge/quality/testing.md) _(Test Strategy)_ — Unit tests for provider failover and report aggregation in test/, and a test-harness tool that renders the widget icons.
-
-### questions
-
-- [Which code style do new files follow?](knowledge/questions/code-style-for-new-code.md) _(Open Question)_ — Older views are formatted at 80 columns with untyped callbacks; newer services run past 100 columns with typed callbacks. Which way does new code go?
-- [Is the iOS app built and shipped?](knowledge/questions/ios-support.md) _(Open Question)_ — An iOS project exists, but ads and the widget are Android-only and iOS carries Google's sample AdMob ID.
-- [Does the app collect usage analytics, as the privacy policy says?](knowledge/questions/privacy-policy-analytics.md) _(Open Question)_ — privacy.md says usage and device information are collected for analytics, but the app has no analytics SDK.
-
-### risks
-
-- [Technical debt](knowledge/risks/debt.md) _(Technical Debt)_ — Leftovers worth fixing, from the Kotlin package name and Kelvin conversions repeated in views to unmapped condition codes and unused fonts.
-
-### security
-
-- [Location, keys and what leaves the device](knowledge/security/data-protection.md) _(Security)_ — The app has no accounts; its sensitive data is the user's location, the API keys built into it, and ad consent.
 
 <!-- OKF-KNOWLEDGE-MAP:END -->

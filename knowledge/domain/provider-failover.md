@@ -25,8 +25,8 @@ OpenWeatherMap retired its One Call 2.5 API.
 4. **City searches.** A provider with `supportsCitySearch` gets the city name directly. For the others, the service
    finds coordinates with the first `Geocoder` that answers (`_firstGeocoder`), only once per search, and passes
    them on. No geocoder finding the city counts as that provider failing.
-5. **Place names.** A coordinates result with no place name is named by reverse geocoding, or "My location" if that
-   fails. A city result with no name is named after the search text.
+5. **Place names.** A coordinates result with no place name is named by reverse geocoding, or left with an empty name if
+   that fails; the screens and the widget then show "My location" in the chosen language. A city result with no name is named after the search text.
 6. **Timezone.** For coordinates, the device's UTC offset is passed, because the user is there (a comment says so).
    For a geocoded city, the offset is estimated from the longitude. Providers whose responses include a timezone
    use their own.
@@ -42,6 +42,10 @@ always starts from the default order.
 - `lib/services/providers/weather_provider.dart`: `WeatherProvider.isConfigured`, `supportsCitySearch`, `Geocoder`,
   `getJson` (status check and timeout).
 - Tested in `test/weather_service_test.dart` ([testing](../quality/testing.md)).
+
+## History
+
+- 2026-11-03: a coordinates result no geocoder could name was named "My location" by `WeatherService`; now it keeps an empty name and the screens translate it, because the app is translated. See [language picker](../features/language-picker.md).
 
 ## Sources
 

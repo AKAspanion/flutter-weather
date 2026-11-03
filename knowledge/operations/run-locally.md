@@ -20,6 +20,9 @@ verified: human:panditankit1995@gmail.com
 ## Steps
 
 - **Run:** `flutter run --dart-define-from-file=keys.json`, or plain `flutter run` without keys.
+- **Translations:** `AppLocalizations` is generated from `lib/l10n/*.arb` and git-ignored, so a fresh checkout needs
+  `flutter pub get` (or `flutter gen-l10n`) before the app, the tests or the analyzer will see it. After a branch merge
+  that changes an `.arb`, run `flutter gen-l10n` ([gen_l10n decision](../decisions/app-localization-gen-l10n.md)).
 - **Check:** the commands are the policy's `checks.commands.lint` and `checks.commands.test`
   ([conventions](../project/conventions.md), [testing](../quality/testing.md)).
 - **Release for Play:** `flutter build appbundle --release --dart-define-from-file=keys.json`, as `README.md` says,
@@ -32,6 +35,10 @@ verified: human:panditankit1995@gmail.com
   `assets/icon/icon.png`.
 - **Store listing:** the Play Store images are in `store/` (`store/feature_graphic.png` and `store/phone/`). The
   privacy policy is `privacy.md`.
+
+## History
+
+- 2026-11-03: added the generated-translations step, because `AppLocalizations` is git-ignored and generated. See [gen_l10n decision](../decisions/app-localization-gen-l10n.md).
 
 ## Sources
 

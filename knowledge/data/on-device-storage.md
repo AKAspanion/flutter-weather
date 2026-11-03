@@ -20,12 +20,14 @@ SDK sends ([data protection](../security/data-protection.md)).
 | `city_preference` | the searched city, or empty to use the device location | `setCity` in `lib/main.dart` | `getCity` in `lib/main.dart` |
 | `theme_preference` | the index of the `AppTheme` | `ThemeManager.setTheme` | `ThemeManager` at start-up |
 | `accent_preference` | the index of the accent gradient | `setAccent` in `lib/main.dart` | `getAccent` in `lib/main.dart` |
+| `language_preference` | the chosen language code, such as `fr`; absent means System default | `LocaleManager.setLocale` | `LocaleManager.load` at start-up, and `WeatherWidget.localizations` in the background refresh |
 
 The keys are string literals at the places named, or `_reportKey` and `_queryKey` in
 `lib/services/weather_cache.dart`.
 
-The widget's data (`city`, `now`, `hours`, `updated`) is written with `HomeWidget.saveWidgetData` in
-`lib/services/weather_widget.dart`. `WeatherWidgetProvider.kt` reads it from the `SharedPreferences` that
+The widget's data (`city`, `now`, `hours`, `labels`) is written with `HomeWidget.saveWidgetData` in
+`lib/services/weather_widget.dart`. `labels` holds the card titles and the update line in the app's chosen language.
+`updated` is no longer written; the Kotlin provider still reads it as a fallback for the update line. `WeatherWidgetProvider.kt` reads it from the `SharedPreferences` that
 `home_widget` hands it ([home-screen widget](../features/home-screen-widget.md)).
 
 ## Rules
@@ -34,13 +36,20 @@ The widget's data (`city`, `now`, `hours`, `updated`) is written with `HomeWidge
   values from another isolate (a comment there says so).
 - A cached value that no longer parses is dropped, not fixed. A comment says this is for caches written by an older
   app version.
-- Refreshing from the top button writes an empty `city_preference`, which switches back to the device location
+- Choosing System default removes `language_preference` rather than saving an empty value; an unknown saved code is
+  read as System default ([language picker](../features/language-picker.md)).
+- Refreshing from the menu button writes an empty `city_preference`, which switches back to the device location
   ([city search](../features/city-search.md)).
+
+## History
+
+- 2026-11-03: added `language_preference` and the widget's `labels`; `updated` is no longer written, because the widget's text now follows the app's language. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
 
 * `lib/services/weather_cache.dart`
 * `lib/main.dart`
 * `lib/services/theme_manager.dart`
+* `lib/services/locale_manager.dart`
 * `lib/services/weather_widget.dart`
 * `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`

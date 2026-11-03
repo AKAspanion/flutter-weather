@@ -26,15 +26,19 @@ inline.
 These values are repeated inline, not named:
 
 - Cards and buttons: rounded corners (12 for buttons, dialogs and day cards; 24 for the home card while the menu is
-  open), and a soft `BoxShadow` in `Colors.black38`. See `Btn` in `lib/components/btn.dart` and `Home` in
+  open), and a soft `BoxShadow` in `Colors.black38`. See `Btn` in `lib/components/btn.dart` (56 square unless given a `size`) and `Home` in
   `lib/views/home/home.dart`.
-- Screen padding of 24 around the main card and the top buttons (`lib/main.dart`, `lib/views/home/home.dart`).
+- Screen padding of 24 around the main card, and 24 from the top for the menu's button row, which has 16 at its sides
+  (`lib/main.dart`, `lib/views/home/home.dart`, `lib/views/menu/menu_buttons.dart`).
 
 ## Typography
 
 - Montserrat, registered under `flutter.fonts` in `pubspec.yaml` and set as `fontFamily` in `appThemeData`. Only the
   font files listed in `pubspec.yaml` are bundled. The others in `assets/fonts/` are unused
   ([debt](../risks/debt.md)).
+- Montserrat has no Devanagari, Bengali, Arabic or Han glyphs: text in those languages falls back to Android's system
+  fonts, which are taller, so text rows that must not overflow force Montserrat's line height
+  ([forecast](../features/forecast.md), [supported languages](../decisions/supported-languages.md)).
 - Headings are upper case and bold. Sizes are set inline per widget.
 
 ## Sources
@@ -43,6 +47,7 @@ These values are repeated inline, not named:
 * `lib/theme/app_theme.dart`
 * `lib/services/theme_manager.dart`
 * `lib/components/btn.dart`
+* `lib/views/menu/menu_buttons.dart`
 * `lib/views/home/home.dart`
 * `lib/main.dart`
 * `pubspec.yaml`

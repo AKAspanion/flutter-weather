@@ -10,13 +10,15 @@ verified: human:panditankit1995@gmail.com
 
 ## What it does
 
-The location button (top right, shown while the menu is open) opens `DialogOverlay`. When the user confirms a city
+The location button (in the menu's top button row, between translate and close, shown while the menu is open) opens `DialogOverlay`. When the user confirms a city
 name, `onSubmit` saves it as `city_preference` and calls `getLocation`, which fetches `WeatherQuery.city`. The city
 stays chosen across launches. Pressing refresh clears it and goes back to the device location
 ([current weather](current-weather.md)).
 
 How a city is resolved depends on the provider: some search by name, and the others need the city geocoded to
 coordinates first. See [provider failover](../domain/provider-failover.md).
+
+The dialog's text follows the chosen language ([language picker](language-picker.md)).
 
 ## Screens and routes
 
@@ -35,8 +37,13 @@ coordinates first. See [provider failover](../domain/provider-failover.md).
   misspelling, stays in `city_preference`: every launch retries it and falls back to the cached report or
   `ErrorView`, until the user taps refresh (`onSubmit` and `getLocation` in `lib/main.dart`).
 
+## History
+
+- 2026-11-03: the location button was a top-right button in `lib/main.dart`; now one of the menu's button row (`MenuButtons`), and the dialog's text is translated, because the translate button joined that row. See [supported languages](../decisions/supported-languages.md).
+
 ## Sources
 
 * `lib/views/home/dialog_overlay.dart`
 * `lib/main.dart`
+* `lib/views/menu/menu_buttons.dart`
 * `lib/services/weather_service.dart`
