@@ -3,7 +3,7 @@ type: Open Question
 title: Does the app collect usage analytics, as the privacy policy says?
 description: privacy.md says usage and device information are collected for analytics, but the app has no analytics SDK.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Does the app collect usage analytics, as the privacy policy says?

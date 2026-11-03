@@ -3,7 +3,7 @@ type: Decision
 title: Android is the only supported platform
 description: The app ships on Android only; changes are built and checked for Android, and ios/ is kept but not maintained.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:30:34Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Android is the only supported platform

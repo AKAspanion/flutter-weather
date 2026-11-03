@@ -3,7 +3,7 @@ type: Feature
 title: Android home-screen widget
 description: A swipeable stack of two cards (now, and the next 24 hours) fed by the app and refreshed in the background for the last place viewed.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Android home-screen widget
@@ -14,7 +14,8 @@ A resizable home-screen widget, on Android only. It is a looping stack of two ca
 between:
 
 - **Now:** the city, the icon, the temperature, the description, today's high and low, and when it was updated.
-- **Next 24 hours:** columns at least 3 hours apart, each with a short hour label, an icon and the temperature.
+- **Next 24 hours:** up to `_hourColumns` columns at least `_hourStep` apart (both in `WeatherWidget`), each with a
+  short hour label, an icon and the temperature.
 
 Tapping a card opens the app. Before any data arrives, the widget shows an empty view that also opens the app.
 
@@ -44,7 +45,8 @@ centre while the menu is open. It calls `WeatherWidget.pin`.
 - `_androidName` names the provider by its full Kotlin class, because the Kotlin package differs from the
   application ID (a comment says so).
 - `iconFor` in the Kotlin provider maps icon names to drawables one by one, instead of looking them up by name. A
-  comment says this is so resource shrinking keeps them. A new icon name needs a line there and a PNG.
+  comment says this is so resource shrinking keeps them. Adding an icon name: see
+  [condition icons](../domain/condition-icons.md).
 - `WeatherWidget` does nothing on platforms other than Android (`_supported`).
 - When the background fetch fails, the task returns false so WorkManager retries with backoff.
 

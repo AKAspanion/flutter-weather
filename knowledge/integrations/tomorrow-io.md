@@ -3,7 +3,7 @@ type: Integration
 title: Tomorrow.io
 description: Third provider by default; hourly and daily forecast in one call, city search by name. Needs TOMORROW_IO_KEY.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Tomorrow.io

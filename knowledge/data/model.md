@@ -3,7 +3,7 @@ type: Data Model
 title: Weather data model
 description: Weather, WeatherReport, Place and WeatherQuery, and the normalised units every provider converts to.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Weather data model

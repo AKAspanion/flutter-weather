@@ -3,7 +3,7 @@ type: Security
 title: Location, keys and what leaves the device
 description: The app has no accounts; its sensitive data is the user's location, the API keys built into it, and ad consent.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Location, keys and what leaves the device
@@ -22,7 +22,8 @@ The app has no sign-in, no accounts and no backend of its own. What needs protec
 
 - **Location only while the app is open.** Android asks for `ACCESS_FINE_LOCATION` and `ACCESS_COARSE_LOCATION`,
   and no background location, in `android/app/src/main/AndroidManifest.xml`. iOS has only
-  `NSLocationWhenInUseUsageDescription` in `ios/Runner/Info.plist`. Permission is requested when the app needs a
+  `NSLocationWhenInUseUsageDescription` in `ios/Runner/Info.plist` (iOS isn't shipped:
+  [decisions/android-only](../decisions/android-only.md)). Permission is requested when the app needs a
   position (`Location.currentPosition`). The widget never asks for location
   ([decisions/widget-uses-last-place](../decisions/widget-uses-last-place.md)).
 - **What the weather services receive.** Only the coordinates or the city name, over HTTPS (every provider builds
@@ -30,7 +31,8 @@ The app has no sign-in, no accounts and no backend of its own. What needs protec
   describes the same.
 - **Keys stay out of git,** passed at build time with `--dart-define-from-file=keys.json`. `keys.json` is in
   `./.gitignore`. This doesn't hold for OpenWeatherMap: see
-  [findings/committed-openweathermap-key](../findings/committed-openweathermap-key.md). Values read with
+  [findings/committed-openweathermap-key](../findings/committed-openweathermap-key.md). Rotating the key and removing
+  the fallback is decided ([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md)). Values read with
   `String.fromEnvironment` are compiled into the app, so anyone with the APK can read them. Build-time keys keep keys
   out of the repository, not away from users.
 - **Ad consent.** AdMob starts only once Google's UMP consent allows ads (`Ads._startIfAllowed` in

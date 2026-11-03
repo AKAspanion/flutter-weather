@@ -3,7 +3,7 @@ type: Decision
 title: New Dart code is formatted at 120 columns with typed callbacks
 description: dart format with a page width of 120, set in analysis_options.yaml, and callbacks typed as function types, as the newer services do.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:30:34Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # New Dart code is formatted at 120 columns with typed callbacks
@@ -25,8 +25,7 @@ The developer decided on 2026-11-03:
 
 ## Consequences
 
-- Setting the width in `./analysis_options.yaml` is a change still to make. After that, `dart format` gives the
-  same result for everyone.
+- The width belongs in `./analysis_options.yaml`, so `dart format` gives the same result for everyone.
 - Formatting the whole of `lib/` at once reflows the older views. Do it as its own commit, or only on the files a
   change touches, so diffs stay readable.
 - The untyped callbacks listed in [debt](../risks/debt.md) get types when their files are next touched.

@@ -3,7 +3,7 @@ type: Open Question
 title: Which code style do new files follow?
 description: Older views are formatted at 80 columns with untyped callbacks; newer services run past 100 columns with typed callbacks. Which way does new code go?
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Which code style do new files follow?

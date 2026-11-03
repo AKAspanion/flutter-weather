@@ -3,7 +3,7 @@ type: Open Question
 title: Is the iOS app built and shipped?
 description: An iOS project exists, but ads and the widget are Android-only and iOS carries Google's sample AdMob ID.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Is the iOS app built and shipped?

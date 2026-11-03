@@ -3,7 +3,7 @@ type: Feature
 title: Choose a theme and an accent
 description: A light and a dark theme, toggled from the menu, and accent gradients picked from a carousel; both are remembered.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Choose a theme and an accent
@@ -29,6 +29,10 @@ status: draft
 - The gradients and the theme colours are in [design tokens](../design-system/tokens.md).
 - With the menu open, the card shrinks so it stays clear of the menu footer and the banner ad
   (`Menu.footerHeight`, `fitScale` in `lib/views/home/home.dart`).
+- Both choices load asynchronously after start-up. Until they do, the app uses the defaults: `ThemeManager` returns
+  `AppTheme.White` until `_loadTheme` finishes, and `selectedAccent` in `lib/main.dart` starts at the first gradient
+  until `getAccent` finishes. A user who picked the dark theme or another accent can see the defaults briefly at
+  launch.
 
 ## Sources
 

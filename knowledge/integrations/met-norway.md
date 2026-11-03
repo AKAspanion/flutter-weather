@@ -3,7 +3,7 @@ type: Integration
 title: MET Norway
 description: Last provider by default and the only keyless one; locationforecast plus the sunrise API, by coordinates only.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # MET Norway

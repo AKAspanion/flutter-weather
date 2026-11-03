@@ -3,7 +3,7 @@ type: Feature
 title: See the current weather
 description: At launch the app shows the last report at once, then fetches fresh weather for the device location or the saved city; refresh does the same.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # See the current weather

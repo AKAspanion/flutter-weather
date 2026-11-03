@@ -3,7 +3,7 @@ type: Runbook
 title: Run, build and release
 description: Running the app with its keys, building the Play bundle, regenerating widget icons and launcher icons, and the store listing images.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Run, build and release
@@ -14,7 +14,8 @@ status: draft
   is in `./.metadata`. Commit `01da471` describes the Flutter, Gradle, Kotlin and NDK upgrade.
 - An Android SDK for the compile and target SDK in `android/app/build.gradle.kts`, and Xcode for `ios/`.
 - Optionally, a `keys.json` copied from `keys.example.json` ([environment](environment.md)). Without it, the app
-  runs on the code's OpenWeatherMap key, MET Norway and test ads.
+  runs on the code's OpenWeatherMap key, MET Norway and test ads. Removing that key is decided
+  ([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md)).
 
 ## Steps
 

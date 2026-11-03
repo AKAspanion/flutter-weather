@@ -3,7 +3,7 @@ type: Integration
 title: OpenWeatherMap
 description: First provider by default; current weather plus the 5-day / 3-hour forecast, city search, and geocoding both ways.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # OpenWeatherMap
@@ -25,7 +25,8 @@ status: draft
 
 - Key: `OPENWEATHERMAP_KEY`, read in `lib/config/api_keys.dart` ([environment](../operations/environment.md)). When
   it is blank, a key written in that file is used instead, so this provider is always configured. See
-  [findings/committed-openweathermap-key](../findings/committed-openweathermap-key.md).
+  [findings/committed-openweathermap-key](../findings/committed-openweathermap-key.md). Removing the fallback is
+  decided ([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md)).
 - Attribution text: `attribution` in the provider.
 
 ## Failure modes

@@ -3,7 +3,7 @@ type: Feature
 title: Look up a city
 description: The location button opens a dialog where the user types a city; the app remembers it until refresh switches back to the device location.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Look up a city
@@ -31,6 +31,9 @@ coordinates first. See [provider failover](../domain/provider-failover.md).
 - The dialog closes once `getLocation` reads a non-empty saved city, before the fetch finishes.
 - When no provider or geocoder finds the city, the fetch fails like any other failure
   ([current weather](current-weather.md)).
+- The city is saved before the fetch, and a failed fetch doesn't clear it. A city that can't be found, such as a
+  misspelling, stays in `city_preference`: every launch retries it and falls back to the cached report or
+  `ErrorView`, until the user taps refresh (`onSubmit` and `getLocation` in `lib/main.dart`).
 
 ## Sources
 

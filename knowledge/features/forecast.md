@@ -3,7 +3,7 @@ type: Feature
 title: See the forecast
 description: A panel that slides up with the next 48 hours as expandable chips and the next days as expandable cards.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # See the forecast

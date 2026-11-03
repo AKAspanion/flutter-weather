@@ -3,7 +3,7 @@ type: Finding
 title: An OpenWeatherMap API key is committed in the code
 description: lib/config/api_keys.dart falls back to a hard-coded OpenWeatherMap key, in git history since 2020, though the README says keys are kept out of git.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # An OpenWeatherMap API key is committed in the code

@@ -3,7 +3,7 @@ type: Project Overview
 title: Beautiful Weather, an animated weather app built with Flutter
 description: Shows the current weather and a 48-hour and multi-day forecast for your location or a city, with an Android home-screen widget.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Beautiful Weather, an animated weather app built with Flutter
@@ -12,7 +12,9 @@ status: draft
 
 Beautiful Weather shows the weather where you are, or in any city you type, with animated weather icons, accent
 gradients and a light and a dark theme. One screen shows the current conditions. A forecast panel slides up with the
-next 48 hours and the next days. On Android, a home-screen widget shows the same weather and refreshes in the
+next 48 hours and the next days. The 48 hours is the span the forecast screen promises ("Forecast for the next 48
+hours" in `lib/views/forecast/forecast.dart`); how much each provider actually returns is in
+[forecast](../features/forecast.md). On Android, a home-screen widget shows the same weather and refreshes in the
 background. The app is free and shows a banner ad.
 
 The weather comes from several services ([provider failover](../domain/provider-failover.md)), so the app keeps
@@ -48,5 +50,6 @@ Android is the only supported platform ([decision](../decisions/android-only.md)
 * `README.md`
 * `pubspec.yaml`
 * `lib/main.dart`
+* `lib/views/forecast/forecast.dart`
 * `privacy.md`
 * `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`

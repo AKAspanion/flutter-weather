@@ -3,15 +3,15 @@ type: Data Model
 title: What the app stores on the device
 description: The SharedPreferences keys the app and the widget read and write, and what each holds.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # What the app stores on the device
 
 ## Fields
 
-Everything is in `shared_preferences`. Nothing leaves the device except the provider requests
-([data protection](../security/data-protection.md)).
+Everything is in `shared_preferences`. Nothing leaves the device except the provider requests and what the AdMob
+SDK sends ([data protection](../security/data-protection.md)).
 
 | Key | Holds | Written by | Read by |
 | --- | --- | --- | --- |

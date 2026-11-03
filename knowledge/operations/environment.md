@@ -3,7 +3,7 @@ type: Runbook
 title: Build-time keys and signing
 description: The dart-define keys in keys.example.json, where each is read, what a blank value does, and the Android signing file.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Build-time keys and signing
@@ -14,7 +14,8 @@ template is `keys.example.json`. `keys.json` is ignored by `./.gitignore`. `READ
 ## Variables
 
 - `OPENWEATHERMAP_KEY`: [OpenWeatherMap](../integrations/openweathermap.md). When blank, a key written in the code
-  is used ([finding](../findings/committed-openweathermap-key.md)).
+  is used ([finding](../findings/committed-openweathermap-key.md)); removing it is decided
+  ([decisions/rotate-openweathermap-key](../decisions/rotate-openweathermap-key.md)).
 - `WEATHERAPI_KEY`: [WeatherAPI.com](../integrations/weatherapi.md). When blank, the provider is skipped.
 - `TOMORROW_IO_KEY`: [Tomorrow.io](../integrations/tomorrow-io.md). When blank, the provider is skipped.
 - `ADMOB_APP_ID`: the AdMob app ID in the Android manifest. When blank, Google's test app ID is used.

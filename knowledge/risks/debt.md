@@ -3,7 +3,7 @@ type: Technical Debt
 title: Technical debt
 description: Leftovers worth fixing, from the Kotlin package name and Kelvin conversions repeated in views to unmapped condition codes and unused fonts.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Technical debt

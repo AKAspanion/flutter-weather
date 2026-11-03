@@ -3,7 +3,7 @@ type: Design Tokens
 title: Colours, shapes and type
 description: Accent gradients, the two theme colours, the Montserrat font, and the radius and shadow values the screens repeat.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Colours, shapes and type

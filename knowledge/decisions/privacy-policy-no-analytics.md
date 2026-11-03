@@ -3,7 +3,7 @@ type: Decision
 title: The privacy policy describes only what the app collects
 description: The app collects no usage analytics, so privacy.md is to describe only location, the weather services and AdMob.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:30:34Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # The privacy policy describes only what the app collects
@@ -22,7 +22,7 @@ only location, the weather services and AdMob, and to drop the usage, device-inf
 
 ## Consequences
 
-- Rewording `privacy.md` is a change still to make. Until it is made, the policy claims more than the app does.
+- `privacy.md` must describe only what the app collects: no usage, device-information or analytics sections.
 - Play's Data safety answers should match the reworded policy.
 - Adding analytics or crash reporting later means updating the policy first, as a new decision replacing this one.
 

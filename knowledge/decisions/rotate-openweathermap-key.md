@@ -3,7 +3,7 @@ type: Decision
 title: Rotate the OpenWeatherMap key and remove the bundled fallback
 description: The committed key is to be rotated, the new one passed only through keys.json, and the fallback removed so OpenWeatherMap is skipped without a key.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:30:34Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Rotate the OpenWeatherMap key and remove the bundled fallback

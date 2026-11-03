@@ -3,7 +3,7 @@ type: Decision
 title: Publish under the new application ID in.spanion.weather
 description: The app is published as a new Play listing because the original signing key was lost.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Publish under the new application ID in.spanion.weather

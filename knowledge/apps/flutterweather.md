@@ -3,7 +3,7 @@ type: Application
 title: The Flutter app (flutterweather)
 description: The single Flutter app: entry point, screens, platform projects, and its Android build (Android is the only supported platform).
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # The Flutter app (flutterweather)

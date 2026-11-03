@@ -3,7 +3,7 @@ type: Integration
 title: Google AdMob and consent
 description: An anchored adaptive banner on Android, started only after Google UMP consent allows ads, with a privacy button where the user must be able to change their choice.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Google AdMob and consent

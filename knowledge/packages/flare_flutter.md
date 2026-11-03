@@ -3,7 +3,7 @@ type: Package
 title: flare_flutter, our patched copy
 description: A copy of the discontinued flare_flutter 3.0.2, kept in packages/ and patched to compile, which plays the app's .flr weather animations.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # flare_flutter, our patched copy

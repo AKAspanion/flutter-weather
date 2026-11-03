@@ -3,7 +3,7 @@ type: Business Rule
 title: Weather provider failover
 description: WeatherService tries the providers in turn, the last one that worked first, parks failing ones for a cooldown, skips unconfigured ones, and geocodes cities for providers that need coordinates.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Weather provider failover

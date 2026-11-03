@@ -3,7 +3,7 @@ type: Decision
 title: The widget refreshes the last place viewed, without background location
 description: The background widget refresh reuses the last query saved by the app instead of asking for the device's location in the background.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # The widget refreshes the last place viewed, without background location

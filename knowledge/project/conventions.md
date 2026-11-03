@@ -3,7 +3,7 @@ type: Conventions
 title: How code is written here
 description: Folder layout, naming, error handling and tests as the code shows them, the analyzer config, and where the git and check settings live.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # How code is written here
@@ -20,7 +20,8 @@ status: draft
 
 - Screens and their parts: `lib/views/<area>/` (`home`, `menu`, `forecast`, `weather`). Widgets shared across areas:
   `lib/components/`.
-- Logic, storage and platform features: `lib/services/`, one class per file (`lib/services/weather_widget.dart`).
+- Logic, storage and platform features: `lib/services/`, one file per service, with its supporting types beside it
+  (`WeatherQuery` next to `WeatherCache` in `lib/services/weather_cache.dart`).
   Weather APIs: `lib/services/providers/`.
 - Theme values: `lib/theme/`. Build-time config: `lib/config/`.
 - Android-native code: `android/app/src/main/kotlin/com/example/flutterweather/`.
@@ -45,7 +46,7 @@ status: draft
 
 - Dart analyzer, configured by `./analysis_options.yaml`. It excludes `packages/**`, the Flare copy, and the
   platform folders.
-- New and changed code: `dart format` at page width 120, set in `./analysis_options.yaml`, and callbacks typed as
+- New and changed code: `dart format` at page width 120, to be set in `./analysis_options.yaml`, and callbacks typed as
   function types (`lib/views/forecast/forecast.dart`). Older views still use 80 columns and untyped callbacks. See
   [decisions/code-style-120-typed](../decisions/code-style-120-typed.md).
 - Changes are built and checked for Android only ([decisions/android-only](../decisions/android-only.md)).

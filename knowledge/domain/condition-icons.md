@@ -3,7 +3,7 @@ type: Business Rule
 title: Condition codes, icons and night
 description: Every provider maps its conditions to OpenWeatherMap codes; Weather.getIcon turns a code into one of a fixed set of icon names, with a night variant by local hour.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Condition codes, icons and night
