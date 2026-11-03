@@ -18,8 +18,9 @@ import org.json.JSONObject
  * Home-screen widget: one card with the current weather, drawn in the app's
  * accent. The Flutter side (lib/services/weather_widget.dart) writes the values.
  *
- * Two layouts: the wide card, used from [WIDE_WIDTH] (full width), and a compact
- * one for anything narrower, which keeps its sunrise / wind / humidity row from
+ * Three layouts: a mini one (just the temperature) for a card shorter than [STRIP_HEIGHT] or
+ * narrower than [MINI_WIDTH], the wide card from [WIDE_WIDTH] (full width), and a compact
+ * one for anything in between, which keeps its sunrise / wind / humidity row from
  * [DETAILS_WIDTH] (3 cells) and hides it below (2x2). On Android 12+ the
  * launcher reports every size the widget can be shown at, and one RemoteViews is
  * rendered per size so the host picks the layout that fits; earlier versions get
@@ -97,11 +98,16 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
     )
 
     private fun widgetViews(context: Context, content: Content, size: SizeF?): RemoteViews {
-        // Without a known size, the wide layout is the default.
-        val small = size != null && size.width < WIDE_WIDTH
+        // The mini layout is chosen first; without a known size, the wide layout is the default.
+        val mini = size != null && (size.height < STRIP_HEIGHT || size.width < MINI_WIDTH)
+        val small = !mini && size != null && size.width < WIDE_WIDTH
         val views = RemoteViews(
             context.packageName,
-            if (small) R.layout.weather_widget_small else R.layout.weather_widget,
+            when {
+                mini -> R.layout.weather_widget_mini
+                small -> R.layout.weather_widget_small
+                else -> R.layout.weather_widget
+            },
         )
         views.setInt(R.id.widget_root, "setBackgroundResource", backgroundFor(content.accent))
 
@@ -120,11 +126,26 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         views.setViewVisibility(R.id.widget_content, View.VISIBLE)
         views.setViewVisibility(R.id.widget_empty, View.GONE)
 
+        if (mini && size != null) {
+            fillMini(context, views, now, size)
+            return views
+        }
+
+        // A compact card taller than it is wide stacks the icon above the temperature; the others
+        // put them side by side. The ids the provider fills are those of the arrangement it shows.
+        val tall = small && size != null && size.height > size.width
+        val iconSlot = if (tall) R.id.card_icon_slot_tall else R.id.card_icon_slot
+        val temperature = if (tall) R.id.card_temperature_tall else R.id.card_temperature
+        if (small) {
+            views.setViewVisibility(R.id.card_row, if (tall) View.GONE else View.VISIBLE)
+            views.setViewVisibility(R.id.card_stack, if (tall) View.VISIBLE else View.GONE)
+        }
+
         views.setTextViewText(R.id.card_city, city)
         // The icon is an animated layout, swapped into the slot on every render.
-        views.removeAllViews(R.id.card_icon_slot)
-        views.addView(R.id.card_icon_slot, RemoteViews(context.packageName, iconLayoutFor(now.optString("icon"))))
-        views.setTextViewText(R.id.card_temperature, now.optString("temperature"))
+        views.removeAllViews(iconSlot)
+        views.addView(iconSlot, RemoteViews(context.packageName, iconLayoutFor(now.optString("icon"))))
+        views.setTextViewText(temperature, now.optString("temperature"))
         views.setTextViewText(R.id.card_description, now.optString("description"))
         views.setTextViewText(R.id.card_detail, now.optString("detail"))
 
@@ -140,13 +161,13 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
 
             views.text(R.id.card_city, 12f, scale)
             views.text(R.id.card_label, 12f, scale)
-            // The icon and the temperature fill the card's middle band, so they grow with it.
+            // The icon and the temperature fill the card's middle block, so they grow with it.
             val compactScale = compactScaleFor(size)
-            views.text(R.id.card_temperature, 30f, compactScale)
+            views.text(temperature, 30f, compactScale)
             views.text(R.id.card_description, 12f, scale)
             views.text(R.id.card_detail, 12f, scale)
             listOf(R.id.card_sunrise, R.id.card_wind, R.id.card_humidity).forEach { views.text(it, 12f, scale) }
-            views.image(R.id.card_icon_slot, 40f, compactScale)
+            views.image(iconSlot, 40f, compactScale)
             listOf(R.id.card_sunrise_icon, R.id.card_wind_icon, R.id.card_humidity_icon).forEach {
                 views.image(it, 16f, scale)
             }
@@ -169,6 +190,31 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
     }
 
     /**
+     * The mini layout: only the temperature, centred, sized to the card, with the icon before it
+     * from [MINI_WIDTH]. The temperature grows with the card's height (about half of it) but is
+     * held to what fits the width, so "-12°" is never clipped in a 1x1.
+     */
+    private fun fillMini(context: Context, views: RemoteViews, now: JSONObject, size: SizeF) {
+        val icon = size.width >= MINI_WIDTH
+        val widthForText = size.width - 2 * MINI_PADDING - if (icon) MINI_ICON_GAP else 0f
+        val ems = MINI_TEXT_EMS + if (icon) MINI_ICON_EMS else 0f
+        val textSp = minOf(size.height * MINI_TEXT_HEIGHT_RATIO, widthForText / ems)
+
+        views.setTextViewText(R.id.card_temperature, now.optString("temperature"))
+        views.setTextViewTextSize(R.id.card_temperature, TypedValue.COMPLEX_UNIT_SP, textSp)
+
+        views.setViewVisibility(R.id.card_icon_slot, if (icon) View.VISIBLE else View.GONE)
+        if (icon) {
+            views.removeAllViews(R.id.card_icon_slot)
+            views.addView(R.id.card_icon_slot, RemoteViews(context.packageName, iconLayoutFor(now.optString("icon"))))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                views.setViewLayoutWidth(R.id.card_icon_slot, textSp * MINI_ICON_EMS, TypedValue.COMPLEX_UNIT_DIP)
+                views.setViewLayoutHeight(R.id.card_icon_slot, textSp * MINI_ICON_EMS, TypedValue.COMPLEX_UNIT_DIP)
+            }
+        }
+    }
+
+    /**
      * How much to enlarge the text and icons so they fill a bigger card. The
      * layouts are designed for the minimum size (about 250 x 110 dp); the scale
      * is capped by both dimensions so nothing overflows.
@@ -179,12 +225,20 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
     }
 
     /**
-     * The scale of the compact layout's icon and temperature: they grow with the card from the
-     * 2x2 size the layout is designed for, so a 3x2 (about 235 x 217 dp) gets about 1.45x.
+     * The scale of the compact layout's icon and temperature, which grow with the card. A card at
+     * least as wide as it is tall (side by side) is capped by both dimensions, and a 3x2 (about
+     * 235 x 217 dp) reaches the 1.6x cap; a taller one (stacked, a 2x2 of about 150 x 217 dp) uses
+     * its own design size and gets about 1.45x.
      */
     private fun compactScaleFor(card: SizeF?): Float {
         if (card == null) return 1f
-        return minOf(card.width / COMPACT_DESIGN_WIDTH, card.height / COMPACT_DESIGN_HEIGHT).coerceIn(1f, 1.6f)
+        val scale =
+            if (card.height > card.width) {
+                minOf(card.width / TALL_DESIGN_WIDTH, card.height / TALL_DESIGN_HEIGHT)
+            } else {
+                minOf(card.width / COMPACT_DESIGN_WIDTH, card.height / COMPACT_DESIGN_HEIGHT)
+            }
+        return scale.coerceIn(1f, 1.6f)
     }
 
     private fun RemoteViews.text(id: Int, sp: Float, scale: Float) {
@@ -266,8 +320,37 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
          */
         const val DETAILS_WIDTH = 220f
 
-        /** The 2x2 size (dp) the compact layout is designed for; [compactScaleFor] scales from it. */
+        /**
+         * The size (dp) the side-by-side compact layout is designed for; [compactScaleFor] scales
+         * from it. The height is lower than a 2x2's so a 3x2 (about 235 x 217 dp) reaches the cap.
+         */
         const val COMPACT_DESIGN_WIDTH = 130f
-        const val COMPACT_DESIGN_HEIGHT = 150f
+        const val COMPACT_DESIGN_HEIGHT = 135f
+
+        /** The size (dp) the stacked compact layout (a card taller than wide, a 2x2) is designed for. */
+        const val TALL_DESIGN_WIDTH = 100f
+        const val TALL_DESIGN_HEIGHT = 150f
+
+        /** A card shorter than this (dp) is one row (1x2, 1x3, 1x4) and uses weather_widget_mini.xml. */
+        const val STRIP_HEIGHT = 150f
+
+        /**
+         * A card narrower than this (dp) is one cell (1x1) and uses weather_widget_mini.xml; the mini
+         * layout shows the icon from this width.
+         */
+        const val MINI_WIDTH = 110f
+
+        /** The mini layout's padding and the gap before its temperature (dp); match weather_widget_mini.xml. */
+        const val MINI_PADDING = 8f
+        const val MINI_ICON_GAP = 4f
+
+        /** The mini temperature's size (sp) as a share of the card's height: it fills about half of it. */
+        const val MINI_TEXT_HEIGHT_RATIO = 0.45f
+
+        /** The width of "-12°" in sans-serif-medium, in ems (about 1.85, rounded up), so it never clips. */
+        const val MINI_TEXT_EMS = 2.1f
+
+        /** The mini icon's size, in ems of the temperature's size, so the icon grows with the text. */
+        const val MINI_ICON_EMS = 1.1f
     }
 }
