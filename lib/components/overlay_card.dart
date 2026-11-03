@@ -40,9 +40,13 @@ class OverlayCard extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(
-                          title.toUpperCase(),
-                          style: TextStyle(color: theme.textColor, fontSize: 16, fontWeight: FontWeight.bold),
+                        // ListTile insets its text by 16, so 12 + 4 lines the title up with the rows below it.
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.only(start: 4),
+                          child: Text(
+                            title.toUpperCase(),
+                            style: TextStyle(color: theme.textColor, fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
                       IconButton(

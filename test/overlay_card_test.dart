@@ -54,6 +54,16 @@ void main() {
     expect(tester.getCenter(find.byIcon(Icons.close)).dx, lessThan(tester.getCenter(find.text('SETTINGS')).dx));
   });
 
+  testWidgets('lines the title up with the text of a ListTile row', (tester) async {
+    await _pump(tester, child: const ListTile(title: Text('Row')));
+    expect(tester.getTopLeft(find.text('SETTINGS')).dx, tester.getTopLeft(find.text('Row')).dx);
+  });
+
+  testWidgets('lines the title up with a ListTile row at the right in Arabic', (tester) async {
+    await _pump(tester, locale: const Locale('ar'), child: const ListTile(title: Text('Row')));
+    expect(tester.getTopRight(find.text('SETTINGS')).dx, tester.getTopRight(find.text('Row')).dx);
+  });
+
   testWidgets('calls onClose once when the close button is tapped, and has the material tooltip', (tester) async {
     int closed = 0;
     await _pump(tester, onClose: () => closed++);
