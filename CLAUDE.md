@@ -121,8 +121,8 @@ _Generated from `knowledge/`. Do not edit by hand._
 - [Rotate the OpenWeatherMap key and remove the bundled fallback](knowledge/decisions/rotate-openweathermap-key.md) _(Decision)_ — The committed key is to be rotated, the new one passed only through keys.json, and the fallback removed so OpenWeatherMap is skipped without a key.
 - [The theme follows the system, and the button overrides it until the system next changes](knowledge/decisions/theme-follows-system.md) _(Decision)_ — The app takes light or dark from the system and switches live; the theme button sets an override that holds until the system brightness changes.
 - [Keep a patched copy of flare_flutter instead of moving to Rive](knowledge/decisions/vendored-flare-flutter.md) _(Decision)_ — The app's animations are Flare .flr files, which Rive can't load, so the discontinued flare_flutter is kept in packages/ and patched to compile.
-- [Widget icons animate as frame animations in a ProgressBar](knowledge/decisions/widget-animated-icons.md) _(Decision)_ — Home-screen widgets can't play Flare, so each icon's loop is rendered to frames and played by an indeterminate ProgressBar, at a cost of about 1.5 MB and some battery.
-- [One resizable widget that goes down to 2x2, showing only Now](knowledge/decisions/widget-one-resizable-card.md) _(Decision)_ — The widget is a single picker entry that resizes from 4x2 down to 2x2, switching to a compact layout when narrow; the 24-hour page is dropped.
+- [Widget icons animate as frame animations in a ProgressBar](knowledge/decisions/widget-animated-icons.md) _(Decision)_ — Home-screen widgets can't play Flare, so each icon's loop is rendered to frames and played by an indeterminate ProgressBar, at a cost of about 1.2 MB and some battery.
+- [One resizable widget that goes down to one cell, showing only Now](knowledge/decisions/widget-one-resizable-card.md) _(Decision)_ — The widget is a single picker entry that resizes from 4x2 down to one row or one cell, switching to a compact or a temperature-only layout when small; the 24-hour page is dropped.
 - [The widget refreshes the last place viewed, without background location](knowledge/decisions/widget-uses-last-place.md) _(Decision)_ — The background widget refresh reuses the last query saved by the app instead of asking for the device's location in the background.
 
 ### design-system
@@ -140,8 +140,8 @@ _Generated from `knowledge/`. Do not edit by hand._
 - [Look up a city](knowledge/features/city-search.md) _(Feature)_ — The location button opens a dialog where the user types a city; the app remembers it until refresh switches back to the device location.
 - [See the current weather](knowledge/features/current-weather.md) _(Feature)_ — At launch the app shows the last report at once, then fetches fresh weather for the device location or the saved city; refresh does the same.
 - [See the forecast](knowledge/features/forecast.md) _(Feature)_ — A panel that slides up with the next 48 hours as expandable chips and the next days as expandable cards.
-- [Android home-screen widget](knowledge/features/home-screen-widget.md) _(Feature)_ — One flat card that snaps between Now and the next 24 hours on a vertical swipe, fed by the app and refreshed in the background for the last place viewed.
-- [Choose a theme and an accent](knowledge/features/themes-and-accents.md) _(Feature)_ — A light and a dark theme, toggled from the menu, and accent gradients picked from a carousel; both are remembered.
+- [Android home-screen widget](knowledge/features/home-screen-widget.md) _(Feature)_ — One resizable Now card in the app's accent, with an animated weather icon, fed by the app and refreshed in the background for the last place viewed.
+- [Choose a theme and an accent](knowledge/features/themes-and-accents.md) _(Feature)_ — The theme follows the system light or dark, the menu button overrides it until the system changes, and accent gradients picked from a carousel also colour the widget.
 
 ### findings
 
@@ -172,7 +172,7 @@ _Generated from `knowledge/`. Do not edit by hand._
 
 ### quality
 
-- [Tests](knowledge/quality/testing.md) _(Test Strategy)_ — Unit tests for provider failover and report aggregation in test/, and a test-harness tool that renders the widget icons.
+- [Tests](knowledge/quality/testing.md) _(Test Strategy)_ — Unit tests for provider failover, the theme, the widget service and the widget resources in test/, and a test-harness tool that renders the widget icons.
 
 ### questions
 

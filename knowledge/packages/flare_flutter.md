@@ -23,7 +23,7 @@ upstream as possible.
 The app uses only `FlareActor`, from the vendored `packages/flare_flutter/lib/flare_actor.dart` (imported as
 package:flare_flutter/flare_actor.dart). It is wrapped by `FlareIcon`
 in `lib/components/flare_icon.dart` ([components](../design-system/components.md)).
-`tool/render_widget_icons_test.dart` also uses `FlareActor`, to render the widget's PNG icons.
+`tool/render_widget_icons_test.dart` also uses `FlareActor`, to render the widget's icon frames and stills.
 
 ## Used by
 

@@ -34,7 +34,7 @@ integration). For example, OpenWeatherMap steps by 3 hours.
   `Forecast`). It is unmounted after the panel slides away. Comments say this stops its animated icons from running
   off screen.
 - Both lists are built lazily with `ListView.builder`. Comments say this is so off-screen icons cost nothing.
-- Hourly chips use the same night rule as the widget ([condition icons](../domain/condition-icons.md)).
+- Hourly chips pick day or night icons from their own hour, not the current time ([condition icons](../domain/condition-icons.md)).
 
 ## Sources
 
