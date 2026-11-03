@@ -17,6 +17,8 @@ in Kotlin (`WeatherWidgetProvider.kt`, `MainActivity.kt`), built with `flutter b
 
 **Spec:** `docs/specs/2026-11-03-widget-testing-feedback.md`
 
+**Status:** complete
+
 ## Global Constraints
 
 - New Dart code is formatted at 120 columns with typed callbacks (`decisions/code-style-120-typed`).
@@ -120,37 +122,37 @@ and `accent`; `project/architecture`: the widget is a single `RemoteViews` layou
 - Given the Kotlin and XML changes, when `flutter build apk --debug` runs, then it succeeds (no remaining reference to
   a deleted layout, drawable, id or string).
 
-- [ ] **Step 1: Write the failing tests** for the four Dart cases in `test/weather_widget_test.dart` (set
+- [x] **Step 1: Write the failing tests** for the four Dart cases in `test/weather_widget_test.dart` (set
   `debugDefaultTargetPlatformOverride`, reset it in `tearDown`; mock the `home_widget` channel on the test binary
   messenger and record its calls). Add `setAccent` with its real signature and an empty body first, so the tests fail
   on behaviour.
 
-- [ ] **Step 2: Run them to verify they fail**
+- [x] **Step 2: Run them to verify they fail**
 
 Run: `flutter test test/weather_widget_test.dart`
 Expected: FAIL on the `hours` and `accent` assertions.
 
-- [ ] **Step 3: Implement the Dart side**: drop `_nextDay`, `_hourLabel`, `_isNight`, `_localTime`, `_hourColumns`
+- [x] **Step 3: Implement the Dart side**: drop `_nextDay`, `_hourLabel`, `_isNight`, `_localTime`, `_hourColumns`
   and `_hourStep`; implement `setAccent`; call it from `setAccent` and `getAccent` in `lib/main.dart`; add the order
   comment in `lib/theme/gradients.dart`.
 
-- [ ] **Step 4: Run the tests and verify they pass**
+- [x] **Step 4: Run the tests and verify they pass**
 
 Run: `flutter test test/weather_widget_test.dart`
 Expected: PASS
 
-- [ ] **Step 5: Rewrite the Android side**: the two layouts, the preview, the nine backgrounds (angle `315`, the
+- [x] **Step 5: Rewrite the Android side**: the two layouts, the preview, the nine backgrounds (angle `315`, the
   gradient's `from` as `startColor`, `to` as `endColor`, radius `20dp`, as `widget_background.xml` has now), the info
   file, the strings, and the provider (render one `RemoteViews` per size on Android 12+ and from `portraitSize`
   before; choose the layout by `SMALL_WIDTH`; set the root background with `backgroundFor`; open the app from
   `widget_root` and `widget_empty`; show `widget_empty` and hide the content when `city` or `now` is missing).
 
-- [ ] **Step 6: Build to verify the Android side compiles**
+- [x] **Step 6: Build to verify the Android side compiles**
 
 Run: `flutter build apk --debug`
 Expected: `Built build/app/outputs/flutter-apk/app-debug.apk`
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add lib/services/weather_widget.dart lib/main.dart lib/theme/gradients.dart test/weather_widget_test.dart \
@@ -221,30 +223,30 @@ length per icon comes from the Flare animation's duration, not a guess.
   the 11 names.
 - Given the changes, when `flutter build apk --debug` runs, then it succeeds.
 
-- [ ] **Step 1: Write the failing tests** for the four resource cases in `test/widget_icon_resources_test.dart`
+- [x] **Step 1: Write the failing tests** for the four resource cases in `test/widget_icon_resources_test.dart`
   (reading files relative to the project root).
 
-- [ ] **Step 2: Run them to verify they fail**
+- [x] **Step 2: Run them to verify they fail**
 
 Run: `flutter test test/widget_icon_resources_test.dart`
 Expected: FAIL: the animation lists and layouts don't exist yet.
 
-- [ ] **Step 3: Add the frames mode to the tool and run it** to write the frames, lists and layouts (the command goes
+- [x] **Step 3: Add the frames mode to the tool and run it** to write the frames, lists and layouts (the command goes
   in the tool's header comment).
 
-- [ ] **Step 4: Change the layouts and the provider** to the icon slot and `iconLayoutFor`.
+- [x] **Step 4: Change the layouts and the provider** to the icon slot and `iconLayoutFor`.
 
-- [ ] **Step 5: Run the tests and verify they pass**
+- [x] **Step 5: Run the tests and verify they pass**
 
 Run: `flutter test test/widget_icon_resources_test.dart`
 Expected: PASS
 
-- [ ] **Step 6: Build to verify the Android side compiles**
+- [x] **Step 6: Build to verify the Android side compiles**
 
 Run: `flutter build apk --debug`
 Expected: `Built build/app/outputs/flutter-apk/app-debug.apk`
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add tool/render_widget_icons_test.dart test/widget_icon_resources_test.dart \
@@ -296,26 +298,26 @@ static Future<void> pin(); // invokes 'pin' on _pinChannel; catches and debugPri
 - Given the platform is iOS, when `pin()` runs, then no channel call is made.
 - Given the change, when `flutter build apk --debug` runs, then it succeeds.
 
-- [ ] **Step 1: Write the failing tests** for the three Dart cases in `test/weather_widget_test.dart`.
+- [x] **Step 1: Write the failing tests** for the three Dart cases in `test/weather_widget_test.dart`.
 
-- [ ] **Step 2: Run them to verify they fail**
+- [x] **Step 2: Run them to verify they fail**
 
 Run: `flutter test test/weather_widget_test.dart`
 Expected: FAIL: `pin` still calls `home_widget`.
 
-- [ ] **Step 3: Implement** `pin` on the new channel and the channel handler in `MainActivity`.
+- [x] **Step 3: Implement** `pin` on the new channel and the channel handler in `MainActivity`.
 
-- [ ] **Step 4: Run the tests and verify they pass**
+- [x] **Step 4: Run the tests and verify they pass**
 
 Run: `flutter test test/weather_widget_test.dart`
 Expected: PASS
 
-- [ ] **Step 5: Build to verify the Android side compiles**
+- [x] **Step 5: Build to verify the Android side compiles**
 
 Run: `flutter build apk --debug`
 Expected: `Built build/app/outputs/flutter-apk/app-debug.apk`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add android/app/src/main/kotlin/com/example/flutterweather/MainActivity.kt lib/services/weather_widget.dart \
@@ -378,23 +380,23 @@ brightness the override was set against.
 - Given the system light and no override, when `setTheme(AppTheme.Dark)` runs, then `theme` is `AppTheme.Dark`, prefs
   hold `theme_preference: 1` and `theme_preference_system: Brightness.light.index`, and listeners are notified.
 
-- [ ] **Step 1: Write the failing tests** for the cases in `test/theme_manager_test.dart` (use
+- [x] **Step 1: Write the failing tests** for the cases in `test/theme_manager_test.dart` (use
   `SharedPreferences.setMockInitialValues` and `tester.platformDispatcher.platformBrightnessTestValue`). Add
   `resolveTheme` with its real signature returning `AppTheme.White` first, so the tests fail on behaviour.
 
-- [ ] **Step 2: Run them to verify they fail**
+- [x] **Step 2: Run them to verify they fail**
 
 Run: `flutter test test/theme_manager_test.dart`
 Expected: FAIL on the dark-system and override cases.
 
-- [ ] **Step 3: Implement** `resolveTheme` and the `ThemeManager` changes.
+- [x] **Step 3: Implement** `resolveTheme` and the `ThemeManager` changes.
 
-- [ ] **Step 4: Run the tests and verify they pass**
+- [x] **Step 4: Run the tests and verify they pass**
 
 Run: `flutter test test/theme_manager_test.dart`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add lib/services/theme_manager.dart test/theme_manager_test.dart
@@ -441,27 +443,27 @@ the compact layout, which keeps the details row from `DETAILS_WIDTH` and never e
   no longer names `SMALL_WIDTH`.
 - Given the change, when `flutter build apk --debug` runs, then it succeeds.
 
-- [ ] **Step 1: Write the failing tests** for the two resource cases in `test/widget_layout_resources_test.dart`.
+- [x] **Step 1: Write the failing tests** for the two resource cases in `test/widget_layout_resources_test.dart`.
 
-- [ ] **Step 2: Run them to verify they fail**
+- [x] **Step 2: Run them to verify they fail**
 
 Run: `flutter test test/widget_layout_resources_test.dart`
 Expected: FAIL: the small layout still ellipsizes and has no `card_details`.
 
-- [ ] **Step 3: Change the compact layout and the provider** (choose the layout by `WIDE_WIDTH`, set `card_details`
+- [x] **Step 3: Change the compact layout and the provider** (choose the layout by `WIDE_WIDTH`, set `card_details`
   visibility by `DETAILS_WIDTH`, fill and scale the details row in the compact layout as the wide one does).
 
-- [ ] **Step 4: Run the tests and verify they pass**
+- [x] **Step 4: Run the tests and verify they pass**
 
 Run: `flutter test test/widget_layout_resources_test.dart`
 Expected: PASS
 
-- [ ] **Step 5: Build to verify the Android side compiles**
+- [x] **Step 5: Build to verify the Android side compiles**
 
 Run: `flutter build apk --debug`
 Expected: `Built build/app/outputs/flutter-apk/app-debug.apk`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt \
@@ -516,28 +518,28 @@ temperature (with the icon from `MINI_WIDTH`), and a tall compact card stacks th
 - Given `weather_widget_small.xml`, then it still has no `android:ellipsize` (the Task 5 case keeps passing).
 - Given the change, when `flutter build apk --debug` runs, then it succeeds.
 
-- [ ] **Step 1: Write the failing tests** for the three new resource cases in `test/widget_layout_resources_test.dart`.
+- [x] **Step 1: Write the failing tests** for the three new resource cases in `test/widget_layout_resources_test.dart`.
 
-- [ ] **Step 2: Run them to verify they fail**
+- [x] **Step 2: Run them to verify they fail**
 
 Run: `flutter test test/widget_layout_resources_test.dart`
 Expected: FAIL: no mini layout, the info file still says `110dp`.
 
-- [ ] **Step 3: Build the mini layout and the compact spacing** (the layout choice by `STRIP_HEIGHT` and `MINI_WIDTH`
+- [x] **Step 3: Build the mini layout and the compact spacing** (the layout choice by `STRIP_HEIGHT` and `MINI_WIDTH`
   before `WIDE_WIDTH`; the tall arrangement when height > width; the centred block; the scales, with named constants
   and a comment on each).
 
-- [ ] **Step 4: Run the tests and verify they pass**
+- [x] **Step 4: Run the tests and verify they pass**
 
 Run: `flutter test test/widget_layout_resources_test.dart`
 Expected: PASS
 
-- [ ] **Step 5: Build to verify the Android side compiles**
+- [x] **Step 5: Build to verify the Android side compiles**
 
 Run: `flutter build apk --debug`
 Expected: `Built build/app/outputs/flutter-apk/app-debug.apk`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt \
