@@ -294,7 +294,6 @@ final void Function() onLanguagePress;
 
 **Spec:**
 - §5: "System default first, then the ten languages, the current choice marked with the accent colour. Choosing one closes the overlay and switches the app at once, with no restart. A close button dismisses it without changing anything."
-- §5: "`Home`'s top row … gets an `IconButton` with `Icons.translate` beside the forecast button, disabled while the drawer is open, like that button."
 - §3: "Weekday names, the date line, and AM/PM come from `intl`'s `DateFormat` with the active locale"
 - §6: "Arabic and Urdu use Flutter's default mirroring."
 
@@ -428,4 +427,97 @@ Expected: PASS
 ```bash
 git add lib/services/weather_widget.dart android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt test/weather_widget_test.dart
 git commit -m "Feed the home-screen widget its text in the app's chosen language."
+```
+
+---
+
+### Task 5: Translate button in the menu row
+
+Added during the run at the developer's request, after Tasks 1–4 were merged: the translate button moves from the
+home screen's top row to the menu's top button row.
+
+**Files:**
+- Modify: `lib/main.dart` (the menu's top button row, and the `Home(...)` call)
+- Modify: `lib/views/home/home.dart`
+- Modify: `lib/components/btn.dart`
+- Create: `lib/views/menu/menu_buttons.dart`
+- Test: `test/menu_buttons_test.dart`
+
+**Interfaces:**
+- Consumes: existing `LanguageOverlay` and `toggleLanguage` in `main.dart` (Task 3), existing `WeatherWidget.canPin()`
+  and `WeatherWidget.pin`.
+- Produces: nothing other tasks call.
+
+```dart
+// lib/components/btn.dart: new optional parameter, default 56
+final double size;
+
+// lib/views/menu/menu_buttons.dart
+class MenuButtons extends StatelessWidget {
+  final void Function() onRefresh;
+  final void Function() onTheme;
+  final Widget themeIcon;              // the sun or moon icon main.dart shows today
+  final void Function()? onPinWidget;  // null hides the widget button
+  final void Function() onLanguage;
+  final void Function() onLocation;
+  final void Function() onClose;
+  const MenuButtons({...});
+}
+```
+
+- `MenuButtons` lays out one `Row` with `MainAxisAlignment.spaceBetween` inside 16 dp horizontal padding: refresh,
+  theme, widget (when `onPinWidget` isn't null), translate (`Icons.translate`), location, close. Refresh is the first
+  child and close the last, so they sit in the far corners and mirror in right-to-left with the `Row`.
+- Each button's size is `min(56, (width - 32 - 8 * (n - 1)) / n)` for `n` buttons, so 56 dp where they fit and evenly
+  smaller on narrow screens.
+- `main.dart` replaces its five hand-placed menu buttons (refresh, close, theme, location, and the centred widget
+  button) with one `MenuButtons` at `top: 24`, wrapped in `_translateBuilder` as they are today. It keeps the
+  `FutureBuilder` on `WeatherWidget.canPin()` to pass `onPinWidget`. Translate calls `toggleLanguage(true)`.
+- `Home` loses the translate `IconButton` and its `onLanguagePress` parameter: its top row is the hamburger and the
+  forecast button only, as on `master`.
+
+**Spec:**
+- §5: "The translate button (`Icons.translate`) is in the menu's top button row in `lib/main.dart`, not on the home screen."
+- §5: "That row is one row: refresh in the far start corner, close in the far end corner, and theme, widget (only when the phone can pin widgets), translate and location justified evenly between them."
+- §5: "The overlay opens above the menu; choosing a language closes the overlay and leaves the menu open."
+
+**Tags:** `screen`
+
+**Knowledge:** (written after the finish)
+- `features/language-picker`: the translate button is in the menu's top button row.
+- `design-system/components`: `MenuButtons`, and `Btn`'s `size`.
+
+**Acceptance:**
+- Given a 412 dp wide screen and `onPinWidget` set, then six buttons show in the order refresh, theme, widget,
+  translate, location, close; refresh's left edge is 16 dp from the screen's left and close's right edge 16 dp from
+  the right; each button is 56 dp; no exception.
+- Given a 360 dp wide screen and `onPinWidget` set, then the six buttons fit with no exception, each the same size,
+  smaller than 56 dp.
+- Given `onPinWidget` is null, then five buttons show, without the widget button, refresh and close still in the far
+  corners.
+- Given `TextDirection.rtl`, then refresh is at the right edge and close at the left.
+- When the translate button is tapped, then `onLanguage` is called once and no other callback.
+- `Home` builds with no `onLanguagePress` parameter and shows no `Icons.translate`.
+
+- [ ] **Step 1: Create `menu_buttons.dart` with the signature above and an empty `build`, and add `size` to `Btn`**
+
+- [ ] **Step 2: Write the failing tests** for each Acceptance case in `test/menu_buttons_test.dart`
+
+- [ ] **Step 3: Run them to verify they fail**
+
+Run: `flutter test test/menu_buttons_test.dart`
+Expected: FAIL on the assertions.
+
+- [ ] **Step 4: Implement `MenuButtons`, use it in `main.dart`, and remove the translate button from `Home`**
+
+- [ ] **Step 5: Run them to verify they pass**
+
+Run: `flutter test test/menu_buttons_test.dart`
+Expected: PASS
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add lib/main.dart lib/views/home/home.dart lib/components/btn.dart lib/views/menu/menu_buttons.dart test/menu_buttons_test.dart
+git commit -m "Move the translate button into the menu's top button row, with refresh and close in the corners."
 ```

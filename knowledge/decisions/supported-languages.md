@@ -20,8 +20,8 @@ Ethnologue: English (`en`, the source and fallback), Chinese Simplified (`zh`), 
 (`ar`), French (`fr`), Bengali (`bn`), Portuguese (`pt`), Russian (`ru`) and Urdu (`ur`). Some years Indonesian ranks
 tenth instead of Urdu; Urdu was taken.
 
-The language is picked from a translate button in the home screen's top row: System default first, then each
-language in its own script. System default follows the phone's language when it is in the list, otherwise English.
+The language is picked from a translate button in the menu's top button row, between the widget and location
+buttons: System default first, then each language in its own script. System default follows the phone's language when it is in the list, otherwise English.
 
 ## Consequences
 
@@ -29,7 +29,13 @@ language in its own script. System default follows the phone's language when it 
 - Montserrat has no Devanagari, Bengali, Arabic or Han glyphs; Android's system fonts show those scripts.
 - Android's own per-app language setting isn't wired up: the in-app picker is the way to choose.
 
+## History
+
+- 2026-11-03: the translate button was in the home screen's top row; now in the menu's top button row, with refresh
+  and close in the far corners and the other buttons justified between them, because the developer wanted the home
+  screen's top row kept as it was.
+
 ## Sources
 
 * `docs/specs/2026-11-03-app-localization.md`
-* `lib/views/home/home.dart`
+* `lib/main.dart`

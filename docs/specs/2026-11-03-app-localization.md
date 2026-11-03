@@ -88,12 +88,16 @@ Each language shows in its own script, so a user who can't read the current lang
   `language_preference`, removes the key for System default, and restores it at start. An unknown saved code is
   treated as System default.
 - With System default, Flutter picks the phone's language when it is in the list, otherwise English.
-- `Home`'s top row (`lib/views/home/home.dart`) gets an `IconButton` with `Icons.translate` beside the forecast
-  button, disabled while the drawer is open, like that button.
-- Tapping it opens `lib/views/home/language_overlay.dart`, styled like the city dialog in `dialog_overlay.dart`:
+- The translate button (`Icons.translate`) is in the menu's top button row in `lib/main.dart`, not on the home
+  screen. That row is one row: refresh in the far start corner, close in the far end corner, and theme, widget (only
+  when the phone can pin widgets), translate and location justified evenly between them. It mirrors in right-to-left.
+  Its buttons stay 56 dp where they fit and shrink evenly on narrow screens (a 360 dp phone). `Home`'s top row is the
+  hamburger and the forecast button only, as before this feature.
+- Tapping translate opens `lib/views/home/language_overlay.dart`, styled like the city dialog in `dialog_overlay.dart`:
   System default first, then the ten languages, the current choice marked with the accent colour. Choosing one closes
   the overlay and switches the app at once, with no restart. A close button dismisses it without changing anything.
-- `main.dart` shows and hides the overlay as it does the city dialog.
+- `main.dart` shows and hides the overlay as it does the city dialog. The overlay opens above the menu; choosing a
+  language closes the overlay and leaves the menu open.
 
 ### 6. Right to left
 
