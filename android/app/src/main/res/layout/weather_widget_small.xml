@@ -35,11 +35,11 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/card_icon"
+            <!-- The provider adds widget_icon_<name>.xml here: an animated ProgressBar that fills the slot. -->
+            <FrameLayout
+                android:id="@+id/card_icon_slot"
                 android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:contentDescription="@null" />
+                android:layout_height="40dp" />
 
             <TextView
                 android:id="@+id/card_temperature"

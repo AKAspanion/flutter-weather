@@ -119,7 +119,9 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         views.setViewVisibility(R.id.widget_empty, View.GONE)
 
         views.setTextViewText(R.id.card_city, city)
-        views.setImageViewResource(R.id.card_icon, iconFor(now.optString("icon")))
+        // The icon is an animated layout, swapped into the slot on every render.
+        views.removeAllViews(R.id.card_icon_slot)
+        views.addView(R.id.card_icon_slot, RemoteViews(context.packageName, iconLayoutFor(now.optString("icon"))))
         views.setTextViewText(R.id.card_temperature, now.optString("temperature"))
         views.setTextViewText(R.id.card_description, now.optString("description"))
         views.setTextViewText(R.id.card_detail, now.optString("detail"))
@@ -130,7 +132,7 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
             views.text(R.id.card_temperature, 30f, scale)
             views.text(R.id.card_description, 12f, scale)
             views.text(R.id.card_detail, 12f, scale)
-            views.image(R.id.card_icon, 40f, scale)
+            views.image(R.id.card_icon_slot, 40f, scale)
         } else {
             views.setTextViewText(R.id.card_sunrise, now.optString("sunrise"))
             views.setTextViewText(R.id.card_wind, now.optString("wind"))
@@ -144,7 +146,7 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
             views.text(R.id.card_detail, 13f, scale)
             listOf(R.id.card_sunrise, R.id.card_wind, R.id.card_humidity).forEach { views.text(it, 12f, scale) }
             views.text(R.id.card_updated, 10f, scale)
-            views.image(R.id.card_icon, 64f, scale)
+            views.image(R.id.card_icon_slot, 64f, scale)
             listOf(R.id.card_sunrise_icon, R.id.card_wind_icon, R.id.card_humidity_icon).forEach {
                 views.image(it, 16f, scale)
             }
@@ -206,22 +208,25 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         }
 
     /**
-     * Icons rendered from the app's Flare animations by tool/render_widget_icons_test.dart.
-     * Mapped explicitly (not by name lookup) so resource shrinking keeps them.
+     * The animated icon for a condition: a ProgressBar playing frames that
+     * tool/render_widget_icons_test.dart rendered from the app's Flare loops
+     * (ICON_LOOPS=1). Mapped explicitly (not by name lookup) so resource shrinking
+     * keeps the layouts; an unknown name uses the "few" icon.
      */
-    private fun iconFor(name: String) =
+    private fun iconLayoutFor(name: String) =
         when (name) {
-            "clear" -> R.drawable.widget_icon_clear
-            "clear-night" -> R.drawable.widget_icon_clear_night
-            "sunny" -> R.drawable.widget_icon_sunny
-            "sunny-night" -> R.drawable.widget_icon_sunny_night
-            "few-night" -> R.drawable.widget_icon_few_night
-            "broken" -> R.drawable.widget_icon_broken
-            "rain" -> R.drawable.widget_icon_rain
-            "snow" -> R.drawable.widget_icon_snow
-            "thunder" -> R.drawable.widget_icon_thunder
-            "foggy" -> R.drawable.widget_icon_foggy
-            else -> R.drawable.widget_icon_few
+            "clear" -> R.layout.widget_icon_clear
+            "clear-night" -> R.layout.widget_icon_clear_night
+            "sunny" -> R.layout.widget_icon_sunny
+            "sunny-night" -> R.layout.widget_icon_sunny_night
+            "few" -> R.layout.widget_icon_few
+            "few-night" -> R.layout.widget_icon_few_night
+            "broken" -> R.layout.widget_icon_broken
+            "rain" -> R.layout.widget_icon_rain
+            "snow" -> R.layout.widget_icon_snow
+            "thunder" -> R.layout.widget_icon_thunder
+            "foggy" -> R.layout.widget_icon_foggy
+            else -> R.layout.widget_icon_few
         }
 
     private companion object {
