@@ -18,7 +18,10 @@ the widget picker with its own preview, or the same widget resized.
 
 - One widget provider, one entry in the picker. It still opens at 4x2, and resizes down to 2x2. Below full width it
   switches to a compact layout: the icon with the temperature, then the description and high/low as a subtitle, with
-  no ellipsis; the sunrise / wind / humidity row stays at 3 cells and goes at 2.
+  no ellipsis; the sunrise / wind / humidity row stays at 3 cells and goes at 2. On a tall card (2x2) the icon sits
+  above the temperature so the number can grow.
+- One row tall (2 to 4 cells wide) or one cell, it shows only the temperature, with the icon when there is room:
+  the developer asked for these sizes on 2026-11-03.
 - The widget shows only Now. The 24-hour page, the vertical swipe between pages, and the StackView that carried them
   go, so the card is one plain layout.
 
@@ -33,6 +36,9 @@ the 4x2 without asking which.
 
 ## History
 
+- 2026-11-03: the widget went no smaller than 2x2; now it also goes down to one row and one cell, showing only the
+  temperature, and a tall compact card stacks the icon above the temperature, because the developer asked for 1-row
+  sizes and the 2x2 temperature stayed small. See [the spec](../../docs/specs/2026-11-03-widget-testing-feedback.md).
 - 2026-11-03: the compact layout was for 2x2 only, with the full layout from 3 cells; now the full layout is for full
   width only and everything narrower is compact with no ellipsis, because on a Galaxy the 3-cell card ellipsized its
   text. See [the spec](../../docs/specs/2026-11-03-widget-testing-feedback.md).

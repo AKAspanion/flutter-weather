@@ -50,6 +50,19 @@ refresh uses the last place viewed) and [decisions/android-only](../../knowledge
   - The compact layout shows the sunrise / wind / humidity row while the reported width is at least
     `DETAILS_WIDTH = 220` dp (3 cells), and hides it below (2x2). "Updated" appears only in the wide layout.
   - `SMALL_WIDTH` goes, replaced by those two constants.
+- Amended again after the Galaxy check, 2026-11-03 (One UI reports 2x2 as `150.19x217.6`, 3x2 as `235.52x217.6` and
+  4x2 as `320.85x217.6` dp):
+  - Compact layout, wide cards (width at least height): the icon + temperature row and the subtitle form one block,
+    centred vertically between the header and the details row, with no band between them. The icon and temperature
+    grow up to the `1.6`x cap, so a 3x2 reaches about `48sp` / `64dp`.
+  - Compact layout, tall cards (height greater than width, e.g. 2x2): the icon sits centred above the temperature, and
+    both scale with the height, so a 2x2 temperature reaches about `43sp`.
+  - New mini layout (`weather_widget_mini.xml`) for a card shorter than `STRIP_HEIGHT = 150` dp (one row: 1x2, 1x3,
+    1x4 in the launcher's words) or narrower than `MINI_WIDTH = 110` dp (one column, 1x1): only the temperature,
+    centred and scaled to fill the card, with the animated icon before it when the card is at least `MINI_WIDTH`
+    wide. No city, description or details; nothing ellipsizes. The card's accent background and tap-to-open stay.
+  - `weather_widget_info.xml`: `minResizeWidth` and `minResizeHeight` become `40dp`, so the launcher allows one row
+    and one cell. The default 4x2, the picker and the pin dialog stay as they are.
 - `weather_widget_info.xml`: `minResizeWidth` and `minResizeHeight` become `110dp`. `minWidth`, `minHeight` and
   `targetCellWidth`/`targetCellHeight` (4x2) stay, so the picker and the pin dialog still add a 4x2.
 - The whole card, and the empty view, open the app with `HomeWidgetLaunchIntent.getActivity`.

@@ -468,3 +468,80 @@ git add android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProv
   android/app/src/main/res/layout/weather_widget_small.xml test/widget_layout_resources_test.dart
 git commit -m "Use the wide widget layout only at full width, and a compact two-line layout without ellipsis below it."
 ```
+
+---
+
+### Task 6: Spacing in the compact layout, and the one-row and one-cell mini layout
+
+Added after the Galaxy check: One UI reports 2x2 as `150.19x217.6`, 3x2 as `235.52x217.6` and 4x2 as `320.85x217.6` dp.
+
+**Files:**
+- Modify: `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`
+- Modify: `android/app/src/main/res/layout/weather_widget_small.xml`
+- Create: `android/app/src/main/res/layout/weather_widget_mini.xml`
+- Modify: `android/app/src/main/res/xml/weather_widget_info.xml`
+- Modify: `test/widget_layout_resources_test.dart`
+
+**Interfaces:**
+- Consumes: `scaleFor` and `backgroundFor` (Task 1); `WIDE_WIDTH`, `DETAILS_WIDTH` and `compactScaleFor` (Task 5);
+  `card_icon_slot` and `iconLayoutFor` (Task 2).
+- Produces:
+
+```kotlin
+// WeatherWidgetProvider companion, added:
+const val STRIP_HEIGHT = 150f // dp; a card shorter than this uses weather_widget_mini.xml
+const val MINI_WIDTH = 110f   // dp; a card narrower than this uses weather_widget_mini.xml; the mini layout shows the icon from it
+// weather_widget_mini.xml: widget_root, widget_content holding card_icon_slot and card_temperature, widget_empty.
+// weather_widget_small.xml: a tall arrangement (icon above temperature) as well as the side-by-side one, chosen by
+// the provider when height > width.
+```
+
+**Spec:**
+- §1: "Compact layout, wide cards (width at least height): the icon + temperature row and the subtitle form one block, centred vertically between the header and the details row, with no band between them. The icon and temperature grow up to the `1.6`x cap, so a 3x2 reaches about `48sp` / `64dp`."
+- §1: "Compact layout, tall cards (height greater than width, e.g. 2x2): the icon sits centred above the temperature, and both scale with the height, so a 2x2 temperature reaches about `43sp`."
+- §1: "New mini layout (`weather_widget_mini.xml`) for a card shorter than `STRIP_HEIGHT = 150` dp (one row: 1x2, 1x3, 1x4 in the launcher's words) or narrower than `MINI_WIDTH = 110` dp (one column, 1x1): only the temperature, centred and scaled to fill the card, with the animated icon before it when the card is at least `MINI_WIDTH` wide. No city, description or details; nothing ellipsizes. The card's accent background and tap-to-open stay."
+- §1: "`weather_widget_info.xml`: `minResizeWidth` and `minResizeHeight` become `40dp`, so the launcher allows one row and one cell. The default 4x2, the picker and the pin dialog stay as they are."
+
+**Knowledge:** `features/home-screen-widget`: below `STRIP_HEIGHT` tall or `MINI_WIDTH` wide the widget shows only the
+temperature (with the icon from `MINI_WIDTH`), and a tall compact card stacks the icon above the temperature.
+
+**Acceptance:**
+- Given `weather_widget_mini.xml`, when `test/widget_layout_resources_test.dart` reads it, then it has `widget_root`,
+  `widget_content`, `card_icon_slot`, `card_temperature` and `widget_empty`, no `card_city`, `card_description` or
+  `card_details`, and no `android:ellipsize`.
+- Given `weather_widget_info.xml`, then `minResizeWidth` and `minResizeHeight` are `40dp`, and `targetCellWidth` is
+  `4` and `targetCellHeight` is `2`.
+- Given `WeatherWidgetProvider.kt` read as text, then it declares `STRIP_HEIGHT = 150f` and `MINI_WIDTH = 110f` and
+  names `R.layout.weather_widget_mini`.
+- Given `weather_widget_small.xml`, then it still has no `android:ellipsize` (the Task 5 case keeps passing).
+- Given the change, when `flutter build apk --debug` runs, then it succeeds.
+
+- [ ] **Step 1: Write the failing tests** for the three new resource cases in `test/widget_layout_resources_test.dart`.
+
+- [ ] **Step 2: Run them to verify they fail**
+
+Run: `flutter test test/widget_layout_resources_test.dart`
+Expected: FAIL: no mini layout, the info file still says `110dp`.
+
+- [ ] **Step 3: Build the mini layout and the compact spacing** (the layout choice by `STRIP_HEIGHT` and `MINI_WIDTH`
+  before `WIDE_WIDTH`; the tall arrangement when height > width; the centred block; the scales, with named constants
+  and a comment on each).
+
+- [ ] **Step 4: Run the tests and verify they pass**
+
+Run: `flutter test test/widget_layout_resources_test.dart`
+Expected: PASS
+
+- [ ] **Step 5: Build to verify the Android side compiles**
+
+Run: `flutter build apk --debug`
+Expected: `Built build/app/outputs/flutter-apk/app-debug.apk`
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt \
+  android/app/src/main/res/layout/weather_widget_small.xml android/app/src/main/res/layout/weather_widget_mini.xml \
+  android/app/src/main/res/xml/weather_widget_info.xml test/widget_layout_resources_test.dart
+git commit -m "Fill the compact widget without gaps, stack it on tall cards, and show only the temperature one row tall or one cell wide."
+```
