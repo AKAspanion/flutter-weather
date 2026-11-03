@@ -2,8 +2,8 @@
 type: Decision
 title: Widget icons animate as frame animations in a ProgressBar
 description: Home-screen widgets can't play Flare, so each icon's loop is rendered to frames and played by an indeterminate ProgressBar, at a cost of about 1.2 MB and some battery.
-status: draft
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T07:29:19Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # Widget icons animate as frame animations in a ProgressBar

@@ -2,8 +2,8 @@
 type: Decision
 title: The theme follows the system, and the button overrides it until the system next changes
 description: The app takes light or dark from the system and switches live; the theme button sets an override that holds until the system brightness changes.
-status: draft
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T07:29:19Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # The theme follows the system, and the button overrides it until the system next changes

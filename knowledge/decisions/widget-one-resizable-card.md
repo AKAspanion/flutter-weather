@@ -2,8 +2,8 @@
 type: Decision
 title: One resizable widget that goes down to one cell, showing only Now
 description: The widget is a single picker entry that resizes from 4x2 down to one row or one cell, switching to a compact or a temperature-only layout when small; the 24-hour page is dropped.
-status: draft
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T07:29:19Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # One resizable widget that goes down to one cell, showing only Now
