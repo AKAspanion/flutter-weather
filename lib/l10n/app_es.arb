@@ -86,5 +86,9 @@
   "condition801": "Pocas nubes",
   "condition802": "Nubes dispersas",
   "condition803": "Nubosidad variable",
-  "condition804": "Cielo cubierto"
+  "condition804": "Cielo cubierto",
+  "settings": "Ajustes",
+  "temperature": "Temperatura",
+  "rateOnGooglePlay": "Valorar en Google Play",
+  "couldNotOpenPlayStore": "No se pudo abrir Google Play"
 }

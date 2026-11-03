@@ -86,5 +86,9 @@
   "condition801": "कुछ बादल",
   "condition802": "बिखरे बादल",
   "condition803": "टूटे-टूटे बादल",
-  "condition804": "घने बादल"
+  "condition804": "घने बादल",
+  "settings": "सेटिंग्स",
+  "temperature": "तापमान",
+  "rateOnGooglePlay": "Google Play पर रेट करें",
+  "couldNotOpenPlayStore": "Google Play नहीं खुल सका"
 }

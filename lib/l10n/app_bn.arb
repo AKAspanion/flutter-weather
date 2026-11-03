@@ -86,5 +86,9 @@
   "condition801": "সামান্য মেঘ",
   "condition802": "বিক্ষিপ্ত মেঘ",
   "condition803": "ভাঙা ভাঙা মেঘ",
-  "condition804": "ঘন মেঘে ঢাকা আকাশ"
+  "condition804": "ঘন মেঘে ঢাকা আকাশ",
+  "settings": "সেটিংস",
+  "temperature": "তাপমাত্রা",
+  "rateOnGooglePlay": "Google Play-তে রেট করুন",
+  "couldNotOpenPlayStore": "Google Play খোলা যায়নি"
 }

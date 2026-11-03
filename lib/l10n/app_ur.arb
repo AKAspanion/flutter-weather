@@ -86,5 +86,9 @@
   "condition801": "تھوڑے بادل",
   "condition802": "بکھرے بادل",
   "condition803": "ٹکڑیوں میں بادل",
-  "condition804": "گھنے بادل"
+  "condition804": "گھنے بادل",
+  "settings": "ترتیبات",
+  "temperature": "درجہ حرارت",
+  "rateOnGooglePlay": "Google Play پر ریٹ کریں",
+  "couldNotOpenPlayStore": "Google Play نہیں کھل سکا"
 }

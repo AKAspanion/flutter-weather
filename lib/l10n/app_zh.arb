@@ -86,5 +86,9 @@
   "condition801": "少云",
   "condition802": "疏云",
   "condition803": "多云转阴",
-  "condition804": "阴"
+  "condition804": "阴",
+  "settings": "设置",
+  "temperature": "温度",
+  "rateOnGooglePlay": "在 Google Play 上评分",
+  "couldNotOpenPlayStore": "无法打开 Google Play"
 }

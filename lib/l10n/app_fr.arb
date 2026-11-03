@@ -86,5 +86,9 @@
   "condition801": "Quelques nuages",
   "condition802": "Nuages épars",
   "condition803": "Nuages fragmentés",
-  "condition804": "Ciel couvert"
+  "condition804": "Ciel couvert",
+  "settings": "Paramètres",
+  "temperature": "Température",
+  "rateOnGooglePlay": "Noter sur Google Play",
+  "couldNotOpenPlayStore": "Impossible d'ouvrir Google Play"
 }

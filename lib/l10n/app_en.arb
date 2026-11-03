@@ -361,5 +361,21 @@
   "condition804": "Overcast clouds",
   "@condition804": {
     "description": "Weather description for OpenWeatherMap condition code 804"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Title of the settings panel opened from the gear button"
+  },
+  "temperature": "Temperature",
+  "@temperature": {
+    "description": "Label of the temperature unit choice in the settings panel"
+  },
+  "rateOnGooglePlay": "Rate on Google Play",
+  "@rateOnGooglePlay": {
+    "description": "Settings row that opens the app's Google Play page so the user can rate it"
+  },
+  "couldNotOpenPlayStore": "Couldn't open Google Play",
+  "@couldNotOpenPlayStore": {
+    "description": "Message shown when the Google Play page could not be opened"
   }
 }

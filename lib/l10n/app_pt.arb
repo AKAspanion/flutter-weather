@@ -86,5 +86,9 @@
   "condition801": "Poucas nuvens",
   "condition802": "Nuvens dispersas",
   "condition803": "Nuvens fragmentadas",
-  "condition804": "Céu nublado"
+  "condition804": "Céu nublado",
+  "settings": "Configurações",
+  "temperature": "Temperatura",
+  "rateOnGooglePlay": "Avaliar no Google Play",
+  "couldNotOpenPlayStore": "Não foi possível abrir o Google Play"
 }
