@@ -61,6 +61,7 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
     ) {
         val content = Content(
             city = widgetData.getString("city", null),
+            labels = parseObject(widgetData.getString("labels", null)),
             updated = widgetData.getString("updated", "") ?: "",
             now = parseObject(widgetData.getString("now", null)),
             hours = parseArray(widgetData.getString("hours", null)),
@@ -100,6 +101,9 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
 
     private class Content(
         val city: String?,
+        /** The card titles and the update line in the app's chosen language; null before the first update. */
+        val labels: JSONObject?,
+        /** The time saved by app versions before [labels]; only the fallback update line uses it. */
         val updated: String,
         val now: JSONObject?,
         val hours: List<JSONObject>,
@@ -121,9 +125,12 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         val idBase = size?.let { (it.width.roundToInt().toLong() shl 20) or (it.height.roundToInt().toLong() shl 4) } ?: 0L
         val items = RemoteViewsCompat.RemoteCollectionItems.Builder().setViewTypeCount(2)
         if (content.city != null && content.now != null) {
-            items.addItem(idBase, nowCard(context, content.city, content.updated, content.now, size).sizedTo(size))
+            items.addItem(idBase, nowCard(context, content.city, content.labels, content.updated, content.now, size).sizedTo(size))
             if (content.hours.isNotEmpty()) {
-                items.addItem(idBase + 1, hoursCard(context, content.city, hoursFor(content.hours, size), size).sizedTo(size))
+                items.addItem(
+                    idBase + 1,
+                    hoursCard(context, content.city, content.labels, hoursFor(content.hours, size), size).sizedTo(size),
+                )
             }
         }
         RemoteViewsCompat.setRemoteAdapter(context, views, widgetId, R.id.widget_stack, items.build())
@@ -156,7 +163,7 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         setViewLayoutHeight(root, card.height, TypedValue.COMPLEX_UNIT_DIP)
     }
 
-    private fun nowCard(context: Context, city: String, updated: String, now: JSONObject, card: SizeF?) =
+    private fun nowCard(context: Context, city: String, labels: JSONObject?, updated: String, now: JSONObject, card: SizeF?) =
         RemoteViews(context.packageName, R.layout.weather_widget_item).apply {
             setTextViewText(R.id.card_city, city)
             setImageViewResource(R.id.card_icon, iconFor(now.optString("icon")))
@@ -166,7 +173,8 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
             setTextViewText(R.id.card_sunrise, now.optString("sunrise"))
             setTextViewText(R.id.card_wind, now.optString("wind"))
             setTextViewText(R.id.card_humidity, now.optString("humidity"))
-            setTextViewText(R.id.card_updated, context.getString(R.string.widget_updated, updated))
+            setTextViewText(R.id.card_label, label(labels, "now") ?: context.getString(R.string.widget_now))
+            setTextViewText(R.id.card_updated, label(labels, "updated") ?: context.getString(R.string.widget_updated, updated))
             setOnClickFillInIntent(R.id.card_root, Intent())
 
             val scale = scaleFor(card)
@@ -181,10 +189,14 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
             listOf(R.id.card_sunrise_icon, R.id.card_wind_icon, R.id.card_humidity_icon).forEach { image(it, 16f, scale) }
         }
 
-    private fun hoursCard(context: Context, city: String, hours: List<JSONObject>, card: SizeF?) =
+    private fun hoursCard(context: Context, city: String, labels: JSONObject?, hours: List<JSONObject>, card: SizeF?) =
         RemoteViews(context.packageName, R.layout.weather_widget_hours).apply {
             val scale = scaleFor(card)
             setTextViewText(R.id.hours_city, city)
+            setTextViewText(
+                R.id.hours_label,
+                label(labels, "next24Hours") ?: context.getString(R.string.widget_next_24_hours),
+            )
             text(R.id.hours_city, 12f, scale)
             text(R.id.hours_label, 12f, scale)
             removeAllViews(R.id.hours_row)
@@ -241,6 +253,10 @@ class WeatherWidgetProvider : HomeWidgetProvider() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) flags = flags or PendingIntent.FLAG_MUTABLE
         return PendingIntent.getActivity(context, 1, intent, flags)
     }
+
+    /** A pushed label, or null when the app hasn't pushed one yet (the caller then uses its strings.xml value). */
+    private fun label(labels: JSONObject?, key: String): String? =
+        labels?.optString(key)?.takeIf { it.isNotEmpty() }
 
     private fun parseObject(json: String?): JSONObject? =
         try {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">आपके आख़िरी देखे गए स्थान का मौजूदा मौसम और अगले 24 घंटे। बदलने के लिए ऊपर या नीचे स्वाइप करें।</string>
+    <string name="widget_empty">मौसम लोड करने के लिए ऐप खोलें</string>
+    <string name="widget_updated">अपडेट किया गया: %1$s</string>
+    <string name="widget_now">अभी</string>
+    <string name="widget_next_24_hours">अगले 24 घंटे</string>
+</resources>

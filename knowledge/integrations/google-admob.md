@@ -17,7 +17,7 @@ verified: human:panditankit1995@gmail.com
 - **Banner.** `AdBanner` in `lib/components/ad_banner.dart` loads a large anchored adaptive banner for the screen
   width once `Ads.ready` is true. Until one loads it takes no space. Then it reports its height, and `Home`, `Menu`
   and `Forecast` leave that much room at the bottom (`bottomInset`).
-- **Privacy options.** When `Ads.privacyOptionsRequired` is true, the menu shows a PRIVACY button that opens Google's
+- **Privacy options.** When `Ads.privacyOptionsRequired` is true, the menu shows a privacy button ("PRIVACY" in English, translated like the rest of the menu) that opens Google's
   privacy options form. A comment says this is for users who must be able to revisit their consent, such as in the
   EEA.
 - Android only. `_supported` is Android, and a comment says only Android has an AdMob app ID configured; the iOS SDK
@@ -35,6 +35,10 @@ verified: human:panditankit1995@gmail.com
 
 - A consent error is logged, and ads start anyway if `canRequestAds` allows it.
 - A banner that fails to load is disposed, and the reserved height goes back to 0.
+
+## History
+
+- 2026-11-03: the button's text was hard-coded "PRIVACY"; now translated, because the app is translated. See [language picker](../features/language-picker.md).
 
 ## Sources
 

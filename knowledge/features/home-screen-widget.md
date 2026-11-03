@@ -16,7 +16,7 @@ right edge show which page is visible.
 
 - **Now:** the city, the icon, the temperature, the description with today's high and low beside them, a row with
   sunrise, wind and humidity (using the app's own detail icons), and when it was updated.
-- **Next 24 hours:** hour columns, each with a short hour label (`3P`), an icon and the temperature. The app sends
+- **Next 24 hours:** hour columns, each with a short hour label (`DateFormat.j`: "3 PM", or "15" in a 24-hour language), an icon and the temperature. The app sends
   up to `_hourColumns` entries at least `_hourStep` apart (both in `WeatherWidget`). A squarish card (width to height
   under `SQUARE_RATIO` in the Kotlin provider, e.g. 4x3) shows every other entry, 4 columns six hours apart, still
   covering 24 hours; wider cards (4x2, 3x2) show all 8.
@@ -37,8 +37,15 @@ during launch. The widget itself never asks for updates (`updatePeriodMillis` is
 `android/app/src/main/res/xml/weather_widget_info.xml`). The provider also re-renders on resize
 (`onAppWidgetOptionsChanged`).
 
-**Adding it.** If the launcher supports pinning (`WeatherWidget.canPin`), a widgets button appears at the top
-centre while the menu is open. It calls `WeatherWidget.pin`.
+**Adding it.** If the launcher supports pinning (`WeatherWidget.canPin`), a widgets button appears in the menu's top
+button row while the menu is open. It calls `WeatherWidget.pin`.
+
+**Language.** The text the app pushes (city, description, high and low, the card titles, the update line, the hour
+labels) is in the app's chosen language: `WeatherWidget.payload` builds it from `WeatherWidget.localizations()`, which
+reads `language_preference` without a `BuildContext`, so the background refresh follows the choice too
+([language picker](language-picker.md)). Titles and update line travel in the `labels` data key. The widget's own
+`strings.xml` values follow the phone's language (a `values-<code>` folder per language) and show only until the first
+update, or when a label is missing.
 
 ## Screens and routes
 
@@ -72,6 +79,10 @@ centre while the menu is open. It calls `WeatherWidget.pin`.
 - `WeatherWidget` does nothing on platforms other than Android (`_supported`).
 - When the background fetch fails, the task returns false so WorkManager retries with backoff.
 
+## History
+
+- 2026-11-03: the pushed text was English, with `3P` hour labels and the `updated` time; now translated in the app's language with a `labels` key and `3 PM` labels, and the pin button moved into the menu's button row, because the app is translated. See [supported languages](../decisions/supported-languages.md).
+
 ## Sources
 
 * `lib/services/weather_widget.dart`
@@ -89,3 +100,6 @@ centre while the menu is open. It calls `WeatherWidget.pin`.
 * `android/app/src/main/AndroidManifest.xml`
 * `tool/render_widget_icons_test.dart`
 * `lib/main.dart`
+* `lib/l10n/app_en.arb`
+* `android/app/src/main/res/values/strings.xml`
+* `test/weather_widget_test.dart`

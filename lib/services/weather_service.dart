@@ -35,7 +35,8 @@ class WeatherService {
 
     if ((report.current.name ?? '').isEmpty) {
       final Place? place = await _firstGeocoder((g) => g.reverse(lat, lon));
-      report.setName(place?.name ?? 'My location');
+      // An unnamed place stays '' so the screens can show "My location" in the user's language.
+      report.setName(place?.name ?? '');
     }
     return report;
   }

@@ -17,9 +17,10 @@ The whole product. The Dart package is named in `pubspec.yaml`. Users see it as 
 
 - Flutter and Dart. The SDK range and every dependency are in `pubspec.yaml`, and resolved versions are in
   `pubspec.lock`.
-- State: `setState` in `_MainAppState`, plus `provider` for the theme ([architecture](../project/architecture.md)).
+- State: `setState` in `_MainAppState`, plus `provider` for the theme and the language
+  ([architecture](../project/architecture.md)).
 - Main plugins: `geolocator` (position), `http` (provider calls), `shared_preferences` (on-device storage),
-  `home_widget` and `workmanager` (Android widget), `google_mobile_ads` (banner and consent), `flutter_spinkit`
+  `home_widget` and `workmanager` (Android widget), `flutter_localizations` and `intl` (translations and dates), `google_mobile_ads` (banner and consent), `flutter_spinkit`
   (loading pulse), and `flare_flutter` from `packages/flare_flutter` (animated icons).
 - Android: a Gradle Kotlin build in `android/app/build.gradle.kts`, which sets the application ID, compile and target
   SDK, and the signing config. The Kotlin code is in `android/app/src/main/kotlin/com/example/flutterweather/`.
@@ -46,8 +47,11 @@ There is one route. All parts are layered in a `Stack` in `lib/main.dart`:
   sideways opens and closes the menu. See [current weather](../features/current-weather.md).
 - `Menu` (`lib/views/menu/menu.dart`): the gradient drawer behind the card, with the accent picker and, where needed,
   the ad privacy button. See [themes and accents](../features/themes-and-accents.md).
-- The top buttons: refresh, theme, location, add-widget and close. They are `Btn`s in `lib/main.dart` and are shown
+- The top buttons: refresh, theme, add-widget, translate, location and close. `MenuButtons`
+  (`lib/views/menu/menu_buttons.dart`) lays them out as `Btn`s, positioned in `lib/main.dart`, and they are shown
   while the menu is open.
+- `LanguageOverlay` (`lib/views/home/language_overlay.dart`): the language list. See
+  [language picker](../features/language-picker.md).
 - `DialogOverlay` (`lib/views/home/dialog_overlay.dart`): the city search. See
   [city search](../features/city-search.md).
 - `Forecast` (`lib/views/forecast/forecast.dart`): the panel that slides up. See
@@ -63,6 +67,10 @@ There is one route. All parts are layered in a `Stack` in `lib/main.dart`:
 - [Google AdMob](../integrations/google-admob.md).
 - Build-time keys: [environment](../operations/environment.md).
 
+## History
+
+- 2026-11-03: the top buttons were five hand-placed `Btn`s; now `MenuButtons` with a translate button, and the app is translated, because the developer chose ten languages. See [supported languages](../decisions/supported-languages.md).
+
 ## Sources
 
 * `pubspec.yaml`
@@ -70,6 +78,8 @@ There is one route. All parts are layered in a `Stack` in `lib/main.dart`:
 * `lib/views/home/home.dart`
 * `lib/views/menu/menu.dart`
 * `lib/views/home/dialog_overlay.dart`
+* `lib/views/home/language_overlay.dart`
+* `lib/views/menu/menu_buttons.dart`
 * `lib/views/forecast/forecast.dart`
 * `lib/views/weather/weather_screen.dart`
 * `lib/views/weather/weather_view.dart`

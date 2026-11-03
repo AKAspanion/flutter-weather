@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">Текущая погода и прогноз на 24 часа для последнего просмотренного места. Проведите вверх или вниз для переключения.</string>
+    <string name="widget_empty">Откройте приложение, чтобы загрузить погоду</string>
+    <string name="widget_updated">Обновлено: %1$s</string>
+    <string name="widget_now">СЕЙЧАС</string>
+    <string name="widget_next_24_hours">БЛИЖАЙШИЕ 24 ЧАСА</string>
+</resources>

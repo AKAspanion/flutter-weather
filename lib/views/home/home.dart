@@ -40,12 +40,14 @@ class Home extends StatelessWidget {
     final double fitScale = (size.height - top - Menu.footerHeight - bottomInset) / size.height;
     final double factor = isDrawerOpen ? fitScale.clamp(0.3, 0.65) : 1;
     Color bgColor = Provider.of<ThemeManager>(context).bgColor;
+    Color textColor = Provider.of<ThemeManager>(context).textColor;
 
     final double y = isDrawerOpen ? top : 0;
     final double x = isDrawerOpen ? (size.width - size.width * factor) / 2 : 0;
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
 
     return GestureDetector(
-      onHorizontalDragEnd: onDragEnd,
+      onHorizontalDragEnd: (details) => onDragEnd(details, rtl),
       onHorizontalDragStart: onDragStart,
       onHorizontalDragUpdate: onDragUpdate,
       child: AnimatedContainer(
@@ -72,6 +74,8 @@ class Home extends StatelessWidget {
                   ),
                   IconButton(
                     iconSize: 36,
+                    // Same colour as the hamburger; Material's default is a grey in the dark theme.
+                    color: textColor,
                     onPressed: loading || isDrawerOpen ? null : onMorePress,
                     icon: Icon(
                       Icons.show_chart,
@@ -96,8 +100,10 @@ class Home extends StatelessWidget {
     );
   }
 
-  void onDragEnd(DragEndDetails details) {
+  /// The menu opens with a swipe towards the end of the line, so right to left it is a swipe to the left.
+  void onDragEnd(DragEndDetails details, bool rtl) {
     double diff = homeDragData.start - homeDragData.end;
+    if (rtl) diff = -diff;
     if ((isDrawerOpen && diff > 0) || (!isDrawerOpen && diff < 0)) {
       onNavPress();
     }

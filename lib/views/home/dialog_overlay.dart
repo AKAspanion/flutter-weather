@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/theme/gradients.dart';
 import 'package:provider/provider.dart';
@@ -56,7 +57,7 @@ class _DialogOverlayState extends State<DialogOverlay> {
                     autofocus: true,
                     onChanged: (e) => _updateCity(e),
                     decoration: InputDecoration(
-                      labelText: "City name",
+                      labelText: AppLocalizations.of(context)!.cityName,
                       labelStyle: TextStyle(color: textColor),
                       prefixIcon: Icon(
                         Icons.location_city,

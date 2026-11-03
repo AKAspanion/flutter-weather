@@ -1,11 +1,18 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
+import 'package:flutterweather/l10n/conditions.dart';
+import 'package:flutterweather/services/locale_manager.dart';
 import 'package:flutterweather/services/providers/weather_provider.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/services/weather_cache.dart';
 import 'package:flutterweather/services/weather_service.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
 /// Feeds the Android home-screen widget (WeatherWidgetProvider.kt).
@@ -20,32 +27,30 @@ class WeatherWidget {
   static const int _hourColumns = 8;
   static const int _hourStep = 3 * 3600;
 
+  /// The words the widget shows: the language saved by the app, else the phone's, else English. Works without a
+  /// BuildContext, as the background refresh has none. [device] is only for tests.
+  static Future<AppLocalizations> localizations({@visibleForTesting Locale? device}) async {
+    String? saved;
+    try {
+      saved = (await SharedPreferences.getInstance()).getString(LocaleManager.preferenceKey);
+    } catch (e) {
+      debugPrint('Could not read the saved language for the widget: $e');
+    }
+    final Locale locale = LocaleManager.resolve(saved, device ?? PlatformDispatcher.instance.locale);
+    return lookupAppLocalizations(locale);
+  }
+
   static Future<void> update(WeatherReport report) async {
     if (!_supported) return;
     try {
-      final Weather now = report.current;
-      final Weather? today = report.daily.isEmpty ? null : report.daily.first;
-      final DateTime updated = DateTime.now();
+      final AppLocalizations l10n = await localizations();
+      // Date formats of a language other than English need its symbols loaded first.
+      await initializeDateFormatting(l10n.localeName);
+      final Map<String, String> data = payload(report, l10n, l10n.localeName, DateTime.now());
 
       await Future.wait([
-        HomeWidget.saveWidgetData<String>('city', (now.name ?? '').toUpperCase()),
-        HomeWidget.saveWidgetData<String>(
-          'now',
-          jsonEncode({
-            'temperature': _degrees(now.temperature),
-            'icon': now.getIcon(),
-            'description': (now.description ?? '').toUpperCase(),
-            'detail': today == null ? '' : 'H ${_degrees(today.tempMax)}  L ${_degrees(today.tempMin)}',
-            'sunrise': _clock(now.sunrise, now.timezone),
-            'wind': '${now.windSpeed ?? '--'} m/s',
-            'humidity': '${now.humidity ?? '--'}%',
-          }),
-        ),
-        HomeWidget.saveWidgetData<String>('hours', jsonEncode(_nextDay(report.hourly, updated))),
-        HomeWidget.saveWidgetData<String>(
-          'updated',
-          '${updated.hour.toString().padLeft(2, '0')}:${updated.minute.toString().padLeft(2, '0')}',
-        ),
+        for (final MapEntry<String, String> entry in data.entries)
+          HomeWidget.saveWidgetData<String>(entry.key, entry.value),
       ]);
       await HomeWidget.updateWidget(qualifiedAndroidName: _androidName);
     } catch (e) {
@@ -53,9 +58,37 @@ class WeatherWidget {
     }
   }
 
+  /// What [update] saves, keyed by widget data name, each value a String. The widget shows the city, description
+  /// and card titles in capitals, so they are upper-cased here. Callers load the date symbols of [locale] first.
+  @visibleForTesting
+  static Map<String, String> payload(WeatherReport report, AppLocalizations l10n, String locale, DateTime updated) {
+    final Weather now = report.current;
+    final Weather? today = report.daily.isEmpty ? null : report.daily.first;
+    final String name = now.name ?? '';
+
+    return {
+      'city': (name.isEmpty ? l10n.myLocation : name).toUpperCase(),
+      'now': jsonEncode({
+        'temperature': _degrees(now.temperature),
+        'icon': _icon(now),
+        'description': describeCondition(l10n, now.condition).toUpperCase(),
+        'detail': today == null ? '' : l10n.widgetHighLow(_degrees(today.tempMax), _degrees(today.tempMin)),
+        'sunrise': _clock(now.sunrise, now.timezone),
+        'wind': '${now.windSpeed ?? '--'} m/s',
+        'humidity': '${now.humidity ?? '--'}%',
+      }),
+      'hours': jsonEncode(_nextDay(report.hourly, updated, locale)),
+      'labels': jsonEncode({
+        'now': l10n.widgetNow.toUpperCase(),
+        'next24Hours': l10n.widgetNext24Hours.toUpperCase(),
+        'updated': l10n.widgetUpdated(DateFormat.Hm(locale).format(updated)),
+      }),
+    };
+  }
+
   /// Picks forecast entries at least 3 hours apart across the next 24 hours.
   /// OpenWeatherMap already steps by 3 hours; hourly providers get thinned out.
-  static List<Map<String, String>> _nextDay(List<Weather> hourly, DateTime from) {
+  static List<Map<String, String>> _nextDay(List<Weather> hourly, DateTime from, String locale) {
     final int start = from.millisecondsSinceEpoch ~/ 1000;
     final List<Map<String, String>> picked = [];
     int? last;
@@ -64,8 +97,8 @@ class WeatherWidget {
       if (date <= start || date > start + Duration.secondsPerDay) continue;
       if (last != null && date - last < _hourStep - 60) continue;
       picked.add({
-        'label': _hourLabel(w),
-        'icon': w.getIcon(overrideNight: _isNight(w) ? '-night' : ''),
+        'label': _hourLabel(w, locale),
+        'icon': _icon(w, overrideNight: _isNight(w) ? '-night' : ''),
         'temperature': _degrees(w.temperature),
       });
       last = date;
@@ -73,6 +106,10 @@ class WeatherWidget {
     }
     return picked;
   }
+
+  /// The icon name, empty without a condition (the widget then falls back to its default icon).
+  static String _icon(Weather w, {String? overrideNight}) =>
+      w.condition == null ? '' : w.getIcon(overrideNight: overrideNight);
 
   /// Same format as the app's sunrise chip, e.g. "5:50".
   static String _clock(int? epochSeconds, int? timezone) {
@@ -86,11 +123,8 @@ class WeatherWidget {
   static DateTime _localTime(Weather w) =>
       DateTime.fromMillisecondsSinceEpoch(w.date! * 1000, isUtc: true).add(Duration(seconds: w.timezone ?? 0));
 
-  /// Compact hour for a narrow column: "12P", "3A".
-  static String _hourLabel(Weather w) {
-    final DateTime time = _localTime(w);
-    return '${(time.hour + 11) % 12 + 1}${time.hour >= 12 ? 'P' : 'A'}';
-  }
+  /// The hour in the locale's short form for a narrow column, e.g. "3 PM" or "15".
+  static String _hourLabel(Weather w, String locale) => DateFormat.j(locale).format(_localTime(w));
 
   // Same rule as the hourly forecast chips.
   static bool _isNight(Weather w) {
@@ -137,7 +171,6 @@ class WeatherWidget {
   }
 
   static String _degrees(double? kelvin) => kelvin == null ? '--' : '${(kelvin - kelvinOffset).floor()}°';
-
 }
 
 /// Runs in a background isolate started by WorkManager.
