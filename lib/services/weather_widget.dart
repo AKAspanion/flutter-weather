@@ -36,6 +36,9 @@ class WeatherWidget {
             'icon': now.getIcon(),
             'description': (now.description ?? '').toUpperCase(),
             'detail': today == null ? '' : 'H ${_degrees(today.tempMax)}  L ${_degrees(today.tempMin)}',
+            'sunrise': _clock(now.sunrise, now.timezone),
+            'wind': '${now.windSpeed ?? '--'} m/s',
+            'humidity': '${now.humidity ?? '--'}%',
           }),
         ),
         HomeWidget.saveWidgetData<String>('hours', jsonEncode(_nextDay(report.hourly, updated))),
@@ -69,6 +72,15 @@ class WeatherWidget {
       if (picked.length == _hourColumns) break;
     }
     return picked;
+  }
+
+  /// Same format as the app's sunrise chip, e.g. "5:50".
+  static String _clock(int? epochSeconds, int? timezone) {
+    if (epochSeconds == null) return '--';
+    final DateTime time =
+        DateTime.fromMillisecondsSinceEpoch(epochSeconds * 1000, isUtc: true).add(Duration(seconds: timezone ?? 0));
+    final int hour = time.hour > 12 ? time.hour - 12 : time.hour;
+    return '$hour:${time.minute.toString().padLeft(2, '0')}';
   }
 
   static DateTime _localTime(Weather w) =>

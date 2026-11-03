@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+const List<String> details = ['sun', 'wind', 'drop'];
+
 const List<String> icons = [
   'clear',
   'clear-night',
@@ -35,7 +37,8 @@ const Duration captureAt = Duration.zero;
 // Thunder only shows its lightning bolt partway through the loop.
 const Map<String, Duration> captureOverrides = {'thunder': Duration(milliseconds: 2000)};
 
-Future<void> render(WidgetTester tester, String icon, Duration at, String path) async {
+Future<void> render(WidgetTester tester, String icon, Duration at, String path,
+    {String file = 'assets/animations/cloudy.flr', String prefix = 'cloudy-'}) async {
   final key = GlobalKey();
   Widget build({required bool paused}) => Directionality(
         textDirection: TextDirection.ltr,
@@ -46,9 +49,9 @@ Future<void> render(WidgetTester tester, String icon, Duration at, String path) 
               width: 128,
               height: 128,
               child: FlareActor(
-                'assets/animations/cloudy.flr',
+                file,
                 alignment: Alignment.center,
-                animation: 'cloudy-$icon',
+                animation: '$prefix$icon',
                 isPaused: paused,
               ),
             ),
@@ -94,6 +97,11 @@ void main() {
     }
     for (final icon in icons) {
       await render(tester, icon, captureOverrides[icon] ?? captureAt, '$outDir/widget_icon_${icon.replaceAll('-', '_')}.png');
+    }
+    // The small white icons from the app's sunrise / wind / humidity chips.
+    for (final detail in details) {
+      await render(tester, detail, captureAt, '$outDir/widget_detail_$detail.png',
+          file: 'assets/animations/icons.flr', prefix: '');
     }
     await tester.pumpWidget(SizedBox());
     await tester.pump(const Duration(seconds: 10));
