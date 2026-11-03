@@ -1,7 +1,7 @@
 ---
 type: Decision
 title: The app speaks the ten most spoken languages, chosen in the app
-description: English, Chinese, Hindi, Spanish, Arabic, French, Bengali, Portuguese, Russian and Urdu, plus System default, picked from a translate button in the menu's top row.
+description: English, Chinese, Hindi, Spanish, Arabic, French, Bengali, Portuguese, Russian and Urdu, plus System default, picked from the Language row of the settings panel.
 status: draft
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T07:29:23Z }
 ---
@@ -20,8 +20,8 @@ Ethnologue: English (`en`, the source and fallback), Chinese Simplified (`zh`), 
 (`ar`), French (`fr`), Bengali (`bn`), Portuguese (`pt`), Russian (`ru`) and Urdu (`ur`). Some years Indonesian ranks
 tenth instead of Urdu; Urdu was taken.
 
-The language is picked from a translate button in the menu's top button row, between the widget and location
-buttons: System default first, then each language in its own script. System default follows the phone's language when it is in the list, otherwise English.
+The language is picked from the Language row of the [settings panel](settings-panel.md), which opens the language
+picker: System default first, then each language in its own script. System default follows the phone's language when it is in the list, otherwise English.
 
 ## Consequences
 
@@ -31,6 +31,9 @@ buttons: System default first, then each language in its own script. System defa
 
 ## History
 
+- 2026-11-03: the picker opened from a translate button in the menu's top button row; now from the Language row
+  of the settings panel behind a gear in the same place, because settings were gathered in one panel. See
+  [Every setting lives in one settings panel behind a gear](settings-panel.md).
 - 2026-11-03: the translate button was in the home screen's top row; now in the menu's top button row, with refresh
   and close in the far corners and the other buttons justified between them, because the developer wanted the home
   screen's top row kept as it was.
