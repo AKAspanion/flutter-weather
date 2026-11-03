@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/locale_manager.dart';
 import 'package:flutterweather/services/providers/weather_provider.dart';
+import 'package:flutterweather/services/unit_manager.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/services/weather_widget.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -50,6 +51,34 @@ void main() {
       expect(now['description'], 'LIGHT RAIN');
       expect(now['detail'], 'H 17°  L 7°');
       expect(now['temperature'], '12°');
+    });
+
+    test('shows Celsius by default and Fahrenheit when asked', () {
+      final Map<String, dynamic> celsius = _json(WeatherWidget.payload(_report(), l10n, 'en', updated)['now']!);
+      final Map<String, dynamic> fahrenheit = _json(
+        WeatherWidget.payload(_report(), l10n, 'en', updated, unit: TemperatureUnit.fahrenheit)['now']!,
+      );
+
+      expect(celsius['temperature'], '12°');
+      expect(celsius['detail'], 'H 17°  L 7°');
+      expect(fahrenheit['temperature'], '53°');
+      expect(fahrenheit['detail'], 'H 63°  L 45°');
+    });
+
+    test('shows each hour in the asked unit', () {
+      final DateTime from = DateTime.utc(2026, 11, 3, 12);
+      final Weather later = Weather(
+        date: DateTime.utc(2026, 11, 3, 15).millisecondsSinceEpoch ~/ 1000,
+        condition: 800,
+        temperature: 285.15,
+        timezone: 0,
+      );
+
+      final Map<String, String> data =
+          WeatherWidget.payload(_report(hourly: [later]), l10n, 'en', from, unit: TemperatureUnit.fahrenheit);
+
+      final List<dynamic> hours = jsonDecode(data['hours']!) as List<dynamic>;
+      expect((hours.single as Map<String, dynamic>)['temperature'], '53°');
     });
 
     test('says MY LOCATION for an unnamed place', () {
@@ -125,6 +154,19 @@ void main() {
       final AppLocalizations found = await WeatherWidget.localizations(device: const Locale('xx'));
 
       expect(found.localeName, 'en');
+    });
+  });
+
+  group('temperatureUnit', () {
+    test('follows the unit the app saved', () async {
+      SharedPreferences.setMockInitialValues({UnitManager.preferenceKey: 'fahrenheit'});
+
+      expect(await WeatherWidget.temperatureUnit(device: const Locale('en', 'GB')), TemperatureUnit.fahrenheit);
+    });
+
+    test('follows the region when nothing is saved', () async {
+      expect(await WeatherWidget.temperatureUnit(device: const Locale('en', 'US')), TemperatureUnit.fahrenheit);
+      expect(await WeatherWidget.temperatureUnit(device: const Locale('fr', 'FR')), TemperatureUnit.celsius);
     });
   });
 

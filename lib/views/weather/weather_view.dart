@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/l10n/conditions.dart';
 import 'package:flutterweather/l10n/dates.dart';
+import 'package:flutterweather/services/unit_manager.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/gradients.dart';
 import 'package:flutterweather/views/weather/weather_detail_chip.dart';
+import 'package:provider/provider.dart';
 
 class LocationView extends StatelessWidget {
   final int accent;
@@ -52,6 +54,7 @@ class LocationView extends StatelessWidget {
   Widget _buildAnimation(BuildContext context, Widget? child) {
     final AppLocalizations l10n = AppLocalizations.of(context)!;
     final String locale = Localizations.localeOf(context).toString();
+    final TemperatureUnit unit = context.watch<UnitManager>().unit;
     return Column(
       mainAxisSize: MainAxisSize.max,
       verticalDirection: VerticalDirection.down,
@@ -115,7 +118,7 @@ class LocationView extends StatelessWidget {
                   bottom: 16,
                 ),
                 child: Text(
-                  '${(weather.temperature! - 273.15).floor()}°C',
+                  formatTemperature(weather.temperature, unit),
                   style: TextStyle(
                     fontSize: 56,
                     fontWeight: FontWeight.w700,

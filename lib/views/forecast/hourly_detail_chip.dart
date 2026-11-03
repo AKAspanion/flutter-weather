@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutterweather/components/flare_icon.dart';
 import 'package:flutterweather/l10n/dates.dart';
+import 'package:flutterweather/services/unit_manager.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/gradients.dart';
+import 'package:provider/provider.dart';
 
 /// Montserrat's line height as a multiple of its font size: the font's ascent (968) plus descent (251) per 1000 units.
 const double _montserratLineHeight = 1.219;
@@ -40,6 +42,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
   Widget build(BuildContext context) {
     final Weather weather = widget.detail;
     final int accentIndex = widget.accent;
+    final TemperatureUnit unit = context.watch<UnitManager>().unit;
     final double width = expanded ? 200 : 80;
     final double innerWidth = expanded ? 50 : 0;
     return InkWell(
@@ -125,7 +128,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
                       Container(
                         padding: EdgeInsets.only(top: 8),
                         child: Text(
-                          '${(weather.temperature! - 273.15).floor()}°C',
+                          formatTemperature(weather.temperature, unit),
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,

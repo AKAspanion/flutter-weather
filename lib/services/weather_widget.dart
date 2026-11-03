@@ -6,6 +6,7 @@ import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/l10n/conditions.dart';
 import 'package:flutterweather/services/locale_manager.dart';
 import 'package:flutterweather/services/providers/weather_provider.dart';
+import 'package:flutterweather/services/unit_manager.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/services/weather_cache.dart';
 import 'package:flutterweather/services/weather_service.dart';
@@ -40,13 +41,26 @@ class WeatherWidget {
     return lookupAppLocalizations(locale);
   }
 
+  /// The unit the widget shows: the saved one, else the region's. Works without a BuildContext, as the background
+  /// refresh has none. [device] is only for tests.
+  static Future<TemperatureUnit> temperatureUnit({@visibleForTesting Locale? device}) async {
+    String? saved;
+    try {
+      saved = (await SharedPreferences.getInstance()).getString(UnitManager.preferenceKey);
+    } catch (e) {
+      debugPrint('Could not read the saved temperature unit for the widget: $e');
+    }
+    return UnitManager.resolve(saved, device ?? PlatformDispatcher.instance.locale);
+  }
+
   static Future<void> update(WeatherReport report) async {
     if (!_supported) return;
     try {
       final AppLocalizations l10n = await localizations();
       // Date formats of a language other than English need its symbols loaded first.
       await initializeDateFormatting(l10n.localeName);
-      final Map<String, String> data = payload(report, l10n, l10n.localeName, DateTime.now());
+      final TemperatureUnit unit = await temperatureUnit();
+      final Map<String, String> data = payload(report, l10n, l10n.localeName, DateTime.now(), unit: unit);
 
       await Future.wait([
         for (final MapEntry<String, String> entry in data.entries)
@@ -61,7 +75,13 @@ class WeatherWidget {
   /// What [update] saves, keyed by widget data name, each value a String. The widget shows the city, description
   /// and card titles in capitals, so they are upper-cased here. Callers load the date symbols of [locale] first.
   @visibleForTesting
-  static Map<String, String> payload(WeatherReport report, AppLocalizations l10n, String locale, DateTime updated) {
+  static Map<String, String> payload(
+    WeatherReport report,
+    AppLocalizations l10n,
+    String locale,
+    DateTime updated, {
+    TemperatureUnit unit = TemperatureUnit.celsius,
+  }) {
     final Weather now = report.current;
     final Weather? today = report.daily.isEmpty ? null : report.daily.first;
     final String name = now.name ?? '';
@@ -69,15 +89,20 @@ class WeatherWidget {
     return {
       'city': (name.isEmpty ? l10n.myLocation : name).toUpperCase(),
       'now': jsonEncode({
-        'temperature': _degrees(now.temperature),
+        'temperature': formatTemperature(now.temperature, unit, symbol: false),
         'icon': _icon(now),
         'description': describeCondition(l10n, now.condition).toUpperCase(),
-        'detail': today == null ? '' : l10n.widgetHighLow(_degrees(today.tempMax), _degrees(today.tempMin)),
+        'detail': today == null
+            ? ''
+            : l10n.widgetHighLow(
+                formatTemperature(today.tempMax, unit, symbol: false),
+                formatTemperature(today.tempMin, unit, symbol: false),
+              ),
         'sunrise': _clock(now.sunrise, now.timezone),
         'wind': '${now.windSpeed ?? '--'} m/s',
         'humidity': '${now.humidity ?? '--'}%',
       }),
-      'hours': jsonEncode(_nextDay(report.hourly, updated, locale)),
+      'hours': jsonEncode(_nextDay(report.hourly, updated, locale, unit)),
       'labels': jsonEncode({
         'now': l10n.widgetNow.toUpperCase(),
         'next24Hours': l10n.widgetNext24Hours.toUpperCase(),
@@ -88,7 +113,7 @@ class WeatherWidget {
 
   /// Picks forecast entries at least 3 hours apart across the next 24 hours.
   /// OpenWeatherMap already steps by 3 hours; hourly providers get thinned out.
-  static List<Map<String, String>> _nextDay(List<Weather> hourly, DateTime from, String locale) {
+  static List<Map<String, String>> _nextDay(List<Weather> hourly, DateTime from, String locale, TemperatureUnit unit) {
     final int start = from.millisecondsSinceEpoch ~/ 1000;
     final List<Map<String, String>> picked = [];
     int? last;
@@ -99,7 +124,7 @@ class WeatherWidget {
       picked.add({
         'label': _hourLabel(w, locale),
         'icon': _icon(w, overrideNight: _isNight(w) ? '-night' : ''),
-        'temperature': _degrees(w.temperature),
+        'temperature': formatTemperature(w.temperature, unit, symbol: false),
       });
       last = date;
       if (picked.length == _hourColumns) break;
@@ -169,8 +194,6 @@ class WeatherWidget {
       debugPrint('Scheduling widget refresh failed: $e');
     }
   }
-
-  static String _degrees(double? kelvin) => kelvin == null ? '--' : '${(kelvin - kelvinOffset).floor()}°';
 }
 
 /// Runs in a background isolate started by WorkManager.

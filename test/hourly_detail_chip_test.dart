@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterweather/l10n/app_localizations.dart';
+import 'package:flutterweather/services/unit_manager.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/views/forecast/hourly.dart';
 import 'package:flutterweather/views/forecast/hourly_detail_chip.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// 12.0 degrees at 6:50 AM UTC on 3 November 2026.
 final Weather _weather = Weather(
@@ -17,6 +20,9 @@ final Weather _weather = Weather(
   timezone: 0,
 );
 
+/// A unit manager for a region that uses Celsius, so a test chooses Fahrenheit itself.
+UnitManager _units() => UnitManager(device: () => const Locale('fr', 'FR'));
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -25,18 +31,23 @@ void main() {
     await initializeDateFormatting('ar');
   });
 
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
   // The chips sit in the forecast's fixed-height strip, so that is where they are pumped.
-  Future<void> pumpChips(WidgetTester tester, String language) {
+  Future<void> pumpChips(WidgetTester tester, String language, {UnitManager? units}) {
     return tester.pumpWidget(
-      MaterialApp(
-        locale: Locale(language),
-        theme: ThemeData(fontFamily: 'Montserrat'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(
-          body: Align(
-            alignment: Alignment.topLeft,
-            child: HourlyView(accent: 0, hourly: [_weather]),
+      ChangeNotifierProvider<UnitManager>.value(
+        value: units ?? _units(),
+        child: MaterialApp(
+          locale: Locale(language),
+          theme: ThemeData(fontFamily: 'Montserrat'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.topLeft,
+              child: HourlyView(accent: 0, hourly: [_weather]),
+            ),
           ),
         ),
       ),
@@ -71,4 +82,36 @@ void main() {
       expectMontserratLineHeights(tester, 'expanded');
     });
   }
+
+  group('temperature unit', () {
+    testWidgets('shows the temperature in Celsius', (tester) async {
+      await pumpChips(tester, 'en');
+      await tester.pump();
+
+      expect(find.text('12°C'), findsOneWidget);
+    });
+
+    testWidgets('shows the temperature in Fahrenheit', (tester) async {
+      final UnitManager units = _units();
+      await units.setUnit(TemperatureUnit.fahrenheit);
+
+      await pumpChips(tester, 'en', units: units);
+      await tester.pump();
+
+      expect(find.text('53°F'), findsOneWidget);
+    });
+
+    testWidgets('follows the unit when it changes while the chip is on screen', (tester) async {
+      final UnitManager units = _units();
+      await pumpChips(tester, 'en', units: units);
+      await tester.pump();
+      expect(find.text('12°C'), findsOneWidget);
+
+      await units.setUnit(TemperatureUnit.fahrenheit);
+      await tester.pump();
+
+      expect(find.text('53°F'), findsOneWidget);
+      expect(find.text('12°C'), findsNothing);
+    });
+  });
 }
