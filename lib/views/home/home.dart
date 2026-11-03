@@ -40,6 +40,7 @@ class Home extends StatelessWidget {
     final double fitScale = (size.height - top - Menu.footerHeight - bottomInset) / size.height;
     final double factor = isDrawerOpen ? fitScale.clamp(0.3, 0.65) : 1;
     Color bgColor = Provider.of<ThemeManager>(context).bgColor;
+    Color textColor = Provider.of<ThemeManager>(context).textColor;
 
     final double y = isDrawerOpen ? top : 0;
     final double x = isDrawerOpen ? (size.width - size.width * factor) / 2 : 0;
@@ -73,6 +74,8 @@ class Home extends StatelessWidget {
                   ),
                   IconButton(
                     iconSize: 36,
+                    // Same colour as the hamburger; Material's default is a grey in the dark theme.
+                    color: textColor,
                     onPressed: loading || isDrawerOpen ? null : onMorePress,
                     icon: Icon(
                       Icons.show_chart,
