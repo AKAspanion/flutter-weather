@@ -11,7 +11,6 @@ import 'package:flutterweather/services/providers/weather_provider.dart';
 import 'package:flutterweather/services/weather_cache.dart';
 import 'package:flutterweather/services/weather_service.dart';
 import 'package:flutterweather/services/weather_widget.dart';
-import 'package:flutterweather/theme/app_theme.dart';
 import 'package:flutterweather/views/forecast/forecast.dart';
 import 'package:flutterweather/views/home/dialog_overlay.dart';
 import 'package:flutterweather/views/home/home.dart';
@@ -168,11 +167,6 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                     builder: (_, snapshot) => _translateBuilder(
                       MenuButtons(
                         onRefresh: onRefresh,
-                        onTheme: () => toggleTheme(manager),
-                        themeIcon: Icon(
-                          manager.theme == AppTheme.Dark ? Icons.wb_sunny : Icons.brightness_3,
-                          size: 32,
-                        ),
                         onPinWidget: snapshot.data == true ? WeatherWidget.pin : null,
                         onSettings: () => toggleSettings(true),
                         onLocation: () => toggleDialog(true),
@@ -254,14 +248,6 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
         );
       },
     );
-  }
-
-  void toggleTheme(manager) {
-    if (manager.theme == AppTheme.White) {
-      manager.setTheme(AppTheme.Dark);
-    } else {
-      manager.setTheme(AppTheme.White);
-    }
   }
 
   void toggleForecast() {

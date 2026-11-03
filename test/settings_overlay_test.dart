@@ -6,6 +6,7 @@ import 'package:flutterweather/l10n/app_localizations_en.dart';
 import 'package:flutterweather/services/locale_manager.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/services/unit_manager.dart';
+import 'package:flutterweather/theme/app_theme.dart';
 import 'package:flutterweather/views/settings/settings_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,9 +36,10 @@ class _Calls {
 class _Panel {
   final LocaleManager locale;
   final UnitManager unit;
+  final ThemeManager theme;
   final _Calls calls;
 
-  _Panel(this.locale, this.unit, this.calls);
+  _Panel(this.locale, this.unit, this.theme, this.calls);
 }
 
 Future<_Panel> _pump(WidgetTester tester, {Locale? chosen, TemperatureUnit? unit}) async {
@@ -47,12 +49,13 @@ Future<_Panel> _pump(WidgetTester tester, {Locale? chosen, TemperatureUnit? unit
   final units = UnitManager(device: () => const Locale('en', 'GB'));
   await units.load();
   if (unit != null) await units.setUnit(unit);
+  final theme = ThemeManager();
   final calls = _Calls();
   final store = await SharedPreferences.getInstance();
   await tester.pumpWidget(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ThemeManager()),
+        ChangeNotifierProvider<ThemeManager>.value(value: theme),
         ChangeNotifierProvider<LocaleManager>.value(value: locale),
         ChangeNotifierProvider<UnitManager>.value(value: units),
       ],
@@ -87,22 +90,69 @@ Future<_Panel> _pump(WidgetTester tester, {Locale? chosen, TemperatureUnit? unit
     ),
   );
   await tester.pumpAndSettle();
-  return _Panel(locale, units, calls);
+  return _Panel(locale, units, theme, calls);
 }
 
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  testWidgets('shows the title, the three rows and both units', (tester) async {
+  testWidgets('shows the title, the four rows and both units', (tester) async {
     await _pump(tester);
 
     expect(find.text('SETTINGS'), findsOneWidget);
+    expect(find.text('Theme'), findsOneWidget);
     expect(find.text('Language'), findsOneWidget);
     expect(find.text('Temperature'), findsOneWidget);
     expect(find.text('Rate on Google Play'), findsOneWidget);
     expect(find.text('°C'), findsOneWidget);
     expect(find.text('°F'), findsOneWidget);
     expect(find.byIcon(Icons.open_in_new), findsOneWidget);
+  });
+
+  testWidgets('the rows run top to bottom as Theme, Language, Temperature, Rate on Google Play', (tester) async {
+    await _pump(tester);
+
+    final tops = [
+      for (final label in ['Theme', 'Language', 'Temperature', 'Rate on Google Play'])
+        tester.getTopLeft(find.text(label)).dy,
+    ];
+    expect(tops, orderedEquals([...tops]..sort()));
+    expect(tops.toSet().length, 4);
+  });
+
+  testWidgets('the Theme row shows a sun and a moon, read aloud as Light and Dark', (tester) async {
+    final handle = tester.ensureSemantics();
+    await _pump(tester);
+
+    expect(find.byIcon(Icons.wb_sunny), findsOneWidget);
+    expect(find.byIcon(Icons.brightness_3), findsOneWidget);
+    expect(find.bySemanticsLabel('Light'), findsOneWidget);
+    expect(find.bySemanticsLabel('Dark'), findsOneWidget);
+    handle.dispose();
+  });
+
+  testWidgets('tapping the moon makes the theme dark and leaves the panel open', (tester) async {
+    final panel = await _pump(tester);
+    expect(panel.theme.theme, AppTheme.White);
+
+    await tester.tap(find.byIcon(Icons.brightness_3));
+    await tester.pumpAndSettle();
+
+    expect(panel.theme.theme, AppTheme.Dark);
+    expect(find.byType(SettingsOverlay), findsOneWidget);
+    expect(panel.calls.names, isEmpty);
+  });
+
+  testWidgets('tapping the sun makes the theme light again', (tester) async {
+    final panel = await _pump(tester);
+    await tester.tap(find.byIcon(Icons.brightness_3));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.wb_sunny));
+    await tester.pumpAndSettle();
+
+    expect(panel.theme.theme, AppTheme.White);
+    expect(panel.calls.names, isEmpty);
   });
 
   testWidgets('the Language row shows System default when no language is saved', (tester) async {
@@ -157,8 +207,11 @@ void main() {
     expect(panel.calls.names, ['rate']);
   });
 
-  testWidgets('the close button calls onClose', (tester) async {
+  testWidgets('the only close button is in the header, above the Theme row, and calls onClose', (tester) async {
     final panel = await _pump(tester);
+
+    expect(find.byIcon(Icons.close), findsOneWidget);
+    expect(tester.getTopLeft(find.byIcon(Icons.close)).dy, lessThan(tester.getTopLeft(find.text('Theme')).dy));
 
     await tester.tap(find.byIcon(Icons.close));
 
