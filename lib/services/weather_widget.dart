@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutterweather/services/providers/weather_provider.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/services/weather_cache.dart';
@@ -83,8 +84,19 @@ class WeatherWidget {
     }
   }
 
+  /// Handled by MainActivity.kt rather than home_widget, whose pin request has no callback, so the launcher's "Add"
+  /// button would leave the user in the app instead of taking them to the home screen.
+  static const MethodChannel _pinChannel = MethodChannel('in.spanion.weather/widget');
+
   /// Asks the launcher to add the widget to the home screen.
-  static Future<void> pin() => HomeWidget.requestPinWidget(qualifiedAndroidName: _androidName);
+  static Future<void> pin() async {
+    if (!_supported) return;
+    try {
+      await _pinChannel.invokeMethod<bool>('pin');
+    } catch (e) {
+      debugPrint('Widget pin failed: $e');
+    }
+  }
 
   /// Refreshes the widget about once an hour, for the place last viewed in the
   /// app. Background location is deliberately not used.

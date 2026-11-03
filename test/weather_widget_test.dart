@@ -7,16 +7,21 @@ import 'package:flutterweather/services/weather_widget.dart';
 
 const String _provider = 'com.example.flutterweather.WeatherWidgetProvider';
 const MethodChannel _channel = MethodChannel('home_widget');
+const MethodChannel _pinChannel = MethodChannel('in.spanion.weather/widget');
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final List<MethodCall> calls = [];
   Object? Function(MethodCall call)? onCall;
+  final List<MethodCall> pinCalls = [];
+  Object? Function(MethodCall call)? onPinCall;
 
   setUp(() {
     calls.clear();
+    pinCalls.clear();
     onCall = null;
+    onPinCall = null;
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(_channel, (
       MethodCall call,
@@ -24,11 +29,18 @@ void main() {
       calls.add(call);
       return onCall?.call(call) ?? true;
     });
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(_pinChannel, (
+      MethodCall call,
+    ) async {
+      pinCalls.add(call);
+      return onPinCall?.call(call) ?? true;
+    });
   });
 
   tearDown(() {
     debugDefaultTargetPlatformOverride = null;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(_channel, null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(_pinChannel, null);
   });
 
   List<String> savedIds() => [
@@ -76,5 +88,28 @@ void main() {
 
     await expectLater(WeatherWidget.setAccent(3), completes);
     expect(calls.map((MethodCall c) => c.method), ['saveWidgetData']);
+  });
+
+  test('pin asks MainActivity to pin, and does not go through home_widget', () async {
+    await WeatherWidget.pin();
+
+    expect(pinCalls.map((MethodCall c) => c.method), ['pin']);
+    expect(calls.where((MethodCall c) => c.method == 'requestPinWidget'), isEmpty);
+  });
+
+  test('pin carries on when the channel fails', () async {
+    onPinCall = (MethodCall call) => throw PlatformException(code: 'boom');
+
+    await expectLater(WeatherWidget.pin(), completes);
+    expect(pinCalls, hasLength(1));
+  });
+
+  test('pin does nothing off Android', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+    await WeatherWidget.pin();
+
+    expect(pinCalls, isEmpty);
+    expect(calls, isEmpty);
   });
 }
