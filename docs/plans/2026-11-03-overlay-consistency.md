@@ -1,5 +1,7 @@
 # Overlay Consistency Implementation Plan
 
+**Status:** complete
+
 > **For agentic workers:** REQUIRED SUB-SKILL: the project's workflow policy names the executor (`run.executor`): ga:implement-with-subagents by default, or ga:implement. Follow the policy and this plan's Checkpoints. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Move the theme toggle into the settings panel and give the city dialog, the language picker and the
@@ -100,21 +102,21 @@ class SegmentedChoice<T> extends StatelessWidget {
   °F one's is transparent; tapping °F calls `onChanged` with °F once; tapping °C calls nothing.
 - An option with `semanticLabel: 'Dark'` is found by `find.bySemanticsLabel('Dark')`.
 
-- [ ] **Step 1: Add the four keys to all ten `.arb` files and run `flutter pub get`**, so `AppLocalizations` has the new getters
-- [ ] **Step 2: Create both widgets with the signatures above and an empty build**, so the tests fail on behaviour
-- [ ] **Step 3: Write the failing tests** for each Acceptance case, in `test/overlay_card_test.dart` and `test/segmented_choice_test.dart`
-- [ ] **Step 4: Run them to verify they fail**
+- [x] **Step 1: Add the four keys to all ten `.arb` files and run `flutter pub get`**, so `AppLocalizations` has the new getters
+- [x] **Step 2: Create both widgets with the signatures above and an empty build**, so the tests fail on behaviour
+- [x] **Step 3: Write the failing tests** for each Acceptance case, in `test/overlay_card_test.dart` and `test/segmented_choice_test.dart`
+- [x] **Step 4: Run them to verify they fail**
 
 Run: `flutter test test/overlay_card_test.dart test/segmented_choice_test.dart`
 Expected: FAIL on the assertions.
 
-- [ ] **Step 5: Write the minimal implementation** to the Interfaces, until they pass
-- [ ] **Step 6: Run them to verify they pass**
+- [x] **Step 5: Write the minimal implementation** to the Interfaces, until they pass
+- [x] **Step 6: Run them to verify they pass**
 
 Run: `flutter test test/overlay_card_test.dart test/segmented_choice_test.dart test/arb_files_test.dart`
 Expected: PASS
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add lib/components/overlay_card.dart lib/components/segmented_choice.dart lib/l10n/app_en.arb lib/l10n/app_zh.arb lib/l10n/app_hi.arb lib/l10n/app_es.arb lib/l10n/app_ar.arb lib/l10n/app_fr.arb lib/l10n/app_bn.arb lib/l10n/app_pt.arb lib/l10n/app_ru.arb lib/l10n/app_ur.arb test/overlay_card_test.dart test/segmented_choice_test.dart
@@ -176,20 +178,20 @@ const MenuButtons({
   four buttons.
 - `flutter analyze lib/main.dart` reports no issues, and `lib/main.dart` no longer contains `toggleTheme`.
 
-- [ ] **Step 1: Remove `onTheme` and `themeIcon` from `MenuButtons` and its caller in `main.dart`**, so the tests compile
-- [ ] **Step 2: Write the failing tests** for each Acceptance case, in `test/settings_overlay_test.dart` and `test/menu_buttons_test.dart`
-- [ ] **Step 3: Run them to verify they fail**
+- [x] **Step 1: Remove `onTheme` and `themeIcon` from `MenuButtons` and its caller in `main.dart`**, so the tests compile
+- [x] **Step 2: Write the failing tests** for each Acceptance case, in `test/settings_overlay_test.dart` and `test/menu_buttons_test.dart`
+- [x] **Step 3: Run them to verify they fail**
 
 Run: `flutter test test/settings_overlay_test.dart test/menu_buttons_test.dart`
 Expected: FAIL on the assertions.
 
-- [ ] **Step 4: Write the minimal implementation**: the panel on `OverlayCard`, the Theme row first, both toggles as `SegmentedChoice`, and `toggleTheme` gone from `main.dart`
-- [ ] **Step 5: Run them to verify they pass**
+- [x] **Step 4: Write the minimal implementation**: the panel on `OverlayCard`, the Theme row first, both toggles as `SegmentedChoice`, and `toggleTheme` gone from `main.dart`
+- [x] **Step 5: Run them to verify they pass**
 
 Run: `flutter test test/settings_overlay_test.dart test/menu_buttons_test.dart`
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add lib/views/settings/settings_overlay.dart lib/views/menu/menu_buttons.dart lib/main.dart test/settings_overlay_test.dart test/menu_buttons_test.dart
@@ -242,20 +244,20 @@ class DialogOverlay extends StatefulWidget {
 - Tapping the header close calls `onCancel` once and not `onSubmit`.
 - The city dialog has exactly one `Icons.done` and one `Icons.close`.
 
-- [ ] **Step 1: Type `DialogOverlay`'s callbacks as above**, so the tests compile
-- [ ] **Step 2: Write the failing tests** for each Acceptance case, in `test/language_overlay_test.dart` and `test/dialog_overlay_test.dart`
-- [ ] **Step 3: Run them to verify they fail**
+- [x] **Step 1: Type `DialogOverlay`'s callbacks as above**, so the tests compile
+- [x] **Step 2: Write the failing tests** for each Acceptance case, in `test/language_overlay_test.dart` and `test/dialog_overlay_test.dart`
+- [x] **Step 3: Run them to verify they fail**
 
 Run: `flutter test test/language_overlay_test.dart test/dialog_overlay_test.dart`
 Expected: FAIL on the assertions.
 
-- [ ] **Step 4: Write the minimal implementation**: both overlays on `OverlayCard`, the ✓ as the field's suffix, the keyboard's done action wired to submit
-- [ ] **Step 5: Run them to verify they pass**
+- [x] **Step 4: Write the minimal implementation**: both overlays on `OverlayCard`, the ✓ as the field's suffix, the keyboard's done action wired to submit
+- [x] **Step 5: Run them to verify they pass**
 
 Run: `flutter test test/language_overlay_test.dart test/dialog_overlay_test.dart`
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add lib/views/home/language_overlay.dart lib/views/home/dialog_overlay.dart test/language_overlay_test.dart test/dialog_overlay_test.dart
