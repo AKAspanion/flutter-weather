@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: the project's workflow policy names the executor (`run.executor`): ga:implement-with-subagents by default, or ga:implement. Follow the policy and this plan's Checkpoints. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Status:** complete
+
 **Goal:** Translate every in-app string into the ten most spoken languages, with a language picker in the home screen's top row.
 
 **Architecture:** Flutter `gen_l10n` compiles `lib/l10n/app_<locale>.arb` into `AppLocalizations`. A `LocaleManager`
@@ -144,25 +146,25 @@ AppLocalizations.supportedLocales` and `locale: localeManager.locale`. The snack
 - The existing test `names coordinate results that come back without a place name` still passes; a new case: given a
   nameless result and a geocoder that finds nothing, `fetchByCoords` returns a report whose name is `''`.
 
-- [ ] **Step 1: Add the dependencies, `l10n.yaml`, `.gitignore` line and `app_en.arb`, and run `flutter pub get`** so `AppLocalizations` is generated
+- [x] **Step 1: Add the dependencies, `l10n.yaml`, `.gitignore` line and `app_en.arb`, and run `flutter pub get`** so `AppLocalizations` is generated
 
-- [ ] **Step 2: Create `locale_manager.dart` and `conditions.dart` with the signatures above and bodies that return null / "Unknown"**, so tests fail on behaviour
+- [x] **Step 2: Create `locale_manager.dart` and `conditions.dart` with the signatures above and bodies that return null / "Unknown"**, so tests fail on behaviour
 
-- [ ] **Step 3: Write the failing tests** for each Acceptance case in `test/locale_manager_test.dart`, `test/conditions_test.dart` and `test/weather_service_test.dart`
+- [x] **Step 3: Write the failing tests** for each Acceptance case in `test/locale_manager_test.dart`, `test/conditions_test.dart` and `test/weather_service_test.dart`
 
-- [ ] **Step 4: Run them to verify they fail**
+- [x] **Step 4: Run them to verify they fail**
 
 Run: `flutter test test/locale_manager_test.dart test/conditions_test.dart test/weather_service_test.dart`
 Expected: FAIL on the assertions.
 
-- [ ] **Step 5: Implement `LocaleManager`, `describeCondition`, the `WeatherService` change and the `main.dart` wiring**
+- [x] **Step 5: Implement `LocaleManager`, `describeCondition`, the `WeatherService` change and the `main.dart` wiring**
 
-- [ ] **Step 6: Run them to verify they pass**
+- [x] **Step 6: Run them to verify they pass**
 
 Run: `flutter test test/locale_manager_test.dart test/conditions_test.dart test/weather_service_test.dart`
 Expected: PASS
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add pubspec.yaml pubspec.lock l10n.yaml .gitignore lib/l10n/app_en.arb lib/l10n/conditions.dart lib/services/locale_manager.dart lib/main.dart lib/services/weather_service.dart test/locale_manager_test.dart test/conditions_test.dart test/weather_service_test.dart
@@ -217,21 +219,21 @@ strings, keeping `%1$s`.
   `describeCondition(lookupAppLocalizations(Locale('es')), 599)` equals its `conditionRain` (spec Testing: "checked in
   English and one other language").
 
-- [ ] **Step 1: Write the failing test** `test/arb_files_test.dart` for each Acceptance case, reading the files from disk
+- [x] **Step 1: Write the failing test** `test/arb_files_test.dart` for each Acceptance case, reading the files from disk
 
-- [ ] **Step 2: Run it to verify it fails**
+- [x] **Step 2: Run it to verify it fails**
 
 Run: `flutter test test/arb_files_test.dart`
 Expected: FAIL: the nine files are missing.
 
-- [ ] **Step 3: Write the nine `.arb` files and the nine `strings.xml` files**
+- [x] **Step 3: Write the nine `.arb` files and the nine `strings.xml` files**
 
-- [ ] **Step 4: Run `flutter pub get`, then the test, to verify it passes**
+- [x] **Step 4: Run `flutter pub get`, then the test, to verify it passes**
 
 Run: `flutter test test/arb_files_test.dart`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add lib/l10n/app_zh.arb lib/l10n/app_hi.arb lib/l10n/app_es.arb lib/l10n/app_ar.arb lib/l10n/app_fr.arb lib/l10n/app_bn.arb lib/l10n/app_pt.arb lib/l10n/app_ru.arb lib/l10n/app_ur.arb android/app/src/main/res/values-zh/strings.xml android/app/src/main/res/values-hi/strings.xml android/app/src/main/res/values-es/strings.xml android/app/src/main/res/values-ar/strings.xml android/app/src/main/res/values-fr/strings.xml android/app/src/main/res/values-bn/strings.xml android/app/src/main/res/values-pt/strings.xml android/app/src/main/res/values-ru/strings.xml android/app/src/main/res/values-ur/strings.xml test/arb_files_test.dart
@@ -317,30 +319,30 @@ final void Function() onLanguagePress;
 - Given `locale` is `Locale('ar')`, when `LanguageOverlay` is pumped under `MaterialApp` with the localization
   delegates, then `Directionality.of` inside it is `TextDirection.rtl` and no exception is thrown.
 
-- [ ] **Step 1: Create `dates.dart` and `language_overlay.dart` with the signatures above and empty bodies**
+- [x] **Step 1: Create `dates.dart` and `language_overlay.dart` with the signatures above and empty bodies**
 
-- [ ] **Step 2: Write the failing tests** for each Acceptance case in `test/dates_test.dart` and `test/language_overlay_test.dart`, with a `LocaleManager` backed by `SharedPreferences.setMockInitialValues`
+- [x] **Step 2: Write the failing tests** for each Acceptance case in `test/dates_test.dart` and `test/language_overlay_test.dart`, with a `LocaleManager` backed by `SharedPreferences.setMockInitialValues`
 
-- [ ] **Step 3: Run them to verify they fail**
+- [x] **Step 3: Run them to verify they fail**
 
 Run: `flutter test test/dates_test.dart test/language_overlay_test.dart`
 Expected: FAIL on the assertions.
 
-- [ ] **Step 4: Implement `dates.dart` and `LanguageOverlay`**
+- [x] **Step 4: Implement `dates.dart` and `LanguageOverlay`**
 
-- [ ] **Step 5: Run them to verify they pass**
-
-Run: `flutter test test/dates_test.dart test/language_overlay_test.dart`
-Expected: PASS
-
-- [ ] **Step 6: Move the views' strings, dates and descriptions to `AppLocalizations`, add the top-row button and the overlay to `Home` and `main.dart`, delete `calendar.dart`, and switch hand-placed left/right to start/end**
-
-- [ ] **Step 7: Run the task's tests again**
+- [x] **Step 5: Run them to verify they pass**
 
 Run: `flutter test test/dates_test.dart test/language_overlay_test.dart`
 Expected: PASS
 
-- [ ] **Step 8: Commit**
+- [x] **Step 6: Move the views' strings, dates and descriptions to `AppLocalizations`, add the top-row button and the overlay to `Home` and `main.dart`, delete `calendar.dart`, and switch hand-placed left/right to start/end**
+
+- [x] **Step 7: Run the task's tests again**
+
+Run: `flutter test test/dates_test.dart test/language_overlay_test.dart`
+Expected: PASS
+
+- [x] **Step 8: Commit**
 
 ```bash
 git add lib/l10n/dates.dart lib/services/calendar.dart lib/views/weather/weather_view.dart lib/views/weather/weather_error.dart lib/views/forecast/forecast.dart lib/views/forecast/daily_detail_card.dart lib/views/forecast/hourly_detail_chip.dart lib/views/menu/menu.dart lib/views/home/home.dart lib/views/home/dialog_overlay.dart lib/views/home/language_overlay.dart lib/main.dart test/dates_test.dart test/language_overlay_test.dart
@@ -404,25 +406,25 @@ Now card's label (`card_label`), the hours card's title, and `card_updated` from
 - Given `SharedPreferences` throws, when `update` runs on Android, then it logs with `debugPrint` and doesn't throw (as
   today's `catch`).
 
-- [ ] **Step 1: Add `payload` and `localizations()` with their signatures and empty bodies**
+- [x] **Step 1: Add `payload` and `localizations()` with their signatures and empty bodies**
 
-- [ ] **Step 2: Write the failing tests** for each Acceptance case in `test/weather_widget_test.dart`
+- [x] **Step 2: Write the failing tests** for each Acceptance case in `test/weather_widget_test.dart`
 
-- [ ] **Step 3: Run them to verify they fail**
+- [x] **Step 3: Run them to verify they fail**
 
 Run: `flutter test test/weather_widget_test.dart`
 Expected: FAIL on the assertions.
 
-- [ ] **Step 4: Implement `payload`, `localizations()`, and `update` saving the payload**
+- [x] **Step 4: Implement `payload`, `localizations()`, and `update` saving the payload**
 
-- [ ] **Step 5: Run them to verify they pass**
+- [x] **Step 5: Run them to verify they pass**
 
 Run: `flutter test test/weather_widget_test.dart`
 Expected: PASS
 
-- [ ] **Step 6: Make `WeatherWidgetProvider.kt` read `labels`, with the `strings.xml` fallbacks**
+- [x] **Step 6: Make `WeatherWidgetProvider.kt` read `labels`, with the `strings.xml` fallbacks**
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add lib/services/weather_widget.dart android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt test/weather_widget_test.dart
@@ -499,23 +501,23 @@ class MenuButtons extends StatelessWidget {
 - When the translate button is tapped, then `onLanguage` is called once and no other callback.
 - `Home` builds with no `onLanguagePress` parameter and shows no `Icons.translate`.
 
-- [ ] **Step 1: Create `menu_buttons.dart` with the signature above and an empty `build`, and add `size` to `Btn`**
+- [x] **Step 1: Create `menu_buttons.dart` with the signature above and an empty `build`, and add `size` to `Btn`**
 
-- [ ] **Step 2: Write the failing tests** for each Acceptance case in `test/menu_buttons_test.dart`
+- [x] **Step 2: Write the failing tests** for each Acceptance case in `test/menu_buttons_test.dart`
 
-- [ ] **Step 3: Run them to verify they fail**
+- [x] **Step 3: Run them to verify they fail**
 
 Run: `flutter test test/menu_buttons_test.dart`
 Expected: FAIL on the assertions.
 
-- [ ] **Step 4: Implement `MenuButtons`, use it in `main.dart`, and remove the translate button from `Home`**
+- [x] **Step 4: Implement `MenuButtons`, use it in `main.dart`, and remove the translate button from `Home`**
 
-- [ ] **Step 5: Run them to verify they pass**
+- [x] **Step 5: Run them to verify they pass**
 
 Run: `flutter test test/menu_buttons_test.dart`
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add lib/main.dart lib/views/home/home.dart lib/components/btn.dart lib/views/menu/menu_buttons.dart test/menu_buttons_test.dart
