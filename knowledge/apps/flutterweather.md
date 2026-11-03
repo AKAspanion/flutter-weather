@@ -17,9 +17,9 @@ The whole product. The Dart package is named in `pubspec.yaml`. Users see it as 
 
 - Flutter and Dart. The SDK range and every dependency are in `pubspec.yaml`, and resolved versions are in
   `pubspec.lock`.
-- State: `setState` in `_MainAppState`, plus `provider` for the theme and the language
+- State: `setState` in `_MainAppState`, plus `provider` for the theme, the language and the temperature unit
   ([architecture](../project/architecture.md)).
-- Main plugins: `geolocator` (position), `http` (provider calls), `shared_preferences` (on-device storage),
+- Main plugins: `geolocator` (position), `http` (provider calls), `shared_preferences` (on-device storage), `url_launcher` (the Play Store page),
   `home_widget` and `workmanager` (Android widget), `flutter_localizations` and `intl` (translations and dates), `google_mobile_ads` (banner and consent), `flutter_spinkit`
   (loading pulse), and `flare_flutter` from `packages/flare_flutter` (animated icons).
 - Android: a Gradle Kotlin build in `android/app/build.gradle.kts`, which sets the application ID, compile and target
@@ -48,10 +48,12 @@ There is one route. All parts are layered in a `Stack` in `lib/main.dart`:
   sideways opens and closes the menu. See [current weather](../features/current-weather.md).
 - `Menu` (`lib/views/menu/menu.dart`): the gradient drawer behind the card, with the accent picker and, where needed,
   the ad privacy button. See [themes and accents](../features/themes-and-accents.md).
-- The top buttons: refresh, theme, add-widget, translate, location and close. `MenuButtons`
+- The top buttons: refresh, add-widget, settings (a gear), location and close. `MenuButtons`
   (`lib/views/menu/menu_buttons.dart`) lays them out as `Btn`s, positioned in `lib/main.dart`, and they are shown
   while the menu is open.
-- `LanguageOverlay` (`lib/views/home/language_overlay.dart`): the language list. See
+- `SettingsOverlay` (`lib/views/settings/settings_overlay.dart`): the settings panel the gear opens (theme, language, temperature, rate). See
+  [settings](../features/settings.md).
+- `LanguageOverlay` (`lib/views/home/language_overlay.dart`): the language list, on the shared `OverlayCard` (`lib/components/overlay_card.dart`), as are the settings panel and the city search. See
   [language picker](../features/language-picker.md).
 - `DialogOverlay` (`lib/views/home/dialog_overlay.dart`): the city search. See
   [city search](../features/city-search.md).
@@ -70,6 +72,8 @@ There is one route. All parts are layered in a `Stack` in `lib/main.dart`:
 
 ## History
 
+- 2026-11-03: the top buttons included theme; now the theme is a row in the settings panel, and the three overlays share `OverlayCard`, because every choice moved into settings and the overlays got one look. See [overlays share one card](../decisions/overlays-share-one-card.md).
+- 2026-11-03: the top buttons included translate; now a settings gear opens `SettingsOverlay`, which holds the language, the temperature unit (`UnitManager`, provided in `lib/main.dart`) and Rate on Google Play, and `url_launcher` is a dependency, because every setting lives in one panel. See [settings panel](../decisions/settings-panel.md).
 - 2026-11-03: the top buttons were five hand-placed `Btn`s; now `MenuButtons` with a translate button, and the app is translated, because the developer chose ten languages. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
@@ -78,8 +82,10 @@ There is one route. All parts are layered in a `Stack` in `lib/main.dart`:
 * `lib/main.dart`
 * `lib/views/home/home.dart`
 * `lib/views/menu/menu.dart`
+* `lib/components/overlay_card.dart`
 * `lib/views/home/dialog_overlay.dart`
 * `lib/views/home/language_overlay.dart`
+* `lib/views/settings/settings_overlay.dart`
 * `lib/views/menu/menu_buttons.dart`
 * `lib/views/forecast/forecast.dart`
 * `lib/views/weather/weather_screen.dart`

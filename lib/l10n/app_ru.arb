@@ -86,5 +86,13 @@
   "condition801": "Малооблачно",
   "condition802": "Переменная облачность",
   "condition803": "Облачно с прояснениями",
-  "condition804": "Пасмурно"
+  "condition804": "Пасмурно",
+  "settings": "Настройки",
+  "temperature": "Температура",
+  "rateOnGooglePlay": "Оценить в Google Play",
+  "couldNotOpenPlayStore": "Не удалось открыть Google Play",
+  "theme": "Тема",
+  "lightTheme": "Светлая",
+  "darkTheme": "Тёмная",
+  "city": "Город"
 }

@@ -4,18 +4,20 @@ import 'package:flutterweather/components/ad_banner.dart';
 import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/ads.dart';
 import 'package:flutterweather/services/locale_manager.dart';
+import 'package:flutterweather/services/play_store.dart';
 import 'package:flutterweather/services/theme_manager.dart';
+import 'package:flutterweather/services/unit_manager.dart';
 import 'package:flutterweather/services/providers/weather_provider.dart';
 import 'package:flutterweather/services/weather_cache.dart';
 import 'package:flutterweather/services/weather_service.dart';
 import 'package:flutterweather/services/weather_widget.dart';
-import 'package:flutterweather/theme/app_theme.dart';
 import 'package:flutterweather/views/forecast/forecast.dart';
 import 'package:flutterweather/views/home/dialog_overlay.dart';
 import 'package:flutterweather/views/home/home.dart';
 import 'package:flutterweather/views/home/language_overlay.dart';
 import 'package:flutterweather/views/menu/menu.dart';
 import 'package:flutterweather/views/menu/menu_buttons.dart';
+import 'package:flutterweather/views/settings/settings_overlay.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +34,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   bool loading = true;
   int selectedAccent = 0;
   bool isDialogOpen = false;
+  bool isSettingsOpen = false;
   bool isLanguageOpen = false;
   bool isDrawerOpen = false;
   bool isForecastOpen = false;
@@ -135,6 +138,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeManager()),
         ChangeNotifierProvider(create: (_) => LocaleManager()..load()),
+        ChangeNotifierProvider(create: (_) => UnitManager()..load()),
       ],
       child: Consumer2<ThemeManager, LocaleManager>(builder: (_, manager, localeManager, __) {
         return MaterialApp(
@@ -163,13 +167,8 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                     builder: (_, snapshot) => _translateBuilder(
                       MenuButtons(
                         onRefresh: onRefresh,
-                        onTheme: () => toggleTheme(manager),
-                        themeIcon: Icon(
-                          manager.theme == AppTheme.Dark ? Icons.wb_sunny : Icons.brightness_3,
-                          size: 32,
-                        ),
                         onPinWidget: snapshot.data == true ? WeatherWidget.pin : null,
-                        onLanguage: () => toggleLanguage(true),
+                        onSettings: () => toggleSettings(true),
                         onLocation: () => toggleDialog(true),
                         onClose: toggleMenu,
                       ),
@@ -193,6 +192,16 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                         accent: selectedAccent,
                         onCancel: () => toggleDialog(false),
                         onSubmit: (city) => onSubmit(city),
+                      )
+                    : Container(),
+                isSettingsOpen
+                    ? SettingsOverlay(
+                        accent: selectedAccent,
+                        onClose: () => toggleSettings(false),
+                        // The picker opens above the panel, which stays open under it.
+                        onLanguage: () => toggleLanguage(true),
+                        onRate: onRate,
+                        onUnitChanged: onUnitChanged,
                       )
                     : Container(),
                 isLanguageOpen
@@ -241,14 +250,6 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
     );
   }
 
-  void toggleTheme(manager) {
-    if (manager.theme == AppTheme.White) {
-      manager.setTheme(AppTheme.Dark);
-    } else {
-      manager.setTheme(AppTheme.White);
-    }
-  }
-
   void toggleForecast() {
     if (isForecastOpen) {
       _controller.reset();
@@ -284,6 +285,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   void toggleDialog(bool value) {
     setState(() {
       isDialogOpen = value;
+    });
+  }
+
+  void toggleSettings(bool value) {
+    setState(() {
+      isSettingsOpen = value;
     });
   }
 
@@ -378,6 +385,22 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
         loading = false;
       });
     }
+  }
+
+  void onRate() async {
+    final bool opened = await PlayStore.openListing();
+    if (!opened && mounted) {
+      _messenger.currentState?.showSnackBar(
+        // This State sits above the MaterialApp, so the text is looked up where the snackbar is built.
+        SnackBar(content: Builder(builder: (context) => Text(AppLocalizations.of(context)!.couldNotOpenPlayStore))),
+      );
+    }
+  }
+
+  /// Pushes the last cached report to the home-screen widget so it switches unit now, not at its next refresh.
+  void onUnitChanged() async {
+    final WeatherReport? cached = await WeatherCache.loadReport();
+    if (cached != null) WeatherWidget.update(cached);
   }
 
   void _loadCachedReport() async {

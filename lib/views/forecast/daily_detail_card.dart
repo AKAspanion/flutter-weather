@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/l10n/conditions.dart';
 import 'package:flutterweather/l10n/dates.dart';
+import 'package:flutterweather/services/unit_manager.dart';
 import 'package:flutterweather/services/weather.dart';
 import 'package:flutterweather/theme/gradients.dart';
+import 'package:provider/provider.dart';
 
 class DailyDetail extends StatefulWidget {
   final int accent;
@@ -29,6 +31,7 @@ class _DailyDetailState extends State<DailyDetail> {
     final size = MediaQuery.of(context).size;
     final AppLocalizations l10n = AppLocalizations.of(context)!;
     final String locale = Localizations.localeOf(context).toString();
+    final TemperatureUnit unit = context.watch<UnitManager>().unit;
 
     return InkWell(
       onTap: toggleExpand,
@@ -113,7 +116,7 @@ class _DailyDetailState extends State<DailyDetail> {
                           Container(
                             padding: EdgeInsetsDirectional.only(end: 12, top: 2),
                             child: Text(
-                              '${(weather.tempMin! - 273.15).floor()}°C',
+                              formatTemperature(weather.tempMin, unit),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -138,7 +141,7 @@ class _DailyDetailState extends State<DailyDetail> {
                           Container(
                             padding: EdgeInsetsDirectional.only(end: 12, top: 2),
                             child: Text(
-                              '${(weather.tempMax! - 273.15).floor()}°C',
+                              formatTemperature(weather.tempMax, unit),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,

@@ -99,6 +99,18 @@ void main() {
     expect(closed, 1);
   });
 
+  testWidgets('shows the LANGUAGE title with its only close button in the header, above System default',
+      (tester) async {
+    await _pump(tester, onClose: () {});
+
+    expect(find.text('LANGUAGE'), findsOneWidget);
+    expect(find.byIcon(Icons.close), findsOneWidget);
+    expect(
+      tester.getCenter(find.byIcon(Icons.close)).dy,
+      lessThan(tester.getTopLeft(find.text('System default')).dy),
+    );
+  });
+
   testWidgets('the close button closes without changing the language', (tester) async {
     var closed = 0;
     final manager = await _pump(tester, chosen: const Locale('es'), onClose: () => closed++);

@@ -103,13 +103,13 @@ Never configurable, whatever the project sets:
 
 _Generated from `knowledge/`. Do not edit by hand._
 
-_44 concepts, so sections other than project/ and apps/ show counts. Follow `knowledge/index.md` into them._
+_49 concepts, so sections other than project/ and apps/ show counts. Follow `knowledge/index.md` into them._
 
 - [data/](knowledge/data/) — 2 concepts
-- [decisions/](knowledge/decisions/) — 13 concepts
+- [decisions/](knowledge/decisions/) — 17 concepts
 - [design-system/](knowledge/design-system/) — 2 concepts
 - [domain/](knowledge/domain/) — 2 concepts
-- [features/](knowledge/features/) — 6 concepts
+- [features/](knowledge/features/) — 7 concepts
 - [findings/](knowledge/findings/) — 1 concept
 - [integrations/](knowledge/integrations/) — 5 concepts
 - [operations/](knowledge/operations/) — 2 concepts

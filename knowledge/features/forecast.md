@@ -13,11 +13,12 @@ verified: human:panditankit1995@gmail.com
 The chart button on the main card opens `Forecast`, which slides up over everything. It shows:
 
 - **Next hours:** a horizontal list of `HourlyDetail` chips from `WeatherReport.hourly`. Each shows the time, an
-  icon and the temperature. Tapping a chip expands it to show wind and humidity.
+  icon and the temperature in the chosen unit. Tapping a chip expands it to show wind and humidity.
 - **Next days:** a `DailyDetail` card per entry in `WeatherReport.daily`. Each shows the day, an icon and the minimum
-  and maximum. Tapping a card expands it in the accent gradient with sunrise, wind and humidity.
+  and maximum in the chosen unit. Tapping a card expands it in the accent gradient with sunrise, wind and humidity.
 - The provider's attribution at the end.
 
+Temperatures follow the unit chosen in [settings](settings.md) (`formatTemperature`); a missing temperature shows `--`.
 All text and dates follow the chosen language ([language picker](language-picker.md)): time of day in the language's own
 style ("5:00 AM", "05:00"), the weekday and the date line from `lib/l10n/dates.dart`, and descriptions from the
 condition code. In Arabic and Urdu the lists and chips run right to left.
@@ -45,6 +46,7 @@ integration). For example, OpenWeatherMap steps by 3 hours.
 
 ## History
 
+- 2026-11-03: temperatures were always °C; now they follow the unit chosen in settings, because the app can show °F. See [temperature unit](../decisions/temperature-unit-by-region.md).
 - 2026-11-03: text and dates were English, with a hand-written calendar (`lib/services/calendar.dart`, removed); now `intl` formats in the chosen language and chip text rows use a forced line height, because the app is translated and fallback fonts overflowed the chips. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
@@ -55,4 +57,5 @@ integration). For example, OpenWeatherMap steps by 3 hours.
 * `lib/views/forecast/daily_detail_card.dart`
 * `lib/main.dart`
 * `lib/l10n/dates.dart`
+* `lib/services/unit_manager.dart`
 * `test/hourly_detail_chip_test.dart`

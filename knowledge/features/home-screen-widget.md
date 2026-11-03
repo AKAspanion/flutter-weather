@@ -64,6 +64,12 @@ channel to `MainActivity` rather than through `home_widget`, whose pin request h
 the launcher a callback that opens the home screen, so tapping "Add" lands the user on the widget instead of back in
 the app. On Android 14+ the callback's creator has to allow the background launch, which `MainActivity` sets.
 
+**Temperature unit.** The temperatures follow the saved `temperature_unit`, or the phone's region when none is saved:
+`WeatherWidget.temperatureUnit` reads it without a `BuildContext`, so the background refresh follows it too. The widget
+shows `°` only, with no `C` or `F`, for lack of room. The app re-pushes the cached report when the unit changes
+(`onUnitChanged` in `lib/main.dart`), so the widget switches at once ([settings](settings.md),
+[decision](../decisions/temperature-unit-by-region.md)). A missing temperature shows `--`.
+
 **Language.** The text the app pushes (city, description, high and low, the card title and the update line) is in the app's chosen language: `WeatherWidget.payload` builds it from `WeatherWidget.localizations()`, which
 reads `language_preference` without a `BuildContext`, so the background refresh follows the choice too
 ([language picker](language-picker.md)). The title and the update line travel in the `labels` data key. The widget's own
@@ -101,6 +107,7 @@ update, or when a label is missing.
 
 ## History
 
+- 2026-11-03: temperatures were always °C; now they follow the saved unit and are re-pushed when it changes, because the app can show °F. See [temperature unit](../decisions/temperature-unit-by-region.md).
 - 2026-11-03: was one card with two pages (Now and the next 24 hours) in a StackView, with a grey background and
   static PNG icons, and could not shrink below 4x2; now one Now card in three layouts, in the app's accent with an
   animated icon, down to one cell, because internal testing asked for a 2x2, no 24-hour page and an animated icon. See
@@ -110,6 +117,7 @@ update, or when a label is missing.
 ## Sources
 
 * `lib/services/weather_widget.dart`
+* `lib/services/unit_manager.dart`
 * `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`
 * `android/app/src/main/kotlin/com/example/flutterweather/MainActivity.kt`
 * `android/app/src/main/res/xml/weather_widget_info.xml`

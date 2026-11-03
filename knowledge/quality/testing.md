@@ -1,7 +1,7 @@
 ---
 type: Test Strategy
 title: Tests
-description: Unit and widget tests in test/ for provider failover, translations, dates, the language picker, the menu buttons, the theme, the widget service and the widget resources, and a test-harness tool that renders the widget icons.
+description: Unit and widget tests in test/ for provider failover, translations, dates, the language picker, the settings panel, the temperature unit, the menu buttons, the theme, the widget service and the widget resources, and a test-harness tool that renders the widget icons.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
 verified: human:panditankit1995@gmail.com
 ---
@@ -28,6 +28,15 @@ Translation tests, one file per subject:
 - `test/locale_manager_test.dart`: saving, restoring and resolving the language, including a store that fails.
 - `test/language_overlay_test.dart`, `test/menu_buttons_test.dart` and `test/hourly_detail_chip_test.dart`: the
   language list, the menu's button row (including narrow screens) and the hourly chip's height with fallback fonts.
+- `test/unit_manager_test.dart`: saving, restoring and resolving the temperature unit (region defaults, a store that
+  fails) and `formatTemperature`.
+- `test/play_store_test.dart`: `PlayStore.openListing` tries the `market://` address, then the web address, with a fake
+  opener (no real launch).
+- `test/settings_overlay_test.dart`: the settings panel's rows (Theme first), the theme and unit toggles (the unit
+  callback runs after the save) and right-to-left layout.
+- `test/overlay_card_test.dart`, `test/segmented_choice_test.dart` and `test/dialog_overlay_test.dart`: the shared
+  card's upper-cased title, close at the end (mirrored in Arabic), title aligned with `ListTile` text and scrolling
+  content; the toggle's fill and callbacks; and the city dialog's ✓, Done key and header close.
 
 `test/weather_service_test.dart` also checks that an unnamed place keeps an empty name.
 
@@ -62,6 +71,8 @@ The policy's `checks.commands.test` (`ga.mjs workflow show`), run by hand.
 
 ## History
 
+- 2026-11-03: added tests for the overlay card, the segmented toggle and the city dialog, because they were added. See [overlays share one card](../decisions/overlays-share-one-card.md).
+- 2026-11-03: added tests for the temperature unit, the Play Store opener and the settings panel, because they were added. See [settings](../features/settings.md).
 - 2026-11-03: added the theme tests and the widget's accent, pin and resource tests, because the widget became one
   resizable card in the app's accent and the theme follows the system. See
   [decisions/widget-one-resizable-card](../decisions/widget-one-resizable-card.md).
@@ -78,6 +89,12 @@ The policy's `checks.commands.test` (`ga.mjs workflow show`), run by hand.
 * `test/menu_buttons_test.dart`
 * `test/hourly_detail_chip_test.dart`
 * `test/weather_widget_test.dart`
+* `test/unit_manager_test.dart`
+* `test/play_store_test.dart`
+* `test/settings_overlay_test.dart`
+* `test/overlay_card_test.dart`
+* `test/segmented_choice_test.dart`
+* `test/dialog_overlay_test.dart`
 * `test/theme_manager_test.dart`
 * `test/widget_icon_resources_test.dart`
 * `test/widget_layout_resources_test.dart`

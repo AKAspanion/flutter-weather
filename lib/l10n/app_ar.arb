@@ -86,5 +86,13 @@
   "condition801": "غيوم قليلة",
   "condition802": "غيوم متفرقة",
   "condition803": "غيوم متقطعة",
-  "condition804": "سماء ملبدة بالغيوم"
+  "condition804": "سماء ملبدة بالغيوم",
+  "settings": "الإعدادات",
+  "temperature": "درجة الحرارة",
+  "rateOnGooglePlay": "قيّم التطبيق على Google Play",
+  "couldNotOpenPlayStore": "تعذّر فتح Google Play",
+  "theme": "المظهر",
+  "lightTheme": "فاتح",
+  "darkTheme": "داكن",
+  "city": "المدينة"
 }

@@ -17,15 +17,15 @@ The app is a single Flutter app, with all Dart code in `lib/`:
 - **Services** (`lib/services/`) hold everything that isn't drawing. `WeatherService` picks a weather provider
   ([provider failover](../domain/provider-failover.md)). `WeatherCache` stores the last report. `Location` asks
   for the device position and wraps the report the views show. `WeatherWidget` feeds the Android widget and asks the launcher to pin it. `Ads`
-  handles AdMob consent and start-up. `ThemeManager` holds the theme and `LocaleManager` the chosen language.
+  handles AdMob consent and start-up. `ThemeManager` holds the theme and `LocaleManager` the chosen language and `UnitManager` the temperature unit.
 - **Providers** (`lib/services/providers/`) each call one weather service and turn its answer into a
   `WeatherReport` ([data model](../data/model.md)). They all extend `WeatherProvider` in
   `lib/services/providers/weather_provider.dart`, and some also implement `Geocoder`.
 
 **State.** Almost all screen state lives in `_MainAppState` in `lib/main.dart`, held in fields and changed with
 `setState`: the current `Location`, the accent, and whether the menu, forecast and city dialog are open. It is passed
-down to the views as constructor arguments and callbacks. The theme and the language are shared through the `provider` package:
-`ThemeManager` and `LocaleManager` are `ChangeNotifier`s that `MainApp` provides, and widgets read them with
+down to the views as constructor arguments and callbacks. The theme, the language and the temperature unit are shared through the `provider` package:
+`ThemeManager`, `LocaleManager` and `UnitManager` are `ChangeNotifier`s that `MainApp` provides, and widgets read them with
 `Provider.of`. `MaterialApp` takes its `locale` from `LocaleManager`. Strings come from the generated
 `AppLocalizations`, built from `lib/l10n/*.arb`; code with no `BuildContext` looks them up by locale with
 `lookupAppLocalizations` ([language picker](../features/language-picker.md)).
@@ -33,7 +33,7 @@ down to the views as constructor arguments and callbacks. The theme and the lang
 ([themes and accents](../features/themes-and-accents.md)).
 
 **Screen structure.** There is one route. `MainApp` builds a single `Scaffold` whose body is a `Stack`: the
-`Menu`, the top buttons (`MenuButtons`), the `Home` card, the `DialogOverlay`, the `LanguageOverlay`, the `Forecast` panel and the `AdBanner`. Opening the
+`Menu`, the top buttons (`MenuButtons`), the `Home` card, the `DialogOverlay`, the `SettingsOverlay`, the `LanguageOverlay`, the `Forecast` panel and the `AdBanner`. Opening the
 menu or the forecast moves and scales these layers with `AnimationController`s; nothing is pushed on a navigator.
 
 **Platform channel.** `MainActivity` handles one method channel, `in.spanion.weather/widget`, whose `pin` method
@@ -67,6 +67,7 @@ The background refresh runs steps 3 to 5 from the saved query, without asking fo
 
 ## History
 
+- 2026-11-03: the language was shared through `provider`; now the temperature unit is too (`UnitManager`), and a `SettingsOverlay` joins the `Stack`, because the app can show °F. See [settings](../features/settings.md).
 - 2026-11-03: the Kotlin widget drew a StackView of two pages from JSON for Now and the hours; now it draws one plain
   `RemoteViews` card, and `MainActivity` has a pin channel, because the widget became a single Now card and its
   "Add" button had to reach the home screen. See
@@ -83,6 +84,8 @@ The background refresh runs steps 3 to 5 from the saved query, without asking fo
 * `lib/services/ads.dart`
 * `android/app/src/main/kotlin/com/example/flutterweather/MainActivity.kt`
 * `lib/services/theme_manager.dart`
+* `lib/services/unit_manager.dart`
+* `lib/views/settings/settings_overlay.dart`
 * `lib/services/locale_manager.dart`
 * `lib/views/menu/menu_buttons.dart`
 * `lib/services/providers/weather_provider.dart`

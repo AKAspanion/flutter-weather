@@ -1,7 +1,7 @@
 ---
 type: Feature
 title: Choose a theme and an accent
-description: The theme follows the system light or dark, the menu button overrides it until the system changes, and accent gradients picked from a carousel also colour the widget.
+description: The theme follows the system light or dark, the settings panel's Theme row overrides it until the system changes, and accent gradients picked from a carousel also colour the widget.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
 verified: human:panditankit1995@gmail.com
 ---
@@ -11,8 +11,8 @@ verified: human:panditankit1995@gmail.com
 ## What it does
 
 - **Theme.** By default the theme matches the system brightness (`resolveTheme` in `lib/services/theme_manager.dart`),
-  at launch and live when the system changes it (`ThemeManager` observes `didChangePlatformBrightness`). The sun/moon
-  button (in the menu's button row, shown while the menu is open) switches between `AppTheme.White` and `AppTheme.Dark` through
+  at launch and live when the system changes it (`ThemeManager` observes `didChangePlatformBrightness`). The Theme
+  row of the [settings panel](settings.md), a ☀ | ☾ toggle, switches between `AppTheme.White` and `AppTheme.Dark` through
   `ThemeManager.setTheme`. That choice is an override, saved as `theme_preference` together with the brightness it was
   made against (`theme_preference_system`). It holds, across launches too, until the system brightness changes; then it
   is cleared and the app follows the system again. A `theme_preference` saved before this had no brightness, so it
@@ -26,7 +26,8 @@ verified: human:panditankit1995@gmail.com
 ## Screens and routes
 
 - `lib/views/menu/menu.dart` (`Menu`): the drawer and the accent carousel.
-- `lib/views/menu/menu_buttons.dart` and `lib/main.dart`: the theme button, `toggleTheme`, `setAccent` and `getAccent`.
+- `lib/views/settings/settings_overlay.dart`: the Theme row.
+- `lib/main.dart`: `setAccent` and `getAccent`.
 - Opening the menu: the hamburger on the card (`lib/components/hamburger.dart`), or swiping the card towards the end of the line
   (`onDragEnd` in `lib/views/home/home.dart`: right in left-to-right languages, left in Arabic and Urdu).
 
@@ -44,6 +45,9 @@ verified: human:panditankit1995@gmail.com
 
 ## History
 
+- 2026-11-03: the light/dark choice was a sun/moon button in the menu's button row; now the Theme row of the settings
+  panel, and the menu row has no theme button, because the developer wanted every choice in settings. See
+  [settings panel](../decisions/settings-panel.md).
 - 2026-11-03: was a light/dark toggle saved as `theme_preference` and loaded at start-up, with the light theme until
   it loaded; now the theme follows the system and the toggle is an override until the system next changes, because
   internal testing asked for the app to follow dark mode. See
@@ -63,7 +67,7 @@ verified: human:panditankit1995@gmail.com
 * `lib/theme/gradients.dart`
 * `lib/services/weather_widget.dart`
 * `lib/views/menu/menu.dart`
-* `lib/views/menu/menu_buttons.dart`
+* `lib/views/settings/settings_overlay.dart`
 * `lib/views/home/home.dart`
 * `lib/components/hamburger.dart`
 * `lib/main.dart`

@@ -1,0 +1,12 @@
+---
+type: Log Entry
+date: 2026-11-03
+at: '2026-11-03T14:54:28.031+05:30'
+kind: Update
+reread: project/overview
+head: 6ac341cca60edc1464aac1ba8826f814da9924b4
+reread_by: agent:after-finish
+by: human:ankitp@geekyants.com
+agent: claude-code
+---
+Reread project/overview: still true at 6ac341c, by agent:after-finish. reread against the code after the overlay-consistency run; the claims they make are unchanged (main.dart, menu_buttons, arb and widget edits don't touch them)

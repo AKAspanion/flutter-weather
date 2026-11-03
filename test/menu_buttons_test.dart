@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterweather/components/btn.dart';
+import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/views/home/home.dart';
 import 'package:flutterweather/services/location.dart';
@@ -11,9 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// The icons of the buttons, in the order they are expected on screen.
 const List<IconData> _withWidget = [
   Icons.refresh,
-  Icons.brightness_3,
   Icons.widgets,
-  Icons.translate,
+  Icons.settings,
   Icons.location_on,
   Icons.close,
 ];
@@ -38,6 +38,9 @@ Future<void> _pump(
     ChangeNotifierProvider<ThemeManager>(
       create: (_) => ThemeManager(),
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
         home: Directionality(
           textDirection: direction,
           child: Scaffold(
@@ -49,10 +52,8 @@ Future<void> _pump(
                   right: 0,
                   child: MenuButtons(
                     onRefresh: c.call('refresh'),
-                    onTheme: c.call('theme'),
-                    themeIcon: Icon(Icons.brightness_3),
                     onPinWidget: canPin ? c.call('widget') : null,
-                    onLanguage: c.call('language'),
+                    onSettings: c.call('settings'),
                     onLocation: c.call('location'),
                     onClose: c.call('close'),
                   ),
@@ -78,10 +79,19 @@ void main() {
     view.resetDevicePixelRatio();
   });
 
-  testWidgets('on a 412 dp screen six 56 dp buttons run from refresh to close, 16 dp from the edges', (tester) async {
+  testWidgets('on a 412 dp screen five 56 dp buttons run from refresh to close, 16 dp from the edges', (tester) async {
     await _pump(tester, width: 412);
 
-    expect(find.byType(Btn), findsNWidgets(6));
+    expect(find.byType(Btn), findsNWidgets(5));
+    expect([
+      for (final icon in _withWidget) icon
+    ], [
+      Icons.refresh,
+      Icons.widgets,
+      Icons.settings,
+      Icons.location_on,
+      Icons.close,
+    ]);
     final lefts = [for (final icon in _withWidget) tester.getTopLeft(_button(icon)).dx];
     expect(lefts, orderedEquals([...lefts]..sort()));
     for (final icon in _withWidget) {
@@ -92,25 +102,30 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('on a 360 dp screen six equal buttons smaller than 56 dp fit', (tester) async {
-    await _pump(tester, width: 360);
+  testWidgets('on a 320 dp screen five equal buttons smaller than 56 dp fit', (tester) async {
+    await _pump(tester, width: 320);
 
-    expect(find.byType(Btn), findsNWidgets(6));
-    final expected = (360 - 32 - 8 * 5) / 6;
+    expect(find.byType(Btn), findsNWidgets(5));
+    final expected = (320 - 32 - 8 * 4) / 5;
     expect(expected, lessThan(56));
     for (final icon in _withWidget) {
       expect(tester.getSize(_button(icon)), Size(expected, expected));
     }
     expect(tester.getTopLeft(_button(Icons.refresh)).dx, 16);
-    expect(tester.getTopRight(_button(Icons.close)).dx, 360 - 16);
+    expect(tester.getTopRight(_button(Icons.close)).dx, 320 - 16);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('without onPinWidget five buttons show, with refresh and close in the far corners', (tester) async {
+  testWidgets('without onPinWidget four buttons show, with refresh and close in the far corners', (tester) async {
     await _pump(tester, width: 412, canPin: false);
 
-    expect(find.byType(Btn), findsNWidgets(5));
+    expect(find.byType(Btn), findsNWidgets(4));
     expect(find.byIcon(Icons.widgets), findsNothing);
+    final lefts = [
+      for (final icon in [Icons.refresh, Icons.settings, Icons.location_on, Icons.close])
+        tester.getTopLeft(_button(icon)).dx,
+    ];
+    expect(lefts, orderedEquals([...lefts]..sort()));
     expect(tester.getTopLeft(_button(Icons.refresh)).dx, 16);
     expect(tester.getTopRight(_button(Icons.close)).dx, 412 - 16);
   });
@@ -123,13 +138,29 @@ void main() {
     expect(tester.getTopLeft(_button(Icons.refresh)).dx, greaterThan(tester.getTopLeft(_button(Icons.close)).dx));
   });
 
-  testWidgets('tapping translate calls onLanguage once and nothing else', (tester) async {
+  testWidgets('tapping the gear calls onSettings once and nothing else', (tester) async {
     final calls = _Calls();
     await _pump(tester, width: 412, calls: calls);
 
-    await tester.tap(_button(Icons.translate));
+    await tester.tap(_button(Icons.settings));
 
-    expect(calls.names, ['language']);
+    expect(calls.names, ['settings']);
+  });
+
+  testWidgets('the menu row has no theme button', (tester) async {
+    await _pump(tester, width: 412);
+
+    expect(find.byIcon(Icons.wb_sunny), findsNothing);
+    expect(find.byIcon(Icons.brightness_3), findsNothing);
+  });
+
+  testWidgets('the gear is announced as Settings, and there is no translate button', (tester) async {
+    final handle = tester.ensureSemantics();
+    await _pump(tester, width: 412);
+
+    expect(find.bySemanticsLabel('Settings'), findsOneWidget);
+    expect(find.byIcon(Icons.translate), findsNothing);
+    handle.dispose();
   });
 
   testWidgets('Home has no translate button', (tester) async {
