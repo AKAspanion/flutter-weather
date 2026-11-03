@@ -34,7 +34,7 @@ A `WeatherReport` has one current `Weather` and lists of hourly and daily `Weath
 
 **Normalised units.** The doc comment on `WeatherReport` says every provider converts its answer to temperatures in
 Kelvin, wind in m/s, and OpenWeatherMap condition codes, because that is what the UI expects. Celsius values are
-converted with `kelvinOffset`. Views turn Kelvin back into °C for display. `windSpeed` is a string, formatted by
+converted with `kelvinOffset`. `formatTemperature` turns Kelvin into °C or °F for display, as the user chose ([settings](../features/settings.md)). `windSpeed` is a string, formatted by
 `formatWind`.
 
 **Days from a series.** Providers without a daily forecast (OpenWeatherMap, MET Norway) build days with

@@ -10,7 +10,7 @@ verified: human:panditankit1995@gmail.com
 
 ## What it does
 
-The main card shows the place name, date, an animated icon, the temperature in °C, the description, and chips for
+The main card shows the place name, date, an animated icon, the temperature in the chosen unit (°C or °F), the description, and chips for
 sunrise, wind and humidity. Under them is the provider's attribution. The words and dates follow the chosen language
 ([language picker](language-picker.md)); the description is the translated phrase for the condition code
 ([condition icons](../domain/condition-icons.md)). A place that no provider or geocoder names is stored with an empty
@@ -43,7 +43,8 @@ always returns to the device location.
 
 ## Rules
 
-- Temperatures are stored in Kelvin and shown in °C, rounded down ([data model](../data/model.md)).
+- Temperatures are stored in Kelvin and shown in °C or °F as chosen in [settings](settings.md), rounded down, by
+  `formatTemperature` ([data model](../data/model.md), [decision](../decisions/temperature-unit-by-region.md)).
 - The icon depends on the condition code and whether it is night at the place
   ([condition icons](../domain/condition-icons.md)).
 - The provider's attribution is always shown with its data. The doc comment on `WeatherReport.attribution` says the
@@ -51,6 +52,7 @@ always returns to the device location.
 
 ## History
 
+- 2026-11-03: the temperature was always °C; now it follows the unit chosen in settings, or the phone's region until one is chosen, because the app can show °F. See [temperature unit](../decisions/temperature-unit-by-region.md).
 - 2026-11-03: the card's text was English only, with provider descriptions and "My location" set by `WeatherService`; now translated, with the description from the condition code and the unnamed place left empty for the screen to name, because the app is translated. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
@@ -67,3 +69,4 @@ always returns to the device location.
 * `lib/l10n/dates.dart`
 * `lib/l10n/conditions.dart`
 * `lib/services/providers/weather_provider.dart`
+* `lib/services/unit_manager.dart`

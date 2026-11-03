@@ -40,6 +40,12 @@ during launch. The widget itself never asks for updates (`updatePeriodMillis` is
 **Adding it.** If the launcher supports pinning (`WeatherWidget.canPin`), a widgets button appears in the menu's top
 button row while the menu is open. It calls `WeatherWidget.pin`.
 
+**Temperature unit.** The temperatures follow the saved `temperature_unit`, or the phone's region when none is saved:
+`WeatherWidget.temperatureUnit` reads it without a `BuildContext`, so the background refresh follows it too. The widget
+shows `°` only, with no `C` or `F`, for lack of room. The app re-pushes the cached report when the unit changes
+(`onUnitChanged` in `lib/main.dart`), so the widget switches at once ([settings](settings.md),
+[decision](../decisions/temperature-unit-by-region.md)). A missing temperature shows `--`.
+
 **Language.** The text the app pushes (city, description, high and low, the card titles, the update line, the hour
 labels) is in the app's chosen language: `WeatherWidget.payload` builds it from `WeatherWidget.localizations()`, which
 reads `language_preference` without a `BuildContext`, so the background refresh follows the choice too
@@ -81,11 +87,13 @@ update, or when a label is missing.
 
 ## History
 
+- 2026-11-03: temperatures were always °C; now they follow the saved unit and are re-pushed when it changes, because the app can show °F. See [temperature unit](../decisions/temperature-unit-by-region.md).
 - 2026-11-03: the pushed text was English, with `3P` hour labels and the `updated` time; now translated in the app's language with a `labels` key and `3 PM` labels, and the pin button moved into the menu's button row, because the app is translated. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
 
 * `lib/services/weather_widget.dart`
+* `lib/services/unit_manager.dart`
 * `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`
 * `android/app/src/main/res/xml/weather_widget_info.xml`
 * `android/app/src/main/res/layout/weather_widget.xml`

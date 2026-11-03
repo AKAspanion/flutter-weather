@@ -25,8 +25,10 @@ In `lib/components/`:
 In `lib/views/`:
 
 - **`MenuButtons`** (`lib/views/menu/menu_buttons.dart`): the menu's top row of `Btn`s: refresh and close in the far
-  corners, with theme, widget (only when the launcher can pin), translate and location spread between them. The buttons
+  corners, with theme, widget (only when the launcher can pin), the settings gear and location spread between them. The buttons
   shrink together on a screen too narrow for full size.
+- **`SettingsOverlay`** (`lib/views/settings/settings_overlay.dart`): the settings panel the gear opens, a card of rows
+  (Language, Temperature toggle, Rate on Google Play) laid out like the language list ([settings](../features/settings.md)).
 - **`LanguageOverlay`** (`lib/views/home/language_overlay.dart`): the full-screen language list, laid out like
   `DialogOverlay` ([language picker](../features/language-picker.md)).
 
@@ -42,6 +44,7 @@ Animated icons are also rendered to PNGs for the Android widget, by `tool/render
 
 ## History
 
+- 2026-11-03: the menu row's sixth button was translate; now the settings gear, and `SettingsOverlay` is new, because every setting lives in one panel. See [settings panel](../decisions/settings-panel.md).
 - 2026-11-03: `Btn` was used for five hand-placed buttons in `lib/main.dart`; now it takes a `size` and `MenuButtons` lays the row out, because the translate button made six. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
@@ -49,6 +52,7 @@ Animated icons are also rendered to PNGs for the Android widget, by `tool/render
 * `lib/components/btn.dart`
 * `lib/views/menu/menu_buttons.dart`
 * `lib/views/home/language_overlay.dart`
+* `lib/views/settings/settings_overlay.dart`
 * `lib/views/home/dialog_overlay.dart`
 * `lib/components/flare_icon.dart`
 * `lib/components/hamburger.dart`

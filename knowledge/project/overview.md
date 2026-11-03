@@ -16,7 +16,7 @@ next 48 hours and the next days. The 48 hours is the span the forecast screen pr
 hours", `nextHoursSubtitle` in `lib/l10n/app_en.arb`); how much each provider actually returns is in
 [forecast](../features/forecast.md). On Android, a home-screen widget shows the same weather and refreshes in the
 background. The app is free and shows a banner ad. It is in ten languages, chosen in the app
-([language picker](../features/language-picker.md)).
+([language picker](../features/language-picker.md)), and shows temperatures in °C or °F ([settings](../features/settings.md)).
 
 The weather comes from several services ([provider failover](../domain/provider-failover.md)), so the app keeps
 working when one of them fails. It has no user accounts and no backend of its own: it calls the weather services
@@ -48,6 +48,7 @@ Android is the only supported platform ([decision](../decisions/android-only.md)
 
 ## History
 
+- 2026-11-03: temperatures were always °C; now °C or °F, chosen in settings, because the developer added a settings panel. See [temperature unit](../decisions/temperature-unit-by-region.md).
 - 2026-11-03: the app was English only; now ten languages, chosen in the app, because the developer wanted the Play listing translated. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources

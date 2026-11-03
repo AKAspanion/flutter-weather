@@ -1,7 +1,7 @@
 ---
 type: Test Strategy
 title: Tests
-description: Unit and widget tests in test/ for provider failover, translations, dates, the language picker, the menu buttons and the widget payload, and a test-harness tool that renders the widget icons.
+description: Unit and widget tests in test/ for provider failover, translations, dates, the language picker, the settings panel, the temperature unit, the menu buttons and the widget payload, and a test-harness tool that renders the widget icons.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-02T19:19:02Z }
 verified: human:panditankit1995@gmail.com
 ---
@@ -28,7 +28,14 @@ Translation tests, one file per subject:
 - `test/locale_manager_test.dart`: saving, restoring and resolving the language, including a store that fails.
 - `test/language_overlay_test.dart`, `test/menu_buttons_test.dart` and `test/hourly_detail_chip_test.dart`: the
   language list, the menu's button row (including narrow screens) and the hourly chip's height with fallback fonts.
-- `test/weather_widget_test.dart`: the text `WeatherWidget.payload` pushes to the home-screen widget, per language.
+- `test/weather_widget_test.dart`: the text `WeatherWidget.payload` pushes to the home-screen widget, per language and
+  per temperature unit, and the unit the background refresh reads.
+- `test/unit_manager_test.dart`: saving, restoring and resolving the temperature unit (region defaults, a store that
+  fails) and `formatTemperature`.
+- `test/play_store_test.dart`: `PlayStore.openListing` tries the `market://` address, then the web address, with a fake
+  opener (no real launch).
+- `test/settings_overlay_test.dart`: the settings panel's rows, the unit toggle (the callback runs after the save) and
+  right-to-left layout.
 
 `test/weather_service_test.dart` also checks that an unnamed place keeps an empty name.
 
@@ -45,6 +52,7 @@ The policy's `checks.commands.test` (`ga.mjs workflow show`), run by hand.
 
 ## History
 
+- 2026-11-03: added tests for the temperature unit, the Play Store opener and the settings panel, because they were added. See [settings](../features/settings.md).
 - 2026-11-03: the tests covered the service layer only; now also the translations, dates, language picker, menu buttons and widget payload, because the app was translated. See [gen_l10n decision](../decisions/app-localization-gen-l10n.md).
 
 ## Sources
@@ -58,5 +66,8 @@ The policy's `checks.commands.test` (`ga.mjs workflow show`), run by hand.
 * `test/menu_buttons_test.dart`
 * `test/hourly_detail_chip_test.dart`
 * `test/weather_widget_test.dart`
+* `test/unit_manager_test.dart`
+* `test/play_store_test.dart`
+* `test/settings_overlay_test.dart`
 * `tool/render_widget_icons_test.dart`
 * `pubspec.yaml`

@@ -14,10 +14,6 @@ verified: human:panditankit1995@gmail.com
   500 to 504 ranges. So OpenWeatherMap's shower and freezing rain codes (511, 520s), and atmosphere codes other than
   fog (smoke, haze, dust), show the `few` icon ([condition icons](../domain/condition-icons.md)).
   `lib/services/weather.dart`.
-- **Kelvin conversions repeated in views.** Views subtract `273.15` inline
-  (`lib/views/weather/weather_view.dart`, `lib/views/forecast/hourly_detail_chip.dart`,
-  `lib/views/forecast/daily_detail_card.dart`), instead of using `kelvinOffset` from
-  `lib/services/providers/weather_provider.dart` as `lib/services/weather_widget.dart` does.
 - **All screen state in one widget.** `_MainAppState` in `lib/main.dart` holds the report, the accent, the dialogs
   and every animation controller, and passes them down by hand. The accent and the city are read from
   SharedPreferences there, while the theme goes through `ThemeManager`.
@@ -32,12 +28,13 @@ verified: human:panditankit1995@gmail.com
   Italic.
 - **Text that is still English.** The wind unit (`m/s`, written inline in `lib/views/weather/weather_view.dart`, the
   forecast chips and `lib/services/weather_widget.dart`), each provider's attribution line (`lib/services/providers/`)
-  and the app's label "Beautiful Weather" aren't translated, and temperatures stay in °C.
+  and the app's label "Beautiful Weather" aren't translated.
 - **Flare is discontinued.** The icons depend on our patched copy ([decisions/vendored-flare-flutter](../decisions/vendored-flare-flutter.md)).
 - **The analyzer enables no lint set.** `./analysis_options.yaml` only lists excludes.
 
 ## History
 
+- 2026-11-03: removed the item about Kelvin conversions repeated in views, and "temperatures stay in °C" from the untranslated text item; `formatTemperature` in `lib/services/unit_manager.dart` is now the one place Kelvin becomes shown text, because the temperature unit became a setting. See [temperature unit](../decisions/temperature-unit-by-region.md).
 - 2026-11-03: added the untranslated text item, because the app is now translated and these stayed English. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
@@ -48,6 +45,7 @@ verified: human:panditankit1995@gmail.com
 * `lib/views/forecast/daily_detail_card.dart`
 * `lib/services/providers/weather_provider.dart`
 * `lib/services/weather_widget.dart`
+* `lib/services/unit_manager.dart`
 * `lib/services/providers/openweathermap.dart`
 * `lib/main.dart`
 * `lib/components/btn.dart`
