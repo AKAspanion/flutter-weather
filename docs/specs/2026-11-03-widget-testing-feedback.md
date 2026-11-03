@@ -44,6 +44,8 @@ refresh uses the last place viewed) and [decisions/android-only](../../knowledge
 - `weather_widget_info.xml`: `minResizeWidth` and `minResizeHeight` become `110dp`. `minWidth`, `minHeight` and
   `targetCellWidth`/`targetCellHeight` (4x2) stay, so the picker and the pin dialog still add a 4x2.
 - The whole card, and the empty view, open the app with `HomeWidgetLaunchIntent.getActivity`.
+- `strings.xml`: `widget_description` no longer mentions the next 24 hours or swiping, and `widget_next_24_hours`
+  goes.
 - `scaleFor` stays for both layouts.
 - `lib/services/weather_widget.dart` stops sending `hours`: `_nextDay`, `_hourLabel`, `_isNight`, `_localTime`,
   `_hourColumns` and `_hourStep` go. The `city`, `now` and `updated` keys stay as they are.
@@ -98,9 +100,11 @@ refresh uses the last place viewed) and [decisions/android-only](../../knowledge
 
 - A pure function decides the theme: `resolveTheme(Brightness system, AppTheme? override, Brightness? overrideSystem)`
   returns `override` when it is set and `overrideSystem == system`, else the theme matching `system`.
-- `ThemeManager` reads `PlatformDispatcher.instance.platformBrightness` in its constructor, so the first frame already
-  matches the system when there's no override, and listens through `onPlatformBrightnessChanged` (chaining any
-  existing handler). On a change it clears the override (memory and prefs) and notifies.
+- `ThemeManager` reads `WidgetsBinding.instance.platformDispatcher.platformBrightness` in its constructor, so the
+  first frame already matches the system when there's no override. It listens as a `WidgetsBindingObserver`
+  (`didChangePlatformBrightness`), added in the constructor and removed in `dispose`; replacing
+  `onPlatformBrightnessChanged` would take it from the framework, which uses it to update `MediaQuery`. On a change it
+  clears the override (memory and prefs) and notifies.
 - Prefs: `theme_preference` keeps the override's index; new `theme_preference_system` holds the system brightness
   index it was set against. `setTheme` (the button) writes both. On load, a `theme_preference` without
   `theme_preference_system` is treated as set against the current system brightness, and the key is written then.
