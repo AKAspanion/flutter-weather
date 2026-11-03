@@ -38,7 +38,8 @@ Reused inside views:
   (`lib/views/forecast/daily_detail_card.dart`): forecast entries that expand when tapped
   ([forecast](../features/forecast.md)).
 
-Animated icons are also rendered to PNGs for the Android widget, by `tool/render_widget_icons_test.dart`.
+Animated icons are also rendered to frames for the Android widget, by `tool/render_widget_icons_test.dart`, which
+plays them as an animation ([home-screen widget](../features/home-screen-widget.md)).
 
 ## History
 

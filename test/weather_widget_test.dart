@@ -12,6 +12,10 @@ import 'package:flutterweather/services/weather_widget.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+const String _provider = 'com.example.flutterweather.WeatherWidgetProvider';
+const MethodChannel _channel = MethodChannel('home_widget');
+const MethodChannel _pinChannel = MethodChannel('in.spanion.weather/widget');
+
 /// 17.5 and 7.5 degrees: shown as 17° and 7°.
 WeatherReport _report({String? name = 'Paris', int? condition = 500, List<Weather> hourly = const []}) {
   return WeatherReport(
@@ -61,7 +65,7 @@ void main() {
     test('sends the card titles and the time of the update', () {
       final Map<String, String> data = WeatherWidget.payload(_report(), l10n, 'en', updated);
 
-      expect(_json(data['labels']!), {'now': 'NOW', 'next24Hours': 'NEXT 24 HOURS', 'updated': 'Updated 14:05'});
+      expect(_json(data['labels']!), {'now': 'NOW', 'updated': 'Updated 14:05'});
     });
 
     test('describes a missing condition as UNKNOWN', () {
@@ -84,21 +88,6 @@ void main() {
       expect(_json(data['now']!)['detail'], '');
     });
 
-    test('labels each hour in the locale short form, in the place local time', () {
-      final DateTime from = DateTime.utc(2026, 11, 3, 12);
-      final Weather later = Weather(
-        date: DateTime.utc(2026, 11, 3, 15).millisecondsSinceEpoch ~/ 1000,
-        condition: 800,
-        temperature: 285.15,
-        timezone: 0,
-      );
-
-      final Map<String, String> data = WeatherWidget.payload(_report(hourly: [later]), l10n, 'en', from);
-
-      final List<dynamic> hours = jsonDecode(data['hours']!) as List<dynamic>;
-      // Recent CLDR data puts a narrow no-break space before PM, so match any space.
-      expect((hours.single as Map<String, dynamic>)['label'], matches(RegExp(r'^3\sPM$')));
-    });
   });
 
   group('localizations', () {
@@ -174,9 +163,91 @@ void main() {
 
       await WeatherWidget.update(_report());
 
-      expect(saved.keys, unorderedEquals(['city', 'now', 'hours', 'labels']));
+      // One Now card: the hours page and its data are gone.
+      expect(saved.keys, unorderedEquals(['city', 'now', 'labels']));
       expect(saved['city'], 'PARIS');
       expect(refreshed, isTrue);
+    });
+  });
+
+  group('accent and pin', () {
+    final List<MethodCall> calls = [];
+    Object? Function(MethodCall call)? onCall;
+    final List<MethodCall> pinCalls = [];
+    Object? Function(MethodCall call)? onPinCall;
+
+    setUp(() {
+      calls.clear();
+      pinCalls.clear();
+      onCall = null;
+      onPinCall = null;
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(_channel, (
+        MethodCall call,
+      ) async {
+        calls.add(call);
+        return onCall?.call(call) ?? true;
+      });
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(_pinChannel, (
+        MethodCall call,
+      ) async {
+        pinCalls.add(call);
+        return onPinCall?.call(call) ?? true;
+      });
+    });
+
+    tearDown(() {
+      debugDefaultTargetPlatformOverride = null;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(_channel, null);
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(_pinChannel, null);
+    });
+
+
+    test('setAccent saves the accent index, then updates the widget', () async {
+      await WeatherWidget.setAccent(3);
+
+      expect(calls.map((MethodCall c) => c.method), ['saveWidgetData', 'updateWidget']);
+      expect(calls.first.arguments['id'], 'accent');
+      expect(calls.first.arguments['data'], 3);
+      expect(calls.last.arguments['qualifiedAndroidName'], _provider);
+    });
+
+    test('setAccent does nothing off Android', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      await WeatherWidget.setAccent(3);
+
+      expect(calls, isEmpty);
+    });
+
+    test('setAccent carries on when the channel fails', () async {
+      onCall = (MethodCall call) => throw PlatformException(code: 'boom');
+
+      await expectLater(WeatherWidget.setAccent(3), completes);
+      expect(calls.map((MethodCall c) => c.method), ['saveWidgetData']);
+    });
+
+    test('pin asks MainActivity to pin, and does not go through home_widget', () async {
+      await WeatherWidget.pin();
+
+      expect(pinCalls.map((MethodCall c) => c.method), ['pin']);
+      expect(calls.where((MethodCall c) => c.method == 'requestPinWidget'), isEmpty);
+    });
+
+    test('pin carries on when the channel fails', () async {
+      onPinCall = (MethodCall call) => throw PlatformException(code: 'boom');
+
+      await expectLater(WeatherWidget.pin(), completes);
+      expect(pinCalls, hasLength(1));
+    });
+
+    test('pin does nothing off Android', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      await WeatherWidget.pin();
+
+      expect(pinCalls, isEmpty);
+      expect(calls, isEmpty);
     });
   });
 }

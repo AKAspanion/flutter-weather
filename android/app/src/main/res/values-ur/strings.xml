@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="widget_description">آپ کے آخری دیکھے گئے مقام کا موجودہ موسم اور اگلے 24 گھنٹے۔ تبدیل کرنے کے لیے اوپر یا نیچے سوائپ کریں۔</string>
+    <string name="widget_description">آپ کے آخری دیکھے گئے مقام کا موجودہ موسم، آپ کے چنے ہوئے رنگ میں۔</string>
     <string name="widget_empty">موسم لوڈ کرنے کے لیے ایپ کھولیں</string>
     <string name="widget_updated">اپ ڈیٹ: %1$s</string>
     <string name="widget_now">ابھی</string>
-    <string name="widget_next_24_hours">اگلے 24 گھنٹے</string>
 </resources>

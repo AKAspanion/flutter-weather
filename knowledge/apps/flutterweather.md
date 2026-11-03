@@ -33,7 +33,8 @@ The whole product. The Dart package is named in `pubspec.yaml`. Users see it as 
   search, theme, accent, menu, forecast).
 - `widgetRefreshDispatcher` in `lib/services/weather_widget.dart`: the background WorkManager entry point, marked
   `@pragma('vm:entry-point')`.
-- `android/app/src/main/kotlin/com/example/flutterweather/MainActivity.kt`: the Android activity.
+- `android/app/src/main/kotlin/com/example/flutterweather/MainActivity.kt`: the Android activity, which also answers
+  the widget's pin request on the `in.spanion.weather/widget` channel.
 - `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`: the widget's
   `AppWidgetProvider`, registered as a `receiver` in `android/app/src/main/AndroidManifest.xml`.
 

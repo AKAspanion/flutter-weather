@@ -1,7 +1,7 @@
 ---
 type: Feature
 title: Android home-screen widget
-description: One flat card that snaps between Now and the next 24 hours on a vertical swipe, fed by the app and refreshed in the background for the last place viewed.
+description: One resizable Now card in the app's accent, with an animated weather icon, fed by the app and refreshed in the background for the last place viewed.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T01:20:00+05:30 }
 verified: human:panditankit1995@gmail.com
 ---
@@ -10,96 +10,118 @@ verified: human:panditankit1995@gmail.com
 
 ## What it does
 
-A resizable home-screen widget, on Android only. It is one card with two pages. A vertical swipe inside the card
-snaps to the other page once it passes StackView's swipe threshold; a smaller nudge springs back. Two dots at the
-right edge show which page is visible.
+A resizable home-screen widget, on Android only. It is one card showing the current weather, coloured with the accent
+the user picked in the app. It opens at 4x2 and the launcher lets it shrink to one row or one cell. There is no
+second page: the 24-hour view, the vertical swipe, the StackView that carried them and the page dots are gone
+([decisions/widget-one-resizable-card](../decisions/widget-one-resizable-card.md)).
 
-- **Now:** the city, the icon, the temperature, the description with today's high and low beside them, a row with
-  sunrise, wind and humidity (using the app's own detail icons), and when it was updated.
-- **Next 24 hours:** hour columns, each with a short hour label (`DateFormat.j`: "3 PM", or "15" in a 24-hour language), an icon and the temperature. The app sends
-  up to `_hourColumns` entries at least `_hourStep` apart (both in `WeatherWidget`). A squarish card (width to height
-  under `SQUARE_RATIO` in the Kotlin provider, e.g. 4x3) shows every other entry, 4 columns six hours apart, still
-  covering 24 hours; wider cards (4x2, 3x2) show all 8.
+The provider chooses one of three layouts from the card's size, in `WeatherWidgetProvider.kt`:
 
-On Android 12 and later, text and icons on both pages scale with the card (`scaleFor`, from 1x up to 1.6x), so a
-large card is filled. Before Android 12 only the text scales.
+- **Wide** (`weather_widget.xml`), from `WIDE_WIDTH` (300dp), which is full width, 4 cells: the city, the icon, the
+  temperature, the description with today's high and low, a row with sunrise, wind and humidity (using the app's own
+  detail icons), and when it was updated.
+- **Compact** (`weather_widget_small.xml`), for anything narrower and not mini. Nothing in it ellipsizes: the city and
+  the description with high and low wrap instead. The sunrise / wind / humidity row stays from `DETAILS_WIDTH`
+  (220dp, 3 cells) and goes below it (2x2). A tall compact card (taller than wide, a 2x2) stacks the icon above the
+  temperature so the number can grow; the others put them side by side.
+- **Mini** (`weather_widget_mini.xml`), below `STRIP_HEIGHT` (150dp) tall (one row) or `MINI_WIDTH` (110dp) wide (one
+  cell): only the temperature, centred and sized to the card, with the weather icon from `MINI_WIDTH` wide.
 
-Left/right swipes can't reach a home-screen widget (launchers use them to change pages), so the hours sit side by
-side rather than in a horizontal pager. The drag effect while swiping (a grey line and the other page fading in)
-is StackView's own and can't be changed from a widget.
+The launcher's smallest size is `minResizeWidth` / `minResizeHeight` of 40dp in
+`android/app/src/main/res/xml/weather_widget_info.xml`; `targetCellWidth` / `targetCellHeight` keep 4x2 the default.
 
-Tapping a page opens the app. Before any data arrives, the widget shows an empty view that also opens the app.
+On Android 12 and later, text and icons scale with the card (`scaleFor`, and `compactScaleFor` for the compact
+layout's icon and temperature, both capped at 1.6x), so a large card is filled. Before Android 12 only the text scales.
+On Android 12+ the launcher reports every size the widget can be shown at, and the provider renders one `RemoteViews`
+per size so the host picks the layout that fits; before that it renders for the size in the options. The thresholds
+are set against the sizes a Galaxy (One UI) reports, which it draws scaled by `hsResizeRatio`: about 150dp for 2
+cells, 235dp for 3 and 320dp for 4, not the nominal cell size
+([the spec](../../docs/specs/2026-11-03-widget-testing-feedback.md)).
 
-**Updating.** Every successful fetch in the app calls `WeatherWidget.update`. `scheduleRefresh` registers a periodic
-WorkManager task that needs a network. It refetches the last `WeatherQuery` in the background and updates the widget.
-Its frequency and its first delay are set there. A comment says the delay is so it doesn't start a second engine
-during launch. The widget itself never asks for updates (`updatePeriodMillis` is 0 in
-`android/app/src/main/res/xml/weather_widget_info.xml`). The provider also re-renders on resize
+**The icon is animated.** A home-screen widget can't run Flare, so each icon's loop is rendered to frames and played
+by an indeterminate `ProgressBar` (an `animation-list`) that the provider adds into `card_icon_slot`. The small
+sunrise, wind and humidity icons stay static
+([decisions/widget-animated-icons](../decisions/widget-animated-icons.md)).
+
+**Accent.** The card's background is the drawable for the app's accent, `backgroundFor` mapping the index to
+`widget_background_0` to `widget_background_8` in the order of `GradientValues`
+([themes and accents](themes-and-accents.md)).
+
+Tapping the card opens the app. Before any data arrives, the widget shows an empty view that also opens the app. The
+picker's preview (`weather_widget_preview.xml`) is a fixed 250x110dp card with static icons, so a host that measures
+it at wrap-content can't collapse it.
+
+**Updating.** Every successful fetch in the app calls `WeatherWidget.update`; picking an accent calls
+`WeatherWidget.setAccent`, at launch too. `scheduleRefresh` registers a periodic WorkManager task that needs a
+network. It refetches the last `WeatherQuery` in the background and updates the widget. Its frequency and its first
+delay are set there. A comment says the delay is so it doesn't start a second engine during launch. The widget itself
+never asks for updates (`updatePeriodMillis` is 0 in the widget info). The provider also re-renders on resize
 (`onAppWidgetOptionsChanged`).
 
 **Adding it.** If the launcher supports pinning (`WeatherWidget.canPin`), a widgets button appears in the menu's top
-button row while the menu is open. It calls `WeatherWidget.pin`.
+button row while the menu is open. It calls `WeatherWidget.pin`, which goes through the `in.spanion.weather/widget`
+channel to `MainActivity` rather than through `home_widget`, whose pin request has no callback. `MainActivity` passes
+the launcher a callback that opens the home screen, so tapping "Add" lands the user on the widget instead of back in
+the app. On Android 14+ the callback's creator has to allow the background launch, which `MainActivity` sets.
 
-**Language.** The text the app pushes (city, description, high and low, the card titles, the update line, the hour
-labels) is in the app's chosen language: `WeatherWidget.payload` builds it from `WeatherWidget.localizations()`, which
+**Language.** The text the app pushes (city, description, high and low, the card title and the update line) is in the app's chosen language: `WeatherWidget.payload` builds it from `WeatherWidget.localizations()`, which
 reads `language_preference` without a `BuildContext`, so the background refresh follows the choice too
-([language picker](language-picker.md)). Titles and update line travel in the `labels` data key. The widget's own
+([language picker](language-picker.md)). The title and the update line travel in the `labels` data key. The widget's own
 `strings.xml` values follow the phone's language (a `values-<code>` folder per language) and show only until the first
 update, or when a label is missing.
 
 ## Screens and routes
 
 - Flutter side: `lib/services/weather_widget.dart` (`WeatherWidget`, `widgetRefreshDispatcher`).
-- Kotlin side: `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`.
-- Layouts: `weather_widget.xml` (the card and its StackView), `weather_widget_item.xml` (Now),
-  `weather_widget_hours.xml` and `weather_widget_hour.xml` (hours), and `weather_widget_preview.xml`, all in
-  `android/app/src/main/res/layout/`. Widget info: `android/app/src/main/res/xml/weather_widget_info.xml`.
-- Backgrounds: `widget_background.xml` (the card), `widget_page_background.xml` (pages; square in `drawable-v31/`)
-  and `widget_dot.xml` in `android/app/src/main/res/drawable/`.
-- Icons: PNGs `widget_icon_*.png` (weather) and `widget_detail_*.png` (sunrise, wind, humidity) in
-  `android/app/src/main/res/drawable-nodpi/`, rendered from the Flare animations by
+- Kotlin side: `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`, and
+  `MainActivity.kt` for the pin request.
+- Layouts, all in `android/app/src/main/res/layout/`: the three above, `weather_widget_preview.xml`, and one
+  generated `widget_icon_<name>.xml` per icon. Widget info: `android/app/src/main/res/xml/weather_widget_info.xml`.
+- Backgrounds: `widget_background_<0..8>.xml` in `android/app/src/main/res/drawable/`.
+- Icons: the loop frames `widget_icon_<name>_<nn>.png` and the stills `widget_icon_*.png` (preview), and
+  `widget_detail_*.png` (sunrise, wind, humidity), in `android/app/src/main/res/drawable-nodpi/`; the
+  `widget_anim_<name>.xml` lists in `res/drawable/`. All are rendered from the Flare animations by
   `tool/render_widget_icons_test.dart` ([run locally](../operations/run-locally.md)).
 
 ## Rules
 
 - The background refresh uses the last place viewed in the app and never the device location. See
   [decisions/widget-uses-last-place](../decisions/widget-uses-last-place.md).
-- The pages live in a StackView, the only widget view that snaps on a swipe. StackView normally draws a fanned deck:
-  it caps each page (inside a frame padded by `FRAME_PADDING`) at 90% of its size and shifts the pages behind into
-  the rest. On Android 12+ `flattenStack` and `sizedTo` size each page to the card and enlarge the StackView past the
-  card's edges so the front page covers the card exactly; the card (`clipToOutline`) hides the page behind. `SLACK`
-  keeps StackView on its predictable "spread" branch. Before Android 12 the stacked look shows.
-- Collection item ids encode the card size. With fixed ids the launcher kept the old pages after a resize, sized for
-  the previous card and outside the visible area.
-- `_androidName` names the provider by its full Kotlin class, because the Kotlin package differs from the
-  application ID (a comment says so).
-- `iconFor` in the Kotlin provider maps icon names to drawables one by one, instead of looking them up by name. A
-  comment says this is so resource shrinking keeps them. Adding an icon name: see
-  [condition icons](../domain/condition-icons.md).
-- `WeatherWidget` does nothing on platforms other than Android (`_supported`).
+- The widget's values reach it as `SharedPreferences` written by `home_widget`
+  ([what the app stores](../data/on-device-storage.md)).
+- The ids the provider fills are those of the arrangement the layout shows: a tall compact card fills
+  `card_icon_slot_tall` and `card_temperature_tall`, not `card_icon_slot` and `card_temperature`.
+- `WeatherWidget` does nothing on platforms other than Android (`_supported`); a pin or accent failure is logged and
+  the app carries on.
+- `iconLayoutFor` and `backgroundFor` in the Kotlin provider map names and indexes to resources one by one, instead
+  of looking them up by name. A comment says this is so resource shrinking keeps them. Adding an icon name: see
+  [condition icons](../domain/condition-icons.md). Adding an accent needs a drawable and an index at the end of
+  `GradientValues`, whose comment says the order must not change.
 - When the background fetch fails, the task returns false so WorkManager retries with backoff.
 
 ## History
 
+- 2026-11-03: was one card with two pages (Now and the next 24 hours) in a StackView, with a grey background and
+  static PNG icons, and could not shrink below 4x2; now one Now card in three layouts, in the app's accent with an
+  animated icon, down to one cell, because internal testing asked for a 2x2, no 24-hour page and an animated icon. See
+  [decisions/widget-one-resizable-card](../decisions/widget-one-resizable-card.md).
 - 2026-11-03: the pushed text was English, with `3P` hour labels and the `updated` time; now translated in the app's language with a `labels` key and `3 PM` labels, and the pin button moved into the menu's button row, because the app is translated. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
 
 * `lib/services/weather_widget.dart`
 * `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`
+* `android/app/src/main/kotlin/com/example/flutterweather/MainActivity.kt`
 * `android/app/src/main/res/xml/weather_widget_info.xml`
 * `android/app/src/main/res/layout/weather_widget.xml`
-* `android/app/src/main/res/layout/weather_widget_item.xml`
-* `android/app/src/main/res/layout/weather_widget_hours.xml`
-* `android/app/src/main/res/layout/weather_widget_hour.xml`
+* `android/app/src/main/res/layout/weather_widget_small.xml`
+* `android/app/src/main/res/layout/weather_widget_mini.xml`
 * `android/app/src/main/res/layout/weather_widget_preview.xml`
-* `android/app/src/main/res/drawable/widget_background.xml`
-* `android/app/src/main/res/drawable/widget_page_background.xml`
-* `android/app/src/main/res/drawable-v31/widget_page_background.xml`
-* `android/app/src/main/res/drawable/widget_dot.xml`
+* `android/app/src/main/res/drawable/widget_background_0.xml`
 * `android/app/src/main/AndroidManifest.xml`
 * `tool/render_widget_icons_test.dart`
 * `lib/main.dart`
+* `docs/specs/2026-11-03-widget-testing-feedback.md`
 * `lib/l10n/app_en.arb`
 * `android/app/src/main/res/values/strings.xml`
 * `test/weather_widget_test.dart`

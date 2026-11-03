@@ -1,199 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- What the widget picker shows before the widget is added. -->
+<!-- What the widget picker shows before the widget is added. A fixed size (the
+     widget's minimum) and no row whose height depends on a weight, so a host that
+     measures it at wrap-content can't collapse it. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/widget_background"
-    android:orientation="horizontal"
-    android:padding="16dp">
+    android:layout_width="250dp"
+    android:layout_height="110dp"
+    android:background="@drawable/widget_background_0"
+    android:orientation="vertical"
+    android:padding="14dp">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/card_city"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:fontFamily="sans-serif-medium"
-                android:maxLines="1"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                    android:text="LISBON" />
-
-            <TextView
-                android:id="@+id/card_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/widget_now"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:text="LISBON"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
 
-            <ImageView
-                android:id="@+id/card_icon"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:contentDescription="@null"
-                android:src="@drawable/widget_icon_sunny" />
-
-            <TextView
-                android:id="@+id/card_temperature"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:includeFontPadding="false"
-                android:textColor="@android:color/white"
-                android:textSize="44sp"
-                    android:text="24°" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/card_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:textColor="@android:color/white"
-                    android:textSize="13sp"
-                    android:text="FEW CLOUDS" />
-
-                <TextView
-                    android:id="@+id/card_detail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:fontFamily="sans-serif-medium"
-                    android:maxLines="1"
-                    android:textColor="@android:color/white"
-                    android:textSize="13sp"
-                    android:text="H 24°  L 19°" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Same details as the app's sunrise / wind / humidity chips. -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/card_sunrise_icon"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:contentDescription="@null"
-                    android:src="@drawable/widget_detail_sun" />
-
-                <TextView
-                    android:id="@+id/card_sunrise"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="14dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:maxLines="1"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    android:text="7:04" />
-
-                <ImageView
-                    android:id="@+id/card_wind_icon"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:contentDescription="@null"
-                    android:src="@drawable/widget_detail_wind" />
-
-                <TextView
-                    android:id="@+id/card_wind"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="14dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:maxLines="1"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    android:text="3.1 m/s" />
-
-                <ImageView
-                    android:id="@+id/card_humidity_icon"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:contentDescription="@null"
-                    android:src="@drawable/widget_detail_drop" />
-
-                <TextView
-                    android:id="@+id/card_humidity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="14dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:maxLines="1"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    android:text="58%" />
-
-            <TextView
-                android:id="@+id/card_updated"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:alpha="0.8"
-                android:ellipsize="end"
-                android:gravity="end"
-                android:maxLines="1"
-                android:textColor="@android:color/white"
-                android:textSize="10sp"
-                    android:text="Updated 14:20" />
-        </LinearLayout>
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/widget_now"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginStart="10dp"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="6dp"
-            android:layout_height="6dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:contentDescription="@null"
-            android:src="@drawable/widget_dot" />
+            android:src="@drawable/widget_icon_sunny" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:text="24°"
+            android:textColor="@android:color/white"
+            android:textSize="44sp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="FEW CLOUDS"
+                android:textColor="@android:color/white"
+                android:textSize="13sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:text="H 24°  L 19°"
+                android:textColor="@android:color/white"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Same details as the app's sunrise / wind / humidity chips. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="6dp"
-            android:layout_height="6dp"
-            android:layout_marginTop="6dp"
-            android:alpha="0.4"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:contentDescription="@null"
-            android:src="@drawable/widget_dot" />
+            android:src="@drawable/widget_detail_sun" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="14dp"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:text="7:04"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/widget_detail_wind" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="14dp"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:text="3.1 m/s"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/widget_detail_drop" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:text="58%"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>

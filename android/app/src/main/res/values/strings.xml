@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="widget_description">Current weather and the next 24 hours for your last viewed place. Swipe up or down to switch.</string>
+    <string name="widget_description">Current weather for your last viewed place, in your accent colour.</string>
     <string name="widget_empty">Open the app to load the weather</string>
     <string name="widget_updated">Updated %1$s</string>
     <string name="widget_now">NOW</string>
-    <string name="widget_next_24_hours">NEXT 24 HOURS</string>
 </resources>

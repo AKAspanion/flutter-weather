@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/l10n/conditions.dart';
 import 'package:flutterweather/services/locale_manager.dart';
@@ -23,9 +24,16 @@ class WeatherWidget {
 
   static bool get _supported => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
-  /// The second widget card shows the next 24 hours as 8 columns, 3 hours apart.
-  static const int _hourColumns = 8;
-  static const int _hourStep = 3 * 3600;
+  /// Colours the widget with the accent at [index] in `GradientValues`; the widget maps the same indexes.
+  static Future<void> setAccent(int index) async {
+    if (!_supported) return;
+    try {
+      await HomeWidget.saveWidgetData<int>('accent', index);
+      await HomeWidget.updateWidget(qualifiedAndroidName: _androidName);
+    } catch (e) {
+      debugPrint('Widget accent update failed: $e');
+    }
+  }
 
   /// The words the widget shows: the language saved by the app, else the phone's, else English. Works without a
   /// BuildContext, as the background refresh has none. [device] is only for tests.
@@ -77,39 +85,15 @@ class WeatherWidget {
         'wind': '${now.windSpeed ?? '--'} m/s',
         'humidity': '${now.humidity ?? '--'}%',
       }),
-      'hours': jsonEncode(_nextDay(report.hourly, updated, locale)),
       'labels': jsonEncode({
         'now': l10n.widgetNow.toUpperCase(),
-        'next24Hours': l10n.widgetNext24Hours.toUpperCase(),
         'updated': l10n.widgetUpdated(DateFormat.Hm(locale).format(updated)),
       }),
     };
   }
 
-  /// Picks forecast entries at least 3 hours apart across the next 24 hours.
-  /// OpenWeatherMap already steps by 3 hours; hourly providers get thinned out.
-  static List<Map<String, String>> _nextDay(List<Weather> hourly, DateTime from, String locale) {
-    final int start = from.millisecondsSinceEpoch ~/ 1000;
-    final List<Map<String, String>> picked = [];
-    int? last;
-    for (final Weather w in hourly) {
-      final int date = w.date ?? 0;
-      if (date <= start || date > start + Duration.secondsPerDay) continue;
-      if (last != null && date - last < _hourStep - 60) continue;
-      picked.add({
-        'label': _hourLabel(w, locale),
-        'icon': _icon(w, overrideNight: _isNight(w) ? '-night' : ''),
-        'temperature': _degrees(w.temperature),
-      });
-      last = date;
-      if (picked.length == _hourColumns) break;
-    }
-    return picked;
-  }
-
   /// The icon name, empty without a condition (the widget then falls back to its default icon).
-  static String _icon(Weather w, {String? overrideNight}) =>
-      w.condition == null ? '' : w.getIcon(overrideNight: overrideNight);
+  static String _icon(Weather w) => w.condition == null ? '' : w.getIcon();
 
   /// Same format as the app's sunrise chip, e.g. "5:50".
   static String _clock(int? epochSeconds, int? timezone) {
@@ -118,18 +102,6 @@ class WeatherWidget {
         DateTime.fromMillisecondsSinceEpoch(epochSeconds * 1000, isUtc: true).add(Duration(seconds: timezone ?? 0));
     final int hour = time.hour > 12 ? time.hour - 12 : time.hour;
     return '$hour:${time.minute.toString().padLeft(2, '0')}';
-  }
-
-  static DateTime _localTime(Weather w) =>
-      DateTime.fromMillisecondsSinceEpoch(w.date! * 1000, isUtc: true).add(Duration(seconds: w.timezone ?? 0));
-
-  /// The hour in the locale's short form for a narrow column, e.g. "3 PM" or "15".
-  static String _hourLabel(Weather w, String locale) => DateFormat.j(locale).format(_localTime(w));
-
-  // Same rule as the hourly forecast chips.
-  static bool _isNight(Weather w) {
-    final int hour = _localTime(w).hour;
-    return hour > 18 || hour <= 6;
   }
 
   static Future<bool>? _canPin;
@@ -147,8 +119,19 @@ class WeatherWidget {
     }
   }
 
+  /// Handled by MainActivity.kt rather than home_widget, whose pin request has no callback, so the launcher's "Add"
+  /// button would leave the user in the app instead of taking them to the home screen.
+  static const MethodChannel _pinChannel = MethodChannel('in.spanion.weather/widget');
+
   /// Asks the launcher to add the widget to the home screen.
-  static Future<void> pin() => HomeWidget.requestPinWidget(qualifiedAndroidName: _androidName);
+  static Future<void> pin() async {
+    if (!_supported) return;
+    try {
+      await _pinChannel.invokeMethod<bool>('pin');
+    } catch (e) {
+      debugPrint('Widget pin failed: $e');
+    }
+  }
 
   /// Refreshes the widget about once an hour, for the place last viewed in the
   /// app. Background location is deliberately not used.

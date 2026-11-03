@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="widget_description">La météo actuelle et les 24 prochaines heures pour le dernier lieu consulté. Faites glisser vers le haut ou le bas pour changer.</string>
+    <string name="widget_description">La météo actuelle du dernier lieu consulté, dans votre couleur d’accent.</string>
     <string name="widget_empty">Ouvrez l’application pour charger la météo</string>
     <string name="widget_updated">Mis à jour %1$s</string>
     <string name="widget_now">MAINTENANT</string>
-    <string name="widget_next_24_hours">24 PROCHAINES HEURES</string>
 </resources>

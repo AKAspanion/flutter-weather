@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The app's "Pale Wood" accent gradient: index 4 in lib/theme/gradients.dart. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="20dp" />
+    <gradient
+        android:angle="315"
+        android:endColor="#FFEACDA3"
+        android:startColor="#FFD6AE7B" />
+</shape>

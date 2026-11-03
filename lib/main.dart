@@ -296,6 +296,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   void setAccent(int i) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt("accent_preference", i);
+    WeatherWidget.setAccent(i);
 
     setState(() {
       selectedAccent = i;
@@ -305,6 +306,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   void getAccent() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int preferredAccent = prefs.getInt("accent_preference") ?? 0;
+    WeatherWidget.setAccent(preferredAccent);
 
     setState(() {
       selectedAccent = preferredAccent;

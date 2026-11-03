@@ -15,10 +15,13 @@ inline.
 
 - **Accent gradients:** `GradientValues` in `lib/theme/gradients.dart`, a named list of two-colour gradients. The
   user's choice is an index into it ([themes and accents](../features/themes-and-accents.md)). Views read it as
-  `GradientValues().gradients[accent].gradient` and often use the first colour alone.
+  `GradientValues().gradients[accent].gradient` and often use the first colour alone. The widget keeps a drawable
+  per index (`widget_background_<index>.xml`), so the order must not change and a new gradient goes at the end with a
+  drawable ([home-screen widget](../features/home-screen-widget.md)).
 - **Theme:** `appThemeData` in `lib/theme/app_theme.dart` sets the brightness and primary colour for `AppTheme.White`
   and `AppTheme.Dark`. The surface and text colours the views actually use come from `ThemeManager.bgColor` and
-  `ThemeManager.textColor` in `lib/services/theme_manager.dart`.
+  `ThemeManager.textColor` in `lib/services/theme_manager.dart`. Which of the two shows follows the system, unless the
+  user overrode it ([themes and accents](../features/themes-and-accents.md)).
 - Views also use Material colours inline (`Colors.white`, `Colors.black38`, `Colors.red[400]` and others).
 
 ## Spacing and radius
