@@ -25,10 +25,10 @@ verified: human:panditankit1995@gmail.com
   that changes an `.arb`, run `flutter gen-l10n` ([gen_l10n decision](../decisions/app-localization-gen-l10n.md)).
 - **Check:** the commands are the policy's `checks.commands.lint` and `checks.commands.test`
   ([conventions](../project/conventions.md), [testing](../quality/testing.md)).
-- **Release for Play:** `flutter build appbundle --release --obfuscate --split-debug-info=build/symbols --dart-define-from-file=keys.json`, as `README.md` says
-  ([decisions/obfuscate-release-builds](../decisions/obfuscate-release-builds.md)). Keep a copy of `build/symbols` for each release you upload: without it a Dart stack trace from that build can't be read,
- 
-  with `android/key.properties` in place. The version and build number are `version` in `pubspec.yaml`. The
+- **Release for Play:** `flutter build appbundle --release --obfuscate --split-debug-info=build/symbols --dart-define-from-file=keys.json`, as `README.md` says,
+  with `android/key.properties` in place ([decisions/obfuscate-release-builds](../decisions/obfuscate-release-builds.md)).
+  Keep a copy of `build/symbols` for each release you upload: without it, a Dart stack trace from that build can't be
+  read. The version and build number are `version` in `pubspec.yaml`. The
   application ID is in `android/app/build.gradle.kts` ([decisions/new-application-id](../decisions/new-application-id.md)).
   Play needs the build number after `+` to be higher than the last upload's. If the build ends with "failed to strip
   debug symbols from native libraries", check `flutter doctor` for a missing Android `cmdline-tools` component.

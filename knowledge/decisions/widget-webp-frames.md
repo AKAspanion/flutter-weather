@@ -3,7 +3,7 @@ type: Decision
 title: Widget icon frames are lossy WebP
 description: The widget's loop frames are encoded as lossy WebP with cwebp and capped at their measured size; the stills stay PNG.
 generated: { by: claude-code/claude-sonnet-5-5, at: 2026-11-04T12:00:00Z }
-status: draft
+verified: human:panditankit1995@gmail.com
 ---
 
 # Widget icon frames are lossy WebP
