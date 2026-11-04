@@ -1,5 +1,7 @@
 # Edge-to-Edge Implementation Plan
 
+**Status:** complete
+
 > **For agentic workers:** REQUIRED SUB-SKILL: the project's workflow policy names the executor (`run.executor`): ga:implement-with-subagents by default, or ga:implement. Follow the policy and this plan's Checkpoints. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Draw the app edge-to-edge on every Android version, with the button row and the ad banner kept clear of
@@ -76,17 +78,17 @@ implementation("androidx.core:core-ktx:1.17.0")
 There's no unit test for a window flag, and the only installed system image is Android 37, which is edge-to-edge
 already. The build and the emulator check are this task's proof; the behaviour on Android 10–14 isn't checked here.
 
-- [ ] **Step 1: Add the dependency** to `android/app/build.gradle.kts`, with a comment saying why it's declared
+- [x] **Step 1: Add the dependency** to `android/app/build.gradle.kts`, with a comment saying why it's declared
 
-- [ ] **Step 2: Override `onCreate`** in `MainActivity.kt` to call `WindowCompat.setDecorFitsSystemWindows(window, false)`
+- [x] **Step 2: Override `onCreate`** in `MainActivity.kt` to call `WindowCompat.setDecorFitsSystemWindows(window, false)`
   after `super.onCreate`, with a `/** */` comment saying why `enableEdgeToEdge()` isn't used
 
-- [ ] **Step 3: Build it**
+- [x] **Step 3: Build it**
 
 Run: `flutter build apk --debug`
 Expected: `Built build/app/outputs/flutter-apk/app-debug.apk`
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add android/app/src/main/kotlin/com/example/flutterweather/MainActivity.kt android/app/build.gradle.kts
@@ -145,31 +147,31 @@ class SystemInsets {
   menu are screenshotted, then the button row sits below the cutout and the ad banner and the accent picker sit above
   the gesture handle.
 
-- [ ] **Step 1: Create `lib/components/system_insets.dart`** with the `SystemInsets` signatures above, each returning `0`,
+- [x] **Step 1: Create `lib/components/system_insets.dart`** with the `SystemInsets` signatures above, each returning `0`,
   so the tests fail on their values rather than on a missing class
 
-- [ ] **Step 2: Write the failing tests** for the first three Acceptance cases in `test/system_insets_test.dart`, each
+- [x] **Step 2: Write the failing tests** for the first three Acceptance cases in `test/system_insets_test.dart`, each
   reading the helper from a `Builder` under a `MediaQuery` with the given padding
 
-- [ ] **Step 3: Run them to verify they fail**
+- [x] **Step 3: Run them to verify they fail**
 
 Run: `flutter test test/system_insets_test.dart`
 Expected: FAIL on the expected offsets
 
-- [ ] **Step 4: Implement `SystemInsets`** to the Interfaces
+- [x] **Step 4: Implement `SystemInsets`** to the Interfaces
 
-- [ ] **Step 5: Run them to verify they pass**
+- [x] **Step 5: Run them to verify they pass**
 
 Run: `flutter test test/system_insets_test.dart`
 Expected: PASS
 
-- [ ] **Step 6: Use `SystemInsets` in `lib/main.dart`** for the button row's `top`, the ad banner's `bottom`, and the
+- [x] **Step 6: Use `SystemInsets` in `lib/main.dart`** for the button row's `top`, the ad banner's `bottom`, and the
   `bottomInset` of `Menu`, `Home` and `Forecast`
 
-- [ ] **Step 7: Check it on the emulator**: run the app on `Pixel_9_Pro` and screenshot the home screen and the open menu
+- [x] **Step 7: Check it on the emulator**: run the app on `Pixel_9_Pro` and screenshot the home screen and the open menu
   for the last Acceptance case
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add lib/components/system_insets.dart lib/main.dart test/system_insets_test.dart
@@ -248,33 +250,33 @@ static double buttonSize(double width, {required int count});
 - Given `buttonSize(400, count: 4)` and `buttonSize(400, count: 5)`, then both are `56`; given `buttonSize(320, count: 5)`,
   then it is `(320 - 32 - 32) / 5`, `51.2`.
 
-- [ ] **Step 1: Create `lib/views/home/open_card_layout.dart`** and `MenuButtons.buttonSize` with the signatures above,
+- [x] **Step 1: Create `lib/views/home/open_card_layout.dart`** and `MenuButtons.buttonSize` with the signatures above,
   each returning `0`, so the tests fail on their values
 
-- [ ] **Step 2: Write the failing tests** for the Acceptance cases in `test/open_card_layout_test.dart`
+- [x] **Step 2: Write the failing tests** for the Acceptance cases in `test/open_card_layout_test.dart`
 
-- [ ] **Step 3: Run them to verify they fail**
+- [x] **Step 3: Run them to verify they fail**
 
 Run: `flutter test test/open_card_layout_test.dart`
 Expected: FAIL on the expected values
 
-- [ ] **Step 4: Implement `OpenCardLayout.compute` and `MenuButtons.buttonSize`**, and use `buttonSize` in
+- [x] **Step 4: Implement `OpenCardLayout.compute` and `MenuButtons.buttonSize`**, and use `buttonSize` in
   `MenuButtons.build`
 
-- [ ] **Step 5: Run them to verify they pass**
+- [x] **Step 5: Run them to verify they pass**
 
 Run: `flutter test test/open_card_layout_test.dart`
 Expected: PASS
 
-- [ ] **Step 6: Use `OpenCardLayout` in `Home`**, with `Menu.pickerHeight` in place of `footerHeight`, and remove
+- [x] **Step 6: Use `OpenCardLayout` in `Home`**, with `Menu.pickerHeight` in place of `footerHeight`, and remove
   `SystemInsets.openCardTop`, `openCardGap` and their test
 
-- [ ] **Step 7: Run the insets test**
+- [x] **Step 7: Run the insets test**
 
 Run: `flutter test test/system_insets_test.dart`
 Expected: PASS
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add lib/views/home/open_card_layout.dart lib/views/home/home.dart lib/views/menu/menu.dart lib/views/menu/menu_buttons.dart lib/components/system_insets.dart test/system_insets_test.dart test/open_card_layout_test.dart
