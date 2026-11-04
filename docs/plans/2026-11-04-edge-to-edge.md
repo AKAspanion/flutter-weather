@@ -175,3 +175,108 @@ Expected: PASS
 git add lib/components/system_insets.dart lib/main.dart test/system_insets_test.dart
 git commit -m "Keep the menu's button row below the camera cutout and the ad above the gesture bar."
 ```
+
+### Task 3: Centre the open-menu card between the button row and the accent picker
+
+Added after Tasks 1 and 2, from spec §2a. It replaces `SystemInsets.openCardTop` (commit `d014100`, the fix for the
+card overlapping the row).
+
+**Files:**
+- Create: `lib/views/home/open_card_layout.dart`
+- Modify: `lib/views/home/home.dart` (the `top`, `fitScale` and `factor` lines of `build`)
+- Modify: `lib/views/menu/menu.dart` (`footerHeight`)
+- Modify: `lib/views/menu/menu_buttons.dart` (the button-size line of `build`)
+- Modify: `lib/components/system_insets.dart` (remove `openCardGap` and `openCardTop`)
+- Modify: `test/system_insets_test.dart` (remove the `openCardTop` test)
+- Test: `test/open_card_layout_test.dart`
+
+**Interfaces:**
+- Consumes: `SystemInsets.buttonRowTop(BuildContext)` from Task 2, and the `bottomInset` `Home` receives from Task 2.
+- Produces:
+
+```dart
+/// Where the shrunken home card sits while the menu is open: centred between the button row and the accent picker.
+class OpenCardLayout {
+  /// The least gap kept above and below the card.
+  static const double minGap = 24;
+
+  /// The card's top edge, from the top of the screen.
+  final double top;
+
+  /// The card's scale, of the full screen height.
+  final double scale;
+
+  const OpenCardLayout({required this.top, required this.scale});
+
+  factory OpenCardLayout.compute({
+    required double screenHeight,
+    required double rowBottom,
+    required double pickerHeight,
+    required double bottomInset,
+  });
+}
+```
+
+```dart
+// lib/views/menu/menu.dart: the accent picker's height without the gap above it; replaces footerHeight.
+static double get pickerHeight;
+
+// lib/views/menu/menu_buttons.dart: the size of each button in a row of `count` buttons on a screen `width` wide.
+static double buttonSize(double width, {required int count});
+```
+
+**Spec:**
+- §2a: "The card's scale is that space less `2 × 24`, over the screen height, clamped to `0.3`–`0.65` as before."
+- §2a: "The gap above and the gap below are equal: half of what the card leaves of the space. That's `24` dp when the
+  card fills it, more on both sides when the `0.65` cap applies."
+- §2a: "The row's bottom is `SystemInsets.buttonRowTop` plus the buttons' real size, from `MenuButtons`, for the
+  4-button row."
+- §2a: "`SystemInsets.openCardTop` and its `120` go: the centred layout replaces them."
+
+**Knowledge:**
+- `features/themes-and-accents`: while the menu is open, the card is centred between the button row and the accent
+  picker, with equal gaps of at least `24` dp; the 24 dp gap above the picker is now `OpenCardLayout.minGap`.
+
+**Acceptance:**
+- Given a screen `952` tall, a row bottom of `132`, a picker `128` tall and a `bottomInset` of `0`, then the scale is
+  `0.65` (capped) and the gap above (`top - 132`) equals the gap below (`952 - 0 - 128 - (top + 952 × 0.65)`), both
+  about `36.6`.
+- Given a screen `700` tall, a row bottom of `80`, a picker `128` tall and a `bottomInset` of `50`, then both gaps are
+  `24` and the top is `104`.
+- Given a screen `500` tall, a row bottom of `80`, a picker `128` tall and a `bottomInset` of `100`, then the scale is
+  `0.3` (the floor) and the two gaps are still equal.
+- Given `buttonSize(400, count: 4)` and `buttonSize(400, count: 5)`, then both are `56`; given `buttonSize(320, count: 5)`,
+  then it is `(320 - 32 - 32) / 5`, `51.2`.
+
+- [ ] **Step 1: Create `lib/views/home/open_card_layout.dart`** and `MenuButtons.buttonSize` with the signatures above,
+  each returning `0`, so the tests fail on their values
+
+- [ ] **Step 2: Write the failing tests** for the Acceptance cases in `test/open_card_layout_test.dart`
+
+- [ ] **Step 3: Run them to verify they fail**
+
+Run: `flutter test test/open_card_layout_test.dart`
+Expected: FAIL on the expected values
+
+- [ ] **Step 4: Implement `OpenCardLayout.compute` and `MenuButtons.buttonSize`**, and use `buttonSize` in
+  `MenuButtons.build`
+
+- [ ] **Step 5: Run them to verify they pass**
+
+Run: `flutter test test/open_card_layout_test.dart`
+Expected: PASS
+
+- [ ] **Step 6: Use `OpenCardLayout` in `Home`**, with `Menu.pickerHeight` in place of `footerHeight`, and remove
+  `SystemInsets.openCardTop`, `openCardGap` and their test
+
+- [ ] **Step 7: Run the insets test**
+
+Run: `flutter test test/system_insets_test.dart`
+Expected: PASS
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add lib/views/home/open_card_layout.dart lib/views/home/home.dart lib/views/menu/menu.dart lib/views/menu/menu_buttons.dart lib/components/system_insets.dart test/system_insets_test.dart test/open_card_layout_test.dart
+git commit -m "Centre the open-menu card between the button row and the accent picker, with equal gaps above and below."
+```

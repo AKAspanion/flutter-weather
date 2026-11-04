@@ -47,6 +47,21 @@ Nothing reads the system insets today. The fixed offsets become the system paddi
 
 The overlays (`OverlayCard`) are centred and keep their margins, so they don't change.
 
+### 2a. The open-menu card is centred between the button row and the accent picker
+
+Added after the build, at the developer's request: with the row moved down, the card's fixed top (`120`) left about
+40 dp above it and about 33 dp below it on the Pixel 9 Pro, and the two only matched by chance on other screens.
+
+- The space for the card runs from the button row's bottom to the accent picker's top: the screen height, less the
+  row's bottom, the picker's height without its gap, and the `bottomInset`.
+- The card's scale is that space less `2 × 24`, over the screen height, clamped to `0.3`–`0.65` as before.
+- The gap above and the gap below are equal: half of what the card leaves of the space. That's `24` dp when the card
+  fills it, more on both sides when the `0.65` cap applies.
+- The row's bottom is `SystemInsets.buttonRowTop` plus the buttons' real size, from `MenuButtons`, for the 4-button
+  row. A 4-button row's buttons are never smaller than a 5-button row's, so the card can't overlap the row. Below
+  `344` dp wide, where a 5-button row's buttons shrink, the gaps differ by those few dp.
+- `SystemInsets.openCardTop` and its `120` go: the centred layout replaces them.
+
 While the bars are hidden, the padding is the cutout's, or zero on a phone without one. If the user swipes the bars
 in, the padding grows while they're showing and the layout moves with it. That's the standard Flutter behaviour, and
 nothing else is added for it.
