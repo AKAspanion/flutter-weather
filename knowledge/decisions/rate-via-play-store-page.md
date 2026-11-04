@@ -2,8 +2,8 @@
 type: Decision
 title: Rate on Google Play opens the store page, not the in-app review dialog
 description: The settings row opens the app's Play Store page through url_launcher, because Google's in-app review dialog is quota-limited and can silently not appear when a button asks for it.
-status: draft
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T08:37:08Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # Rate on Google Play opens the store page, not the in-app review dialog
@@ -31,3 +31,5 @@ if that doesn't open. If neither opens, the app says so in a snackbar. The ID is
 
 * `docs/specs/2026-11-03-settings-menu.md`
 * `android/app/build.gradle.kts`
+* `lib/services/play_store.dart`
+* `test/play_store_test.dart`

@@ -3,6 +3,7 @@ type: Finding
 title: Play flags a deprecated display-cutout mode that comes from the ads SDK
 description: Play's warning about LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES on release 1.0.0 comes from play-services-ads, not the app's code, and clears when that SDK drops the flag.
 generated: { by: agent:after-finish, at: 2026-11-04T00:00:00Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # Play flags a deprecated display-cutout mode that comes from the ads SDK

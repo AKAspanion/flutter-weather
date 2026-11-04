@@ -31,6 +31,10 @@ In `lib/components/`:
   uses: the button row's top (a 24 dp gap plus the top padding, clear of the camera cutout), the ad banner's bottom
   (the bottom padding, clear of the gesture bar) and the content's bottom inset (the ad's height plus the bottom
   padding), which `Menu`, `Home` and `Forecast` leave at the bottom.
+- **`centreInList`** (`lib/components/centre_in_list.dart`): scrolls the nearest enclosing list, and no list around it,
+  so a widget's centre meets the list's centre (400 ms, ease-out); the forecast's chips and cards call it once they have
+  expanded ([forecast](../features/forecast.md)). The hourly chip's end margin is an outer `Padding`, so its visible
+  card is what gets centred.
 In `lib/views/`:
 
 - **`MenuButtons`** (`lib/views/menu/menu_buttons.dart`): the menu's top row of `Btn`s: refresh and close in the far
@@ -60,6 +64,7 @@ plays them as an animation ([home-screen widget](../features/home-screen-widget.
 
 ## History
 
+- 2026-11-04: added `centreInList`, and the hourly chip's end margin moved from the card to an outer `Padding`, because a tapped forecast card is centred in its list and the margin must not shift its centre. See [forecast](../features/forecast.md).
 - 2026-11-04: the menu's button row and the ad banner were placed from fixed offsets; now `SystemInsets` adds the system padding, and `OpenCardLayout` places the open-menu card, because the window is drawn edge-to-edge and the camera cutout and gesture bar must stay clear. See [spec](../../docs/specs/2026-11-04-edge-to-edge.md).
 - 2026-11-03: the city dialog, the language list and the settings panel each built their own backdrop and card; now they share `OverlayCard`, and the theme and unit toggles share `SegmentedChoice`; the menu row lost its theme button, because every overlay got one look and the theme moved into settings. See [overlays share one card](../decisions/overlays-share-one-card.md).
 - 2026-11-03: the menu row's sixth button was translate; now the settings gear, and `SettingsOverlay` is new, because every setting lives in one panel. See [settings panel](../decisions/settings-panel.md).
@@ -69,6 +74,7 @@ plays them as an animation ([home-screen widget](../features/home-screen-widget.
 
 * `lib/components/btn.dart`
 * `lib/components/system_insets.dart`
+* `lib/components/centre_in_list.dart`
 * `lib/views/home/open_card_layout.dart`
 * `lib/components/overlay_card.dart`
 * `lib/components/segmented_choice.dart`
