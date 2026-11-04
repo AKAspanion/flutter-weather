@@ -14,8 +14,9 @@ class HourlyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 196,
-      padding: EdgeInsets.symmetric(vertical: 16),
+      // Just the chips: their own 12 margins above and below leave room for the shadows, and the forecast's spacing
+      // around the strip is set in forecast.dart.
+      height: 164,
       // Built lazily: only the chips on screen exist (and animate).
       child: ListView.builder(
         scrollDirection: Axis.horizontal,

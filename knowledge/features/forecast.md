@@ -49,9 +49,16 @@ integration). For example, OpenWeatherMap steps by 3 hours.
   chip by a few pixels; `test/hourly_detail_chip_test.dart` covers it.
 - Hourly chips pick day or night icons from their own hour, not the current time ([condition icons](../domain/condition-icons.md)).
 
+- **Even spacing.** The gap above each section title is the same (32), and so is the gap between each subtitle and its
+  first card (16). The pieces are named constants at the top of `lib/views/forecast/forecast.dart`
+  (`_hoursTitleTop`, `_daysTitleTop`, `_subtitleBottom`), and `test/forecast_spacing_test.dart` measures the four gaps,
+  so a change to one side of a pair shows up as a failing test.
+
 ## History
 
-- 2026-11-04: day cards were 12 apart in the list; now 24, the same gap as the hourly chips, because the two lists should space their cards alike. See [spec](../../docs/specs/2026-11-04-forecast-center-on-tap.md).
+- 2026-11-04: the gaps above the two titles were 56 and 76 and below the subtitles 44 and 20; now 32 and 32, 16 and
+  16, because the developer marked them as uneven on a phone. See `docs/specs/2026-11-04-forecast-spacing.md`.
+- 2026-11-04: day cards were 48 apart in the list (24 margin on every side of each card); now 24, the same gap as the hourly chips, because the two lists should space their cards alike. See [spec](../../docs/specs/2026-11-04-forecast-center-on-tap.md).
 - 2026-11-04: a tapped chip or card stayed where it was; now it scrolls its own list to the centre once it has expanded (`centreInList`), because an expanded card could sit half off screen. See [spec](../../docs/specs/2026-11-04-forecast-center-on-tap.md).
 - 2026-11-03: temperatures were always °C; now they follow the unit chosen in settings, because the app can show °F. See [temperature unit](../decisions/temperature-unit-by-region.md).
 - 2026-11-03: text and dates were English, with a hand-written calendar (`lib/services/calendar.dart`, removed); now `intl` formats in the chosen language and chip text rows use a forced line height, because the app is translated and fallback fonts overflowed the chips. See [supported languages](../decisions/supported-languages.md).
@@ -67,4 +74,5 @@ integration). For example, OpenWeatherMap steps by 3 hours.
 * `lib/l10n/dates.dart`
 * `lib/services/unit_manager.dart`
 * `test/hourly_detail_chip_test.dart`
+* `test/forecast_spacing_test.dart`
 * `test/centre_in_list_test.dart`

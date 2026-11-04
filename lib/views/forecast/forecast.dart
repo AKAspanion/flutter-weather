@@ -7,6 +7,17 @@ import 'package:flutterweather/views/forecast/daily_detail_card.dart';
 import 'package:flutterweather/views/forecast/hourly.dart';
 import 'package:provider/provider.dart';
 
+/// Space above each section title, chosen so the visible gap from what's above is 32 in both places. Above "NEXT
+/// HOURS" that gap starts at the drawn close cross, which already has 15.5 of empty button below it (8 of padding, and
+/// 7.5 inside the 36 icon), so the list's own 16 top padding is enough. Above "NEXT DAYS" it starts at the chips' edge,
+/// after their 12 bottom margin.
+const double _hoursTitleTop = 0;
+const double _daysTitleTop = 20;
+
+/// Space below each subtitle: with the 12 margin above every chip and day card, the gap to the first card is 16 in both
+/// sections.
+const double _subtitleBottom = 4;
+
 class Forecast extends StatelessWidget {
   final int accent;
   final Location location;
@@ -99,11 +110,11 @@ class Forecast extends StatelessWidget {
     final List<Weather> daily = location.getDaily();
     final List<Widget> header = [
       _translateBuilder(
-        _title(l10n.nextHours.toUpperCase(), top: 40),
+        _title(l10n.nextHours.toUpperCase(), top: _hoursTitleTop),
         amount: 0.4,
       ),
       _translateBuilder(
-        _subtitle(l10n.nextHoursSubtitle, bottom: 16),
+        _subtitle(l10n.nextHoursSubtitle, bottom: _subtitleBottom),
         amount: 0.4,
       ),
       _translateBuilder(
@@ -114,17 +125,20 @@ class Forecast extends StatelessWidget {
         amount: 0.6,
       ),
       _translateBuilder(
-        _title(l10n.nextDays.toUpperCase(), top: 48),
+        _title(l10n.nextDays.toUpperCase(), top: _daysTitleTop),
         amount: 0.8,
       ),
       _translateBuilder(
-        _subtitle(l10n.nextDaysSubtitle(daily.length), bottom: 8),
+        _subtitle(l10n.nextDaysSubtitle(daily.length), bottom: _subtitleBottom),
         amount: 0.8,
       ),
     ];
 
     // Built lazily so off-screen day cards (and their animations) cost nothing.
     return ListView.builder(
+      // The panel places this list and keeps room at the bottom itself. Without a padding, a list adds the screen's
+      // top and bottom insets, which an edge-to-edge window reports (status bar, cutout, gesture bar).
+      padding: EdgeInsets.zero,
       itemCount: header.length + daily.length + 1,
       itemBuilder: (context, i) {
         if (i < header.length) return header[i];
