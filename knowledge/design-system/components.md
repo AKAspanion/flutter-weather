@@ -27,13 +27,19 @@ In `lib/components/`:
   `sun`, `wind` and `drop` in `assets/animations/icons.flr`.
 - **`Hamburger`** (`lib/components/hamburger.dart`): the animated menu button on the home card.
 - **`AdBanner`** (`lib/components/ad_banner.dart`): the adaptive banner ([Google AdMob](../integrations/google-admob.md)).
-
+- **`SystemInsets`** (`lib/components/system_insets.dart`): turns the system padding into the offsets the fixed chrome
+  uses: the button row's top (a 24 dp gap plus the top padding, clear of the camera cutout), the ad banner's bottom
+  (the bottom padding, clear of the gesture bar) and the content's bottom inset (the ad's height plus the bottom
+  padding), which `Menu`, `Home` and `Forecast` leave at the bottom.
 In `lib/views/`:
 
 - **`MenuButtons`** (`lib/views/menu/menu_buttons.dart`): the menu's top row of `Btn`s: refresh and close in the far
   corners, with widget (only when the launcher can pin), the settings gear and location spread between them. There is no
   theme button; the theme is a row in settings. The buttons
-  shrink together on a screen too narrow for full size.
+  shrink together on a screen too narrow for full size; `MenuButtons.buttonSize` gives that size, so the open-menu card
+  can find the row's bottom.
+- **`OpenCardLayout`** (`lib/views/home/open_card_layout.dart`): where the shrunken home card sits while the menu is
+  open, centred between the button row and the accent picker ([themes and accents](../features/themes-and-accents.md)).
 - **`SettingsOverlay`** (`lib/views/settings/settings_overlay.dart`): the settings panel the gear opens, an `OverlayCard` of rows
   (Theme toggle, Language, Temperature toggle, Rate on Google Play) ([settings](../features/settings.md)).
 - **`LanguageOverlay`** (`lib/views/home/language_overlay.dart`): the full-screen language list on `OverlayCard`
@@ -54,6 +60,7 @@ plays them as an animation ([home-screen widget](../features/home-screen-widget.
 
 ## History
 
+- 2026-11-04: the menu's button row and the ad banner were placed from fixed offsets; now `SystemInsets` adds the system padding, and `OpenCardLayout` places the open-menu card, because the window is drawn edge-to-edge and the camera cutout and gesture bar must stay clear. See [spec](../../docs/specs/2026-11-04-edge-to-edge.md).
 - 2026-11-03: the city dialog, the language list and the settings panel each built their own backdrop and card; now they share `OverlayCard`, and the theme and unit toggles share `SegmentedChoice`; the menu row lost its theme button, because every overlay got one look and the theme moved into settings. See [overlays share one card](../decisions/overlays-share-one-card.md).
 - 2026-11-03: the menu row's sixth button was translate; now the settings gear, and `SettingsOverlay` is new, because every setting lives in one panel. See [settings panel](../decisions/settings-panel.md).
 - 2026-11-03: `Btn` was used for five hand-placed buttons in `lib/main.dart`; now it takes a `size` and `MenuButtons` lays the row out, because the translate button made six. See [supported languages](../decisions/supported-languages.md).
@@ -61,6 +68,8 @@ plays them as an animation ([home-screen widget](../features/home-screen-widget.
 ## Sources
 
 * `lib/components/btn.dart`
+* `lib/components/system_insets.dart`
+* `lib/views/home/open_card_layout.dart`
 * `lib/components/overlay_card.dart`
 * `lib/components/segmented_choice.dart`
 * `lib/views/menu/menu_buttons.dart`

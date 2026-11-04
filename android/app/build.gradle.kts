@@ -80,6 +80,8 @@ flutter {
 }
 
 dependencies {
+    // WindowCompat, used by MainActivity: declared here rather than relying on it arriving through the Flutter embedding.
+    implementation("androidx.core:core-ktx:1.17.0")
     // RemoteViewsCompat: collection widgets (the card stack) on every supported Android version.
     implementation("androidx.core:core-remoteviews:1.1.0")
 }

@@ -34,7 +34,10 @@ The whole product. The Dart package is named in `pubspec.yaml`. Users see it as 
 - `widgetRefreshDispatcher` in `lib/services/weather_widget.dart`: the background WorkManager entry point, marked
   `@pragma('vm:entry-point')`.
 - `android/app/src/main/kotlin/com/example/flutterweather/MainActivity.kt`: the Android activity, which also answers
-  the widget's pin request on the `in.spanion.weather/widget` channel.
+  the widget's pin request on the `in.spanion.weather/widget` channel. It draws the window edge-to-edge on every
+  Android version with `WindowCompat.setDecorFitsSystemWindows(window, false)`, not `enableEdgeToEdge()`:
+  `FlutterActivity` isn't a `ComponentActivity`, and on API 28 and 29 that helper sets
+  `LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES`. `androidx.core:core-ktx` is declared in `android/app/build.gradle.kts`.
 - `android/app/src/main/kotlin/com/example/flutterweather/WeatherWidgetProvider.kt`: the widget's
   `AppWidgetProvider`, registered as a `receiver` in `android/app/src/main/AndroidManifest.xml`.
 

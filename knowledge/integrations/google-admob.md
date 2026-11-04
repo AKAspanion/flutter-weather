@@ -16,7 +16,9 @@ verified: human:panditankit1995@gmail.com
   first frame ([architecture](../project/architecture.md)).
 - **Banner.** `AdBanner` in `lib/components/ad_banner.dart` loads a large anchored adaptive banner for the screen
   width once `Ads.ready` is true. Until one loads it takes no space. Then it reports its height, and `Home`, `Menu`
-  and `Forecast` leave that much room at the bottom (`bottomInset`).
+  and `Forecast` leave that much room, plus the bottom system inset, at the bottom (`bottomInset`). The banner sits
+  above that inset, so the gesture bar never covers it (`SystemInsets` in `lib/components/system_insets.dart`). The
+  status and navigation bars stay hidden (`SystemUiMode.manual`, `overlays: []`), decided with the developer.
 - **Privacy options.** When `Ads.privacyOptionsRequired` is true, the menu shows a privacy button ("PRIVACY" in English, translated like the rest of the menu) that opens Google's
   privacy options form. A comment says this is for users who must be able to revisit their consent, such as in the
   EEA.
@@ -38,12 +40,14 @@ verified: human:panditankit1995@gmail.com
 
 ## History
 
+- 2026-11-04: the banner sat at the screen's bottom edge and `bottomInset` was its height; now the banner sits above the bottom system inset and `bottomInset` is its height plus that inset, because the window is drawn edge-to-edge and the gesture bar would cover it. See [spec](../../docs/specs/2026-11-04-edge-to-edge.md).
 - 2026-11-03: the button's text was hard-coded "PRIVACY"; now translated, because the app is translated. See [language picker](../features/language-picker.md).
 
 ## Sources
 
 * `lib/services/ads.dart`
 * `lib/components/ad_banner.dart`
+* `lib/components/system_insets.dart`
 * `lib/views/menu/menu.dart`
 * `lib/main.dart`
 * `android/app/build.gradle.kts`

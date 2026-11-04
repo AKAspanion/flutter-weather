@@ -34,9 +34,12 @@ verified: human:panditankit1995@gmail.com
 ## Rules
 
 - The gradients and the theme colours are in [design tokens](../design-system/tokens.md).
-- With the menu open, the card shrinks so it stays clear of the menu footer and the banner ad
-  (`Menu.footerHeight`, `fitScale` in `lib/views/home/home.dart`). `footerHeight` includes a 24 dp gap (`_cardGap`) so
-  the shrunken card never touches the accent picker.
+- With the menu open, the card shrinks and sits centred between the button row and the accent picker, clear of the
+  banner ad and the bottom system inset (`OpenCardLayout` in `lib/views/home/open_card_layout.dart`, used by
+  `lib/views/home/home.dart`). The gap above it equals the gap below it, and neither is less than
+  `OpenCardLayout.minGap`, so the card never touches the buttons or the picker. The row's bottom is the button row's
+  top ([components](../design-system/components.md)) plus `MenuButtons.buttonSize` for the 4-button row, and the
+  picker's height is `Menu.pickerHeight`.
 - `ThemeManager` reads the system brightness when it is created, so the first frame already matches the system. A
   saved override loads asynchronously and applies once `_loadTheme` finishes, so a user whose override differs from
   the system can see the system theme briefly at launch. `selectedAccent` in `lib/main.dart` likewise starts at the
@@ -58,6 +61,7 @@ verified: human:panditankit1995@gmail.com
 
 ## History
 
+- 2026-11-04: the card's top was a fixed 120 and its size left a 24 dp gap (`_cardGap`) above the picker only, so it overlapped the button row once the row moved below the camera cutout; now it is centred between the row and the picker with equal gaps of at least `24` dp, because the developer saw it overlap the buttons on a phone with a cutout. See [spec](../../docs/specs/2026-11-04-edge-to-edge.md).
 - 2026-11-03: the card could touch the accent picker, and the menu mirrored only left to right; now a 24 dp gap sits above the picker and the layout mirrors for Arabic and Urdu, because the developer saw the card touch the picker and the app gained right-to-left languages. See [supported languages](../decisions/supported-languages.md).
 
 ## Sources
@@ -69,5 +73,7 @@ verified: human:panditankit1995@gmail.com
 * `lib/views/menu/menu.dart`
 * `lib/views/settings/settings_overlay.dart`
 * `lib/views/home/home.dart`
+* `lib/views/home/open_card_layout.dart`
+* `lib/views/menu/menu_buttons.dart`
 * `lib/components/hamburger.dart`
 * `lib/main.dart`

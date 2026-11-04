@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterweather/components/ad_banner.dart';
+import 'package:flutterweather/components/system_insets.dart';
 import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/ads.dart';
 import 'package:flutterweather/services/locale_manager.dart';
@@ -156,10 +157,10 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   onAccentSelect: setAccent,
                   accent: selectedAccent,
                   onNavPress: toggleMenu,
-                  bottomInset: adHeight,
+                  bottomInset: SystemInsets.contentBottom(context, adHeight),
                 ),
                 Positioned(
-                  top: 24,
+                  top: SystemInsets.buttonRowTop(context),
                   left: 0,
                   right: 0,
                   child: FutureBuilder<bool>(
@@ -185,7 +186,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   location: location,
                   // Cached weather stays on screen while a refresh runs.
                   loading: loading && location.getWeather() == null,
-                  bottomInset: adHeight,
+                  bottomInset: SystemInsets.contentBottom(context, adHeight),
                 ),
                 isDialogOpen
                     ? DialogOverlay(
@@ -215,14 +216,14 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                   isWindowOpen: isForecastOpen,
                   onClosePress: toggleForecast,
                   showContent: isForecastMounted,
-                  bottomInset: adHeight,
+                  bottomInset: SystemInsets.contentBottom(context, adHeight),
                   accent: selectedAccent,
                   location: location,
                 ),
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 0,
+                  bottom: SystemInsets.adBottom(context),
                   child: Center(
                     child: AdBanner(
                       onHeightChanged: (height) => setState(() => adHeight = height),
