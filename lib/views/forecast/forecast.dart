@@ -7,10 +7,11 @@ import 'package:flutterweather/views/forecast/daily_detail_card.dart';
 import 'package:flutterweather/views/forecast/hourly.dart';
 import 'package:provider/provider.dart';
 
-/// Space above each section title, chosen so the gap from what's above (the close button's row, then the hourly
-/// chips) is 32 in both places: the list's own 16 top padding plus [_hoursTitleTop], and a chip's 12 bottom margin plus
-/// [_daysTitleTop].
-const double _hoursTitleTop = 16;
+/// Space above each section title, chosen so the visible gap from what's above is 32 in both places. Above "NEXT
+/// HOURS" that gap starts at the drawn close cross, which already has 15.5 of empty button below it (8 of padding, and
+/// 7.5 inside the 36 icon), so the list's own 16 top padding is enough. Above "NEXT DAYS" it starts at the chips' edge,
+/// after their 12 bottom margin.
+const double _hoursTitleTop = 0;
 const double _daysTitleTop = 20;
 
 /// Space below each subtitle: with the 12 margin above every chip and day card, the gap to the first card is 16 in both

@@ -74,7 +74,9 @@ void main() {
     );
     await tester.pump(const Duration(seconds: 1));
 
-    final Rect close = tester.getRect(find.widgetWithIcon(IconButton, Icons.close));
+    // The visible cross, not the button around it: the close icon is drawn 36 wide, and its cross spans the middle
+    // 14 of Material's 24 grid, so it ends 36 * 5 / 24 = 7.5 above the icon's box.
+    final double crossBottom = tester.getRect(find.byIcon(Icons.close)).bottom - 36 * 5 / 24;
     final Rect hoursTitle = tester.getRect(find.text('NEXT HOURS'));
     final Rect hoursSubtitle = tester.getRect(find.text('FORECAST FOR THE NEXT 48 HOURS'));
     final Rect firstChip = _card(tester, find.byType(HourlyDetail).first);
@@ -82,12 +84,12 @@ void main() {
     final Rect daysSubtitle = tester.getRect(find.text('FORECAST FOR THE NEXT 3 DAYS'));
     final Rect firstDay = _card(tester, find.byType(DailyDetail).first);
 
-    final double o1 = hoursTitle.top - close.bottom;
+    final double o1 = hoursTitle.top - crossBottom;
     final double o2 = daysTitle.top - firstChip.bottom;
     final double x1 = firstChip.top - hoursSubtitle.bottom;
     final double x2 = firstDay.top - daysSubtitle.bottom;
 
-    expect(o1, closeTo(32, 1), reason: 'close button to NEXT HOURS');
+    expect(o1, closeTo(32, 1), reason: 'the close cross to NEXT HOURS');
     expect(o2, closeTo(32, 1), reason: 'hourly chips to NEXT DAYS');
     expect(x1, closeTo(16, 1), reason: 'hours subtitle to the chips');
     expect(x2, closeTo(16, 1), reason: 'days subtitle to the first day card');
