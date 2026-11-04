@@ -25,7 +25,7 @@ API keys and AdMob IDs are passed in at build time and kept out of git. Copy
 back to defaults (Google's test ads), and providers without a key are skipped.
 
 ```bash
-flutter build appbundle --release --dart-define-from-file=keys.json
+flutter build appbundle --release --obfuscate --split-debug-info=build/symbols --dart-define-from-file=keys.json
 ```
 
 | Key | Where to get it |
