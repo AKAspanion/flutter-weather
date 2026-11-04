@@ -38,6 +38,11 @@ Translation tests, one file per subject:
   card's upper-cased title, close at the end (mirrored in Arabic), title aligned with `ListTile` text and scrolling
   content; the toggle's fill and callbacks; and the city dialog's ✓, Done key and header close.
 
+`test/centre_in_list_test.dart`: `centreInList` and the forecast's chips and cards: the tapped card centred once it has
+expanded, the first and last cards as near the centre as the list allows, the outer vertical list not moving, Arabic
+(right to left), closing not scrolling, and the day cards' gap equal to the chips' gap. The tests ignore a few pixels of
+overflow while chips and cards animate ([debt](../risks/debt.md)).
+
 `test/weather_service_test.dart` also checks that an unnamed place keeps an empty name.
 
 The widget and the theme have their own tests:
@@ -71,6 +76,7 @@ The policy's `checks.commands.test` (`ga.mjs workflow show`), run by hand.
 
 ## History
 
+- 2026-11-04: added `test/centre_in_list_test.dart`, because tapped forecast cards are now centred in their list. See [forecast](../features/forecast.md).
 - 2026-11-03: added tests for the overlay card, the segmented toggle and the city dialog, because they were added. See [overlays share one card](../decisions/overlays-share-one-card.md).
 - 2026-11-03: added tests for the temperature unit, the Play Store opener and the settings panel, because they were added. See [settings](../features/settings.md).
 - 2026-11-03: added the theme tests and the widget's accent, pin and resource tests, because the widget became one
@@ -88,6 +94,7 @@ The policy's `checks.commands.test` (`ga.mjs workflow show`), run by hand.
 * `test/language_overlay_test.dart`
 * `test/menu_buttons_test.dart`
 * `test/hourly_detail_chip_test.dart`
+* `test/centre_in_list_test.dart`
 * `test/weather_widget_test.dart`
 * `test/unit_manager_test.dart`
 * `test/play_store_test.dart`
