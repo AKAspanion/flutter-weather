@@ -2,8 +2,8 @@
 type: Feature
 title: Choose the app's language
 description: A Language row in the settings panel opens a list of System default and ten languages in their own scripts; the choice applies at once, is remembered, and the widget follows it.
-status: draft
 generated: { by: claude-code/claude-sonnet-5-5, at: 2026-11-03T09:30:00Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # Choose the app's language

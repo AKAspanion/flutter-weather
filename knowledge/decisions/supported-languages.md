@@ -2,8 +2,8 @@
 type: Decision
 title: The app speaks the ten most spoken languages, chosen in the app
 description: English, Chinese, Hindi, Spanish, Arabic, French, Bengali, Portuguese, Russian and Urdu, plus System default, picked from the Language row of the settings panel.
-status: draft
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T07:29:23Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # The app speaks the ten most spoken languages, chosen in the app
@@ -43,4 +43,4 @@ picker: System default first, then each language in its own script. System defau
 * `docs/specs/2026-11-03-app-localization.md`
 * `lib/main.dart`
 * `lib/services/locale_manager.dart`
-* `lib/views/menu/menu_buttons.dart`
+* `lib/views/settings/settings_overlay.dart`
