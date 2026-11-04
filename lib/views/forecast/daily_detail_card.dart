@@ -38,7 +38,8 @@ class _DailyDetailState extends State<DailyDetail> {
       onTap: toggleExpand,
       child: AnimatedContainer(
         width: size.width,
-        margin: EdgeInsets.all(24),
+        // 12 above and below, so neighbouring cards are 24 apart, the same gap as the hourly chips.
+        margin: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         padding: EdgeInsets.symmetric(vertical: 8),
         curve: Curves.easeInOutCirc,
         duration: Duration(milliseconds: 500),

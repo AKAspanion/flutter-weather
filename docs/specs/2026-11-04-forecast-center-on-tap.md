@@ -39,6 +39,14 @@ which is only known once it has finished growing.
 
 Unchanged: one card expanding doesn't close another, and how a card looks open or closed.
 
+## Amendment, 2026-11-04: the gap between day cards
+
+After trying the centring on a phone, the developer asked for the day cards to sit as close together as the hourly
+chips. The chips are 24 apart (each has a 24 end margin); the day cards were 48 apart (`EdgeInsets.all(24)` on each).
+`DailyDetail`'s margin becomes 24 at the sides and 12 above and below, so neighbouring cards are 24 apart. The side
+margins don't change, and the card stays centred in its own box, so centring is unaffected. A test in
+`test/centre_in_list_test.dart` measures both gaps.
+
 ## Testing
 
 Test first, in widget tests:

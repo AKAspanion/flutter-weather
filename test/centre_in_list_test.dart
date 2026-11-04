@@ -170,4 +170,25 @@ void main() {
     await centreInList(captured);
     expect(tester.takeException(), isNull);
   });
+
+  cardTest('day cards sit as far apart as the hourly chips', (tester) async {
+    Rect card(Key key) =>
+        tester.getRect(find.descendant(of: find.byKey(key), matching: find.byType(DecoratedBox)).first);
+
+    await tester.pumpWidget(_app(_chips(ScrollController())));
+    final double chipGap = card(const ValueKey(1)).left - card(const ValueKey(0)).right;
+
+    await tester.pumpWidget(_app(SizedBox(
+      width: 400,
+      height: 800,
+      child: ListView.builder(
+        itemCount: 3,
+        itemBuilder: (_, int i) => KeyedSubtree(key: ValueKey(i), child: DailyDetail(accent: 0, detail: _weather)),
+      ),
+    )));
+    final double dayGap = card(const ValueKey(1)).top - card(const ValueKey(0)).bottom;
+
+    expect(chipGap, 24);
+    expect(dayGap, chipGap);
+  });
 }
