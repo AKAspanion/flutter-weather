@@ -38,8 +38,9 @@ These values are repeated inline, not named:
 - Cards and buttons: rounded corners (12 for buttons, the overlay card and day cards; 24 for the home card while the menu is
   open), and a soft `BoxShadow` in `Colors.black38`. See `Btn` in `lib/components/btn.dart` (56 square unless given a `size`), `OverlayCard` in `lib/components/overlay_card.dart` and `Home` in
   `lib/views/home/home.dart`.
-- Screen padding of 24 around the main card, and 24 from the top for the menu's button row, which has 16 at its sides
-  (`lib/main.dart`, `lib/views/home/home.dart`, `lib/views/menu/menu_buttons.dart`).
+- Screen padding of 24 around the main card. The menu's button row sits `SystemInsets.buttonRowGap` (24) below the
+  top system padding, so it stays clear of the camera cutout, and has 16 at its sides (`SystemInsets.buttonRowTop` in
+  `lib/components/system_insets.dart`, `lib/views/home/home.dart`, `lib/views/menu/menu_buttons.dart`).
 
 ## Typography
 
@@ -53,6 +54,8 @@ These values are repeated inline, not named:
 
 ## History
 
+- 2026-11-04: the button row was 24 from the top of the screen; now 24 below the top system padding, because
+  the app draws edge to edge (#12) and the row has to clear the camera cutout.
 - 2026-11-04: overlays drew the raw accent as text and icons on either card; now they pass it through `readableOn`
   and `onFill`, because on the dark card some accents were unreadable. See
   [overlays share one card](../decisions/overlays-share-one-card.md).
@@ -66,6 +69,7 @@ These values are repeated inline, not named:
 * `lib/services/theme_manager.dart`
 * `lib/components/btn.dart`
 * `lib/components/overlay_card.dart`
+* `lib/components/system_insets.dart`
 * `lib/views/menu/menu_buttons.dart`
 * `lib/views/home/home.dart`
 * `lib/main.dart`
