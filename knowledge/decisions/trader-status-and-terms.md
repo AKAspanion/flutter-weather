@@ -1,9 +1,9 @@
 ---
 type: Decision
-status: draft
 title: The app is declared a trader app, with terms.md as its Terms of Service
 description: Play Console's app-level trader status is Yes because the app earns from AdMob ads; terms.md is the Terms of Service, keeping EEA and UK consumer rights and saying forecasts are not for safety decisions.
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-04T15:00:29Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # The app is declared a trader app, with terms.md as its Terms of Service
