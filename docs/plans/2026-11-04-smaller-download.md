@@ -1,5 +1,7 @@
 # Smaller Download Implementation Plan
 
+**Status:** complete
+
 > **For agentic workers:** REQUIRED SUB-SKILL: the project's workflow policy names the executor (`run.executor`): ga:implement-with-subagents by default, or ga:implement. Follow the policy and this plan's Checkpoints. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Cut the Play download for an arm64 phone from about 12.5 MB, keeping AdMob, by dropping unused fonts,
@@ -65,19 +67,19 @@ None (`run.checkpoints: none`). The run stops before Task 2 only if `cwebp` isn'
 - Given the change, `pubspec.yaml` says `version: 1.0.1+5`.
 - Given the change, `README.md` gives the release command exactly as Spec §3 quotes it.
 
-- [ ] **Step 1: Run the first two greps** and confirm they print the lines this task removes
+- [x] **Step 1: Run the first two greps** and confirm they print the lines this task removes
 
-- [ ] **Step 2: Edit `pubspec.yaml`, delete the italic font file, and edit `README.md`**
+- [x] **Step 2: Edit `pubspec.yaml`, delete the italic font file, and edit `README.md`**
 
-- [ ] **Step 3: Run `flutter pub get`**
+- [x] **Step 3: Run `flutter pub get`**
 
 Expected: succeeds, and `pubspec.lock` loses `cupertino_icons`
 
-- [ ] **Step 4: Run the two greps again**
+- [x] **Step 4: Run the two greps again**
 
 Expected: no output
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add pubspec.yaml pubspec.lock assets/fonts/Montserrat-Italic.ttf README.md
@@ -125,35 +127,35 @@ git commit -m "Drop the unused Cupertino icons and Montserrat Italic fonts, bump
 - Given a re-render, then `git diff --stat android/app/src/main/res/drawable android/app/src/main/res/layout` shows no
   change.
 
-- [ ] **Step 1: Check `cwebp` is installed** with `which cwebp`. If it isn't, stop and ask the developer to approve
+- [x] **Step 1: Check `cwebp` is installed** with `which cwebp`. If it isn't, stop and ask the developer to approve
   `brew install webp`.
 
-- [ ] **Step 2: Change the resource test** for the first four Acceptance cases, with `maxFrameBytes` at `629146`
+- [x] **Step 2: Change the resource test** for the first four Acceptance cases, with `maxFrameBytes` at `629146`
   (0.6 MB, the spec's estimate) until Step 7 measures it
 
-- [ ] **Step 3: Run it to verify it fails**
+- [x] **Step 3: Run it to verify it fails**
 
 Run: `flutter test test/widget_icon_resources_test.dart`
 Expected: FAIL, because no `.webp` frames exist and the `.png` frames do
 
-- [ ] **Step 4: Change the render tool**: after writing each loop frame's PNG, run `cwebp` with the Spec §2 flags into
+- [x] **Step 4: Change the render tool**: after writing each loop frame's PNG, run `cwebp` with the Spec §2 flags into
   `<frame>.webp`, delete the PNG, and fail with the `brew install webp` message when `cwebp` can't be started
 
-- [ ] **Step 5: Re-render the frames**
+- [x] **Step 5: Re-render the frames**
 
 Run: `ICON_LOOPS=1 flutter test tool/render_widget_icons_test.dart`
 Expected: PASS, 11 icons' frames written as `.webp`, no frame `.png` left
 
-- [ ] **Step 6: Measure the frames** with `du -ck android/app/src/main/res/drawable-nodpi/widget_icon_*_[0-9][0-9].webp`
+- [x] **Step 6: Measure the frames** with `du -ck android/app/src/main/res/drawable-nodpi/widget_icon_*_[0-9][0-9].webp`
 
-- [ ] **Step 7: Set `maxFrameBytes`** to the measured total plus about 10%, rounded up to a whole KB, with its comment
+- [x] **Step 7: Set `maxFrameBytes`** to the measured total plus about 10%, rounded up to a whole KB, with its comment
 
-- [ ] **Step 8: Run the resource test to verify it passes**
+- [x] **Step 8: Run the resource test to verify it passes**
 
 Run: `flutter test test/widget_icon_resources_test.dart`
 Expected: PASS
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add test/widget_icon_resources_test.dart tool/render_widget_icons_test.dart android/app/src/main/res/drawable-nodpi
