@@ -2,8 +2,8 @@
 type: Decision
 title: Weather descriptions are shown from the condition code, translated
 description: The description on screen and on the widget is a translated phrase per OpenWeatherMap condition code, not the provider's English text.
-status: draft
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T07:29:23Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # Weather descriptions are shown from the condition code, translated

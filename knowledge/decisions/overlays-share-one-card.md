@@ -2,8 +2,8 @@
 type: Decision
 title: Overlays share one card, closed from the top end
 description: The city dialog, the language picker and the settings panel are built on one OverlayCard, with the title at the top start and the close button at the top end, and choices marked the same way.
-status: draft
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T09:40:00Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # Overlays share one card, closed from the top end

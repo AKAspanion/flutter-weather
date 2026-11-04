@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: the project's workflow policy names the executor (`run.executor`): ga:implement-with-subagents by default, or ga:implement. Follow the policy and this plan's Checkpoints. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Status:** complete
+
 **Goal:** When a forecast chip or day card is tapped open, scroll its own list so the card ends up centred.
 
 **Architecture:** One small helper, `centreInList`, scrolls the nearest enclosing list (and only that one) so a
@@ -74,20 +76,20 @@ Future<void> centreInList(BuildContext context);
   `pumpAndSettle` its centre y is within 1 px of the list's centre.
 - `centreInList` on a context with no enclosing list returns without throwing.
 
-- [ ] **Step 1: Create `centre_in_list.dart` with the signature above and an empty body**, so the tests fail on behaviour
-- [ ] **Step 2: Write the failing tests** for each Acceptance case, in `test/centre_in_list_test.dart`
-- [ ] **Step 3: Run them to verify they fail**
+- [x] **Step 1: Create `centre_in_list.dart` with the signature above and an empty body**, so the tests fail on behaviour
+- [x] **Step 2: Write the failing tests** for each Acceptance case, in `test/centre_in_list_test.dart`
+- [x] **Step 3: Run them to verify they fail**
 
 Run: `flutter test test/centre_in_list_test.dart`
 Expected: FAIL on the assertions.
 
-- [ ] **Step 4: Write the minimal implementation**: the helper, and each card's `onEnd` calling it when `expanded` is true
-- [ ] **Step 5: Run them to verify they pass**
+- [x] **Step 4: Write the minimal implementation**: the helper, and each card's `onEnd` calling it when `expanded` is true
+- [x] **Step 5: Run them to verify they pass**
 
 Run: `flutter test test/centre_in_list_test.dart test/hourly_detail_chip_test.dart`
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add lib/components/centre_in_list.dart lib/views/forecast/hourly_detail_chip.dart lib/views/forecast/daily_detail_card.dart test/centre_in_list_test.dart
