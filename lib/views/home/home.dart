@@ -4,6 +4,7 @@ import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/views/menu/menu.dart';
 import 'package:flutterweather/views/weather/weather_screen.dart';
 import 'package:flutterweather/components/hamburger.dart';
+import 'package:flutterweather/components/system_insets.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
@@ -34,7 +35,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final double top = 120;
+    final double top = SystemInsets.openCardTop(context);
     // The card is always full screen height; shrink it enough to clear the
     // menu footer and the banner ad.
     final double fitScale = (size.height - top - Menu.footerHeight - bottomInset) / size.height;
