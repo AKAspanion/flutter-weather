@@ -135,6 +135,9 @@ class Forecast extends StatelessWidget {
 
     // Built lazily so off-screen day cards (and their animations) cost nothing.
     return ListView.builder(
+      // The panel places this list and keeps room at the bottom itself. Without a padding, a list adds the screen's
+      // top and bottom insets, which an edge-to-edge window reports (status bar, cutout, gesture bar).
+      padding: EdgeInsets.zero,
       itemCount: header.length + daily.length + 1,
       itemBuilder: (context, i) {
         if (i < header.length) return header[i];

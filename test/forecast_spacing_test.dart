@@ -47,6 +47,9 @@ void main() {
     // Wide enough for the day cards' text in the test font, which is much wider than Montserrat.
     await tester.binding.setSurfaceSize(const Size(600, 1400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
+    // A phone drawn edge to edge reports a top inset (status bar, camera cutout): 30 logical pixels here.
+    tester.view.padding = FakeViewPadding(top: 30 * tester.view.devicePixelRatio);
+    addTearDown(tester.view.resetPadding);
     await tester.pumpWidget(
       MultiProvider(
         providers: [

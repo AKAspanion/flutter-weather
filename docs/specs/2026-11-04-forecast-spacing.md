@@ -27,11 +27,15 @@ All in `lib/views/forecast/`:
   - "NEXT HOURS" top 16 (O₁ = the list's 16 top padding + 16);
   - "NEXT DAYS" top 20 (O₂ = the chip's 12 bottom margin + 20);
   - both subtitles bottom 4 (X₁ = 4 + the chip's 12 top margin; X₂ = 4 + the day card's 12 top margin).
+- The panel's list gets `padding: EdgeInsets.zero`. Found on the emulator: with the window drawn edge to edge (#12),
+  a `ListView` with no padding adds the screen's top inset (status bar, camera cutout) above "NEXT HOURS", which made
+  O₁ about 27 larger than O₂ on a device. The panel already places the list and keeps room at the bottom.
 - Nothing else moves: the close button, the subtitles' 4 top gap, the cards, the attribution.
 
 ## Testing
 
-Test first: a widget test pumps `Forecast` with a fake report and measures, on screen:
+Test first: a widget test pumps `Forecast` with a fake report, on a screen with a 30 top inset like an edge-to-edge
+phone, and measures:
 
 - O₁ (bottom of the close button's row to the top of "NEXT HOURS") and O₂ (bottom of the first chip's card to the top
   of "NEXT DAYS") are both 32, within 1 dp;
