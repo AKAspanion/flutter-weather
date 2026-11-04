@@ -81,7 +81,10 @@ void main() {
     return tester.tapAt(Offset(visible.center.dx, tester.getRect(chip(i)).top + 50));
   }
 
-  double centreX(WidgetTester tester, int i) => tester.getCenter(chip(i)).dx;
+  /// The centre of the chip's decorated card, which leaves out the margin that spaces it from the next chip.
+  double centreX(WidgetTester tester, int i) => tester
+      .getCenter(find.descendant(of: chip(i), matching: find.byType(DecoratedBox)).first)
+      .dx;
 
   cardTest('a tapped chip near the edge is centred in its list', (tester) async {
     final ScrollController controller = ScrollController();

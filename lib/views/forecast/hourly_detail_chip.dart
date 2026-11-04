@@ -38,6 +38,7 @@ class HourlyDetail extends StatefulWidget {
 
 class _HourlyDetailState extends State<HourlyDetail> {
   bool expanded = false;
+  final GlobalKey _cardKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -46,130 +47,131 @@ class _HourlyDetailState extends State<HourlyDetail> {
     final TemperatureUnit unit = context.watch<UnitManager>().unit;
     final double width = expanded ? 200 : 80;
     final double innerWidth = expanded ? 50 : 0;
-    return InkWell(
-      onTap: toggleExpand,
-      child: AnimatedContainer(
-        curve: Curves.easeInOutCirc,
-        padding: EdgeInsets.symmetric(vertical: 16),
-        duration: Duration(milliseconds: 500),
-        onEnd: onExpandEnd,
-        margin: EdgeInsetsDirectional.only(end: 24, top: 12, bottom: 12),
-        width: width,
-        decoration: BoxDecoration(
-          boxShadow: <BoxShadow>[
-            BoxShadow(color: Colors.black12, blurRadius: 6.0)
-          ],
-          borderRadius: BorderRadius.circular(12),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment(2, 0.0),
-            colors: GradientValues().gradients[accentIndex].gradient,
+    // The margin is outside the InkWell so the card (what the user sees) is what gets centred in the strip.
+    return Padding(
+      padding: EdgeInsetsDirectional.only(end: 24, top: 12, bottom: 12),
+      child: InkWell(
+        key: _cardKey,
+        onTap: toggleExpand,
+        child: AnimatedContainer(
+          curve: Curves.easeInOutCirc,
+          padding: EdgeInsets.symmetric(vertical: 16),
+          duration: Duration(milliseconds: 500),
+          onEnd: onExpandEnd,
+          width: width,
+          decoration: BoxDecoration(
+            boxShadow: <BoxShadow>[BoxShadow(color: Colors.black12, blurRadius: 6.0)],
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment(2, 0.0),
+              colors: GradientValues().gradients[accentIndex].gradient,
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Text(
-                getTime(weather, Localizations.localeOf(context).toString()),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  getTime(weather, Localizations.localeOf(context).toString()),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  strutStyle: _montserratStrut(12),
+                  overflow: TextOverflow.fade,
+                  softWrap: false,
+                  maxLines: 1,
                 ),
-                strutStyle: _montserratStrut(12),
-                overflow: TextOverflow.fade,
-                softWrap: false,
-                maxLines: 1,
               ),
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                AnimatedContainer(
-                  width: innerWidth,
-                  duration: Duration(milliseconds: 500),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 13),
-                      Container(
-                        width: 42,
-                        height: 42,
-                        child: expanded
-                            ? FlareIcon(
-                                "assets/animations/icons.flr",
-                                animation: "drop",
-                              )
-                            : null,
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 20,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  AnimatedContainer(
+                    width: innerWidth,
+                    duration: Duration(milliseconds: 500),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 13),
+                        Container(
+                          width: 42,
+                          height: 42,
+                          child: expanded
+                              ? FlareIcon(
+                                  "assets/animations/icons.flr",
+                                  animation: "drop",
+                                )
+                              : null,
                         ),
-                        child: _DetailText("${weather.humidity}%", expanded: expanded),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 80,
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 64,
-                        height: 64,
-                        padding: EdgeInsets.only(top: 8),
-                        child: FlareIcon(
-                          "assets/animations/cloudy.flr",
-                          animation:
-                              'cloudy-${weather.getIcon(overrideNight: getNight(weather))}',
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text(
-                          formatTemperature(weather.temperature, unit),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 20,
                           ),
-                          strutStyle: _montserratStrut(16),
+                          child: _DetailText("${weather.humidity}%", expanded: expanded),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                AnimatedContainer(
-                  width: innerWidth,
-                  duration: Duration(milliseconds: 500),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 13),
-                      Container(
-                        width: 42,
-                        height: 42,
-                        child: expanded
-                            ? FlareIcon(
-                                "assets/animations/icons.flr",
-                                animation: "wind",
-                              )
-                            : null,
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 20,
+                  Container(
+                    width: 80,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 64,
+                          height: 64,
+                          padding: EdgeInsets.only(top: 8),
+                          child: FlareIcon(
+                            "assets/animations/cloudy.flr",
+                            animation: 'cloudy-${weather.getIcon(overrideNight: getNight(weather))}',
+                          ),
                         ),
-                        child: _DetailText("${weather.windSpeed}m/s", expanded: expanded),
-                      ),
-                    ],
+                        Container(
+                          padding: EdgeInsets.only(top: 8),
+                          child: Text(
+                            formatTemperature(weather.temperature, unit),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            strutStyle: _montserratStrut(16),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )
-              ],
-            ),
-          ],
+                  AnimatedContainer(
+                    width: innerWidth,
+                    duration: Duration(milliseconds: 500),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 13),
+                        Container(
+                          width: 42,
+                          height: 42,
+                          child: expanded
+                              ? FlareIcon(
+                                  "assets/animations/icons.flr",
+                                  animation: "wind",
+                                )
+                              : null,
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 20,
+                          ),
+                          child: _DetailText("${weather.windSpeed}m/s", expanded: expanded),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -183,7 +185,8 @@ class _HourlyDetailState extends State<HourlyDetail> {
 
   /// Centres the chip in its strip once it has finished opening. Closing leaves the strip where it is.
   void onExpandEnd() {
-    if (expanded) centreInList(context);
+    final BuildContext? card = _cardKey.currentContext;
+    if (expanded && card != null) centreInList(card);
   }
 
   String getTime(Weather weather, String locale) {
@@ -194,8 +197,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
   }
 
   String getNight(Weather weather) {
-    DateTime now =
-        DateTime.fromMillisecondsSinceEpoch(weather.date! * 1000, isUtc: true);
+    DateTime now = DateTime.fromMillisecondsSinceEpoch(weather.date! * 1000, isUtc: true);
     DateTime zoneTime = now.add(Duration(seconds: weather.timezone ?? 0));
 
     String night = zoneTime.hour > 18 || zoneTime.hour <= 6 ? "-night" : "";
