@@ -8,6 +8,7 @@ import 'package:flutterweather/services/locale_manager.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/services/unit_manager.dart';
 import 'package:flutterweather/theme/app_theme.dart';
+import 'package:flutterweather/theme/contrast.dart';
 import 'package:flutterweather/theme/gradients.dart';
 import 'package:provider/provider.dart';
 
@@ -45,6 +46,7 @@ class SettingsOverlay extends StatelessWidget {
     final AppLocalizations l10n = AppLocalizations.of(context)!;
     final ThemeManager theme = Provider.of<ThemeManager>(context);
     final Color accentColor = GradientValues().gradients[accent].gradient[0];
+    final Color accentFill = readableOn(accentColor, theme.bgColor, minRatio: shapeContrast);
     final Locale? locale = context.watch<LocaleManager>().locale;
     final UnitManager units = context.watch<UnitManager>();
 
@@ -64,7 +66,7 @@ class SettingsOverlay extends StatelessWidget {
           ListTile(
             title: Text(l10n.theme, style: labelStyle()),
             trailing: SegmentedChoice<AppTheme>(
-              accent: accentColor,
+              accent: accentFill,
               textColor: theme.textColor,
               selected: theme.theme,
               onChanged: (AppTheme value) => theme.setTheme(value),
@@ -77,13 +79,19 @@ class SettingsOverlay extends StatelessWidget {
           ),
           ListTile(
             title: Text(l10n.language, style: labelStyle()),
-            // Drawn like a selected SegmentedChoice segment: accent text alone was unreadable on the dark card.
+            // Drawn like a selected SegmentedChoice segment, with the same fill and label rules, so it reads on either
+            // card and on a pale accent: accent text alone was unreadable on the dark card.
+            // At most half the card wide, so a long name on a narrow phone ends in "…" instead of breaking the row.
             trailing: Container(
+              constraints: BoxConstraints(maxWidth: (MediaQuery.of(context).size.width - 64) / 2),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(color: accentColor, borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(color: accentFill, borderRadius: BorderRadius.circular(8)),
               child: Text(
                 languageName,
-                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                maxLines: 1,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: onFill(accentFill), fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
             onTap: onLanguage,
@@ -91,19 +99,24 @@ class SettingsOverlay extends StatelessWidget {
           ListTile(
             title: Text(l10n.temperature, style: labelStyle()),
             trailing: SegmentedChoice<TemperatureUnit>(
-              accent: accentColor,
+              accent: accentFill,
               textColor: theme.textColor,
               selected: units.unit,
               onChanged: (TemperatureUnit unit) => _chooseUnit(units, unit),
+              // Units read left to right in every language; in Arabic and Urdu they would otherwise show as C°.
               options: const [
-                SegmentedOption(value: TemperatureUnit.celsius, child: Text('°C')),
-                SegmentedOption(value: TemperatureUnit.fahrenheit, child: Text('°F')),
+                SegmentedOption(value: TemperatureUnit.celsius, child: Text('°C', textDirection: TextDirection.ltr)),
+                SegmentedOption(value: TemperatureUnit.fahrenheit, child: Text('°F', textDirection: TextDirection.ltr)),
               ],
             ),
           ),
           ListTile(
             title: Text(l10n.rateOnGooglePlay, style: labelStyle()),
-            trailing: Icon(Icons.open_in_new, color: theme.textColor),
+            // The arrow means "opens outside the app" in every language, so it isn't mirrored.
+            trailing: Directionality(
+              textDirection: TextDirection.ltr,
+              child: Icon(Icons.open_in_new, color: theme.textColor),
+            ),
             onTap: onRate,
           ),
         ],

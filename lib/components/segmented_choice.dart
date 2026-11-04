@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/theme/contrast.dart';
 
 /// One segment of a [SegmentedChoice]: the [value] it stands for and what it shows.
 class SegmentedOption<T> {
@@ -13,8 +14,9 @@ class SegmentedOption<T> {
   const SegmentedOption({required this.value, required this.child, this.semanticLabel});
 }
 
-/// A small two-part (or more) toggle: the selected option is filled with [accent] and drawn white, the others are
-/// transparent in [textColor]. The temperature unit and the theme share it so the two can't drift apart.
+/// A small two-part (or more) toggle: the selected option is filled with [accent] and drawn in white or near-black,
+/// whichever reads better on it; the others are transparent in [textColor]. The temperature unit and the theme share
+/// it so the two can't drift apart.
 class SegmentedChoice<T> extends StatelessWidget {
   final List<SegmentedOption<T>> options;
   final T selected;
@@ -35,7 +37,7 @@ class SegmentedChoice<T> extends StatelessWidget {
 
   Widget _segment(SegmentedOption<T> option) {
     final bool isSelected = option.value == selected;
-    final Color color = isSelected ? Colors.white : textColor;
+    final Color color = isSelected ? onFill(accent) : textColor;
     Widget segment = InkWell(
       borderRadius: BorderRadius.circular(8),
       onTap: isSelected ? null : () => onChanged(option.value),
