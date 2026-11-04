@@ -2,8 +2,8 @@
 type: Decision
 title: Temperatures show in °C or °F, defaulting to the phone's region
 description: The user picks °C or °F in settings; until they do, the phone's region decides (°F in the handful of countries that use it), and the app and the widget both follow it.
-status: draft
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T08:37:08Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # Temperatures show in °C or °F, defaulting to the phone's region
@@ -33,3 +33,4 @@ whose background refresh reads the saved choice the same way it reads the langua
 * `docs/specs/2026-11-03-settings-menu.md`
 * `lib/services/providers/weather_provider.dart`
 * `lib/services/weather_widget.dart`
+* `lib/services/unit_manager.dart`

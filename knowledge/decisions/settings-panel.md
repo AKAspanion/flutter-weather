@@ -2,8 +2,8 @@
 type: Decision
 title: Every setting lives in one settings panel behind a gear
 description: The menu's translate button became a gear that opens a settings panel (theme, language, temperature unit, rate on Google Play); new settings are added there as rows, not as more menu buttons.
-status: draft
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T08:37:08Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # Every setting lives in one settings panel behind a gear
@@ -41,3 +41,4 @@ need the user to be able to find ([AdMob](../integrations/google-admob.md)).
 * `docs/specs/2026-11-03-settings-menu.md`
 * `lib/views/menu/menu_buttons.dart`
 * `lib/views/home/language_overlay.dart`
+* `lib/views/settings/settings_overlay.dart`

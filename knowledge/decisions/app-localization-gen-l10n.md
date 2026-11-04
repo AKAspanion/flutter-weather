@@ -2,8 +2,8 @@
 type: Decision
 title: Translate the app with Flutter gen_l10n and drafted .arb files
 description: In-app text lives in .arb files compiled by gen_l10n; Claude drafts the translations and they stay marked unreviewed until a native speaker checks them.
-status: draft
 generated: { by: claude-code/claude-opus-5-5, at: 2026-11-03T07:29:23Z }
+verified: human:panditankit1995@gmail.com
 ---
 
 # Translate the app with Flutter gen_l10n and drafted .arb files
