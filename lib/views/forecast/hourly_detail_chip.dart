@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterweather/components/centre_in_list.dart';
 import 'package:flutterweather/components/flare_icon.dart';
 import 'package:flutterweather/l10n/dates.dart';
 import 'package:flutterweather/services/unit_manager.dart';
@@ -51,6 +52,7 @@ class _HourlyDetailState extends State<HourlyDetail> {
         curve: Curves.easeInOutCirc,
         padding: EdgeInsets.symmetric(vertical: 16),
         duration: Duration(milliseconds: 500),
+        onEnd: onExpandEnd,
         margin: EdgeInsetsDirectional.only(end: 24, top: 12, bottom: 12),
         width: width,
         decoration: BoxDecoration(
@@ -177,6 +179,11 @@ class _HourlyDetailState extends State<HourlyDetail> {
     setState(() {
       expanded = !expanded;
     });
+  }
+
+  /// Centres the chip in its strip once it has finished opening. Closing leaves the strip where it is.
+  void onExpandEnd() {
+    if (expanded) centreInList(context);
   }
 
   String getTime(Weather weather, String locale) {

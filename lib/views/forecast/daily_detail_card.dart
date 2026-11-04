@@ -1,3 +1,4 @@
+import 'package:flutterweather/components/centre_in_list.dart';
 import 'package:flutterweather/components/flare_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterweather/l10n/app_localizations.dart';
@@ -160,6 +161,7 @@ class _DailyDetailState extends State<DailyDetail> {
               height: expanded ? 104 : 0,
               curve: Curves.easeInOutCirc,
               duration: Duration(milliseconds: 500),
+              onEnd: onExpandEnd,
               child: !expanded
                   ? null
                   : Column(
@@ -191,6 +193,11 @@ class _DailyDetailState extends State<DailyDetail> {
     setState(() {
       expanded = !expanded;
     });
+  }
+
+  /// Centres the card in its list once its details have finished growing. Closing leaves the list where it is.
+  void onExpandEnd() {
+    if (expanded) centreInList(context);
   }
 
   Widget getExpandRowItem(String icon, String type, String text) {
