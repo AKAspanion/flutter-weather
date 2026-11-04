@@ -28,6 +28,11 @@ verified: human:panditankit1995@gmail.com
 - **Release for Play:** `flutter build appbundle --release --dart-define-from-file=keys.json`, as `README.md` says,
   with `android/key.properties` in place. The version and build number are `version` in `pubspec.yaml`. The
   application ID is in `android/app/build.gradle.kts` ([decisions/new-application-id](../decisions/new-application-id.md)).
+  Play needs the build number after `+` to be higher than the last upload's. If the build ends with "failed to strip
+  debug symbols from native libraries", check `flutter doctor` for a missing Android `cmdline-tools` component.
+  Flutter's check that the symbols were stripped needs that component, and fails without it even when Gradle stripped
+  them and the bundle was written. To confirm a bundle by hand, `file` on each native library under base/lib/ inside
+  the `.aab` should say `stripped`, and `keytool -printcert -jarfile` should show the upload certificate, not Android Debug.
 - **Widget icons:** after changing a weather animation, run `ICON_LOOPS=1 flutter test tool/render_widget_icons_test.dart`.
   It renders each icon's loop to frames (8 fps, 112 px, about 1.2 MB in all) in
   `android/app/src/main/res/drawable-nodpi/`, and writes the `widget_anim_<name>` lists and `widget_icon_<name>`
