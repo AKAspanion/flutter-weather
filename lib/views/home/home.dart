@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutterweather/services/location.dart';
 import 'package:flutterweather/services/theme_manager.dart';
+import 'package:flutterweather/views/home/open_card_layout.dart';
 import 'package:flutterweather/views/menu/menu.dart';
+import 'package:flutterweather/views/menu/menu_buttons.dart';
 import 'package:flutterweather/views/weather/weather_screen.dart';
 import 'package:flutterweather/components/hamburger.dart';
 import 'package:flutterweather/components/system_insets.dart';
@@ -35,11 +37,16 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final double top = SystemInsets.openCardTop(context);
-    // The card is always full screen height; shrink it enough to clear the
-    // menu footer and the banner ad.
-    final double fitScale = (size.height - top - Menu.footerHeight - bottomInset) / size.height;
-    final double factor = isDrawerOpen ? fitScale.clamp(0.3, 0.65) : 1;
+    // The card is always full screen height; shrink it and centre it between the menu's button row and the accent
+    // picker.
+    final layout = OpenCardLayout.compute(
+      screenHeight: size.height,
+      rowBottom: SystemInsets.buttonRowTop(context) + MenuButtons.buttonSize(size.width, count: 4),
+      pickerHeight: Menu.pickerHeight,
+      bottomInset: bottomInset,
+    );
+    final double top = layout.top;
+    final double factor = isDrawerOpen ? layout.scale : 1;
     Color bgColor = Provider.of<ThemeManager>(context).bgColor;
     Color textColor = Provider.of<ThemeManager>(context).textColor;
 

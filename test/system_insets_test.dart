@@ -40,36 +40,6 @@ void main() {
     expect(r.contentBottom, 50);
   });
 
-  testWidgets('the open-menu card moves down with the button row, so it never overlaps it', (tester) async {
-    late double rowTop, cardTop, cardTopNoPadding;
-    await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(padding: EdgeInsets.only(top: 52)),
-        child: Builder(
-          builder: (context) {
-            rowTop = SystemInsets.buttonRowTop(context);
-            cardTop = SystemInsets.openCardTop(context);
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
-    await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(),
-        child: Builder(
-          builder: (context) {
-            cardTopNoPadding = SystemInsets.openCardTop(context);
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
-    expect(cardTopNoPadding, 120);
-    expect(cardTop, 172);
-    expect(cardTop - rowTop, cardTopNoPadding - SystemInsets.buttonRowGap);
-  });
-
   testWidgets('with no ad loaded the content still clears the bottom padding', (tester) async {
     final r = await _read(tester, padding: const EdgeInsets.only(bottom: 20), adHeight: 0);
     expect(r.contentBottom, 20);

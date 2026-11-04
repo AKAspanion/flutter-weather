@@ -30,13 +30,17 @@ class MenuButtons extends StatelessWidget {
     required this.onClose,
   });
 
+  /// The size of each button in a row of [count] buttons on a screen [width] wide.
+  static double buttonSize(double width, {required int count}) =>
+      math.min(_maxSize, (width - 2 * _margin - _minGap * (count - 1)) / count);
+
   @override
   Widget build(BuildContext context) {
     final settingsLabel = AppLocalizations.of(context)?.settings;
     return LayoutBuilder(
       builder: (_, constraints) {
         final count = onPinWidget == null ? 4 : 5;
-        final size = math.min(_maxSize, (constraints.maxWidth - 2 * _margin - _minGap * (count - 1)) / count);
+        final size = buttonSize(constraints.maxWidth, count: count);
 
         Widget button(Widget icon, void Function() onPress) => Btn(size: size, onPress: onPress, child: icon);
         Widget icon(IconData data) => Icon(data, size: _iconSize);
