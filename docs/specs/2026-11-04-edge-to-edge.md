@@ -59,9 +59,10 @@ it as a warning, and it doesn't block a release.
 
 ## Testing
 
-- A widget test pumps the app's layout under a `MediaQuery` with top and bottom padding, and checks the button row's
-  top offset and the ad banner's bottom offset include it. This follows the developer's flow: test first where it
-  fits.
+- The three offsets come from one small helper, `SystemInsets` in `lib/components/system_insets.dart`, because
+  `lib/main.dart`'s state needs location and ads before it can be pumped. A widget test reads it under a `MediaQuery`
+  with top and bottom padding, and checks the button row's top, the ad banner's bottom and the content's bottom inset
+  each include that padding. This follows the developer's flow: test first where it fits.
 - On the `Pixel_9_Pro` emulator (camera cutout, gesture navigation), a screenshot of the home screen and the open
   menu shows the button row below the cutout and nothing under the gesture handle.
 - `flutter analyze`, and a release `flutter build appbundle` to confirm it still builds.
