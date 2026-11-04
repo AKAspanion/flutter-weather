@@ -25,7 +25,9 @@ verified: human:panditankit1995@gmail.com
   that changes an `.arb`, run `flutter gen-l10n` ([gen_l10n decision](../decisions/app-localization-gen-l10n.md)).
 - **Check:** the commands are the policy's `checks.commands.lint` and `checks.commands.test`
   ([conventions](../project/conventions.md), [testing](../quality/testing.md)).
-- **Release for Play:** `flutter build appbundle --release --dart-define-from-file=keys.json`, as `README.md` says,
+- **Release for Play:** `flutter build appbundle --release --obfuscate --split-debug-info=build/symbols --dart-define-from-file=keys.json`, as `README.md` says
+  ([decisions/obfuscate-release-builds](../decisions/obfuscate-release-builds.md)). Keep a copy of `build/symbols` for each release you upload: without it a Dart stack trace from that build can't be read,
+ 
   with `android/key.properties` in place. The version and build number are `version` in `pubspec.yaml`. The
   application ID is in `android/app/build.gradle.kts` ([decisions/new-application-id](../decisions/new-application-id.md)).
   Play needs the build number after `+` to be higher than the last upload's. If the build ends with "failed to strip
@@ -34,9 +36,10 @@ verified: human:panditankit1995@gmail.com
   them and the bundle was written. To confirm a bundle by hand, `file` on each native library under base/lib/ inside
   the `.aab` should say `stripped`, and `keytool -printcert -jarfile` should show the upload certificate, not Android Debug.
 - **Widget icons:** after changing a weather animation, run `ICON_LOOPS=1 flutter test tool/render_widget_icons_test.dart`.
-  It renders each icon's loop to frames (8 fps, 112 px, about 1.2 MB in all) in
+  It renders each icon's loop to frames (8 fps, 112 px) in
   `android/app/src/main/res/drawable-nodpi/`, and writes the `widget_anim_<name>` lists and `widget_icon_<name>`
-  layouts, which the widget plays in its icon slot ([decisions/widget-animated-icons](../decisions/widget-animated-icons.md)).
+  layouts, which the widget plays in its icon slot. It encodes the frames as lossy WebP with `cwebp`, so install it first
+  (`brew install webp`) ([decisions/widget-webp-frames](../decisions/widget-webp-frames.md)).
   Without `ICON_LOOPS` it writes the stills the widget picker preview uses. Its header comment explains `ICON_FRAMES=1`,
   which dumps several frames per animation to help pick the capture time. The frames must stay under the cap that
   `test/widget_icon_resources_test.dart` checks.
@@ -47,6 +50,7 @@ verified: human:panditankit1995@gmail.com
 
 ## History
 
+- 2026-11-04: the release command had no obfuscation, and the widget frames were PNGs of about 1.2 MB; now it adds `--obfuscate --split-debug-info=build/symbols`, and `ICON_LOOPS=1` needs `cwebp` to write WebP frames, because of the smaller-download work. See [decisions/obfuscate-release-builds](../decisions/obfuscate-release-builds.md) and [decisions/widget-webp-frames](../decisions/widget-webp-frames.md).
 - 2026-11-03: added the generated-translations step, because `AppLocalizations` is git-ignored and generated. See [gen_l10n decision](../decisions/app-localization-gen-l10n.md).
 - 2026-11-03: the widget icons were still PNGs from a plain `flutter test` run, and the prerequisites said the app ran on
   the code's OpenWeatherMap key; now `ICON_LOOPS=1` renders the animation frames, and OpenWeatherMap is skipped without

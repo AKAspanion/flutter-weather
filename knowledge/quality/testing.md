@@ -54,9 +54,10 @@ The widget and the theme have their own tests:
 - `test/theme_manager_test.dart`: `resolveTheme` and `ThemeManager`, following the system, keeping an override set
   against the current brightness, and dropping one set against the other
   ([decisions/theme-follows-system](../decisions/theme-follows-system.md)).
-- `test/widget_icon_resources_test.dart`: every icon has an endless animation list of at least two frames whose PNGs
-  exist, a layout with one indeterminate `ProgressBar`, an `iconLayoutFor` entry in the provider, and the frames
-  together stay under 1.5 MB.
+- `test/widget_icon_resources_test.dart`: every icon has an endless animation list of at least two frames whose WebP
+  frames exist, a layout with one indeterminate `ProgressBar`, an `iconLayoutFor` entry in the provider, and the frames
+  together stay under their byte cap, with no frame PNG left beside a WebP
+  ([decisions/widget-webp-frames](../decisions/widget-webp-frames.md)).
 - `test/widget_layout_resources_test.dart`: reads the Kotlin and XML as text to hold the layout rules: no ellipsis in
   the compact layout, its details row, `WIDE_WIDTH`, `DETAILS_WIDTH`, `STRIP_HEIGHT` and `MINI_WIDTH`, the stacked
   arrangement's ids, the mini layout, and the launcher's 40dp minimum resize.
@@ -76,6 +77,7 @@ The policy's `checks.commands.test` (`ga.mjs workflow show`), run by hand.
 
 ## History
 
+- 2026-11-04: the widget icon test counted PNG frames under a 1.5 MB cap; now it counts WebP frames under a cap near their measured size, and checks no frame PNG is left. See [decisions/widget-webp-frames](../decisions/widget-webp-frames.md).
 - 2026-11-04: added `test/centre_in_list_test.dart`, because tapped forecast cards are now centred in their list. See [forecast](../features/forecast.md).
 - 2026-11-03: added tests for the overlay card, the segmented toggle and the city dialog, because they were added. See [overlays share one card](../decisions/overlays-share-one-card.md).
 - 2026-11-03: added tests for the temperature unit, the Play Store opener and the settings panel, because they were added. See [settings](../features/settings.md).

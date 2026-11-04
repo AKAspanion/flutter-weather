@@ -84,7 +84,7 @@ update, or when a label is missing.
 - Layouts, all in `android/app/src/main/res/layout/`: the three above, `weather_widget_preview.xml`, and one
   generated `widget_icon_<name>.xml` per icon. Widget info: `android/app/src/main/res/xml/weather_widget_info.xml`.
 - Backgrounds: `widget_background_<0..8>.xml` in `android/app/src/main/res/drawable/`.
-- Icons: the loop frames `widget_icon_<name>_<nn>.png` and the stills `widget_icon_*.png` (preview), and
+- Icons: the loop frames `widget_icon_<name>_<nn>.webp` and the stills `widget_icon_*.png` (preview), and
   `widget_detail_*.png` (sunrise, wind, humidity), in `android/app/src/main/res/drawable-nodpi/`; the
   `widget_anim_<name>.xml` lists in `res/drawable/`. All are rendered from the Flare animations by
   `tool/render_widget_icons_test.dart` ([run locally](../operations/run-locally.md)).
@@ -107,6 +107,7 @@ update, or when a label is missing.
 
 ## History
 
+- 2026-11-04: the icon's loop frames were PNGs; now they are lossy WebP, because of the smaller-download work. See [decisions/widget-webp-frames](../decisions/widget-webp-frames.md).
 - 2026-11-03: temperatures were always °C; now they follow the saved unit and are re-pushed when it changes, because the app can show °F. See [temperature unit](../decisions/temperature-unit-by-region.md).
 - 2026-11-03: was one card with two pages (Now and the next 24 hours) in a StackView, with a grey background and
   static PNG icons, and could not shrink below 4x2; now one Now card in three layouts, in the app's accent with an

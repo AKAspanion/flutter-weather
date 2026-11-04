@@ -23,8 +23,7 @@ verified: human:panditankit1995@gmail.com
   (`lib/theme/app_theme.dart`); the `description` in `pubspec.yaml` is still Flutter's template text.
 - **Kotlin package `com.example.flutterweather`**, which differs from the application ID
   ([decisions/new-application-id](../decisions/new-application-id.md)).
-- **Unused font files.** `assets/fonts/` holds the whole Montserrat family, but `pubspec.yaml` bundles only Regular and
-  Italic.
+- **Unused font files.** `assets/fonts/` holds the whole Montserrat family, but `pubspec.yaml` bundles only Regular.
 - **Text that is still English.** The wind unit (`m/s`, written inline in `lib/views/weather/weather_view.dart`, the
   forecast chips and `lib/services/weather_widget.dart`), each provider's attribution line (`lib/services/providers/`)
   and the app's label "Beautiful Weather" aren't translated.
@@ -43,6 +42,7 @@ verified: human:panditankit1995@gmail.com
 
 ## History
 
+- 2026-11-04: the unused-fonts item said Regular and Italic were bundled; now only Regular is, because the unused Montserrat Italic entry and file were removed.
 - 2026-11-04: the launch-time layout errors weren't recorded; now they are an item, because the developer asked
   for them to be kept during the knowledge review.
 - 2026-11-04: added the item about forecast cards overflowing mid-expand, seen while testing the centring. See [forecast](../features/forecast.md).
