@@ -7,6 +7,16 @@ import 'package:flutterweather/views/forecast/daily_detail_card.dart';
 import 'package:flutterweather/views/forecast/hourly.dart';
 import 'package:provider/provider.dart';
 
+/// Space above each section title, chosen so the gap from what's above (the close button's row, then the hourly
+/// chips) is 32 in both places: the list's own 16 top padding plus [_hoursTitleTop], and a chip's 12 bottom margin plus
+/// [_daysTitleTop].
+const double _hoursTitleTop = 16;
+const double _daysTitleTop = 20;
+
+/// Space below each subtitle: with the 12 margin above every chip and day card, the gap to the first card is 16 in both
+/// sections.
+const double _subtitleBottom = 4;
+
 class Forecast extends StatelessWidget {
   final int accent;
   final Location location;
@@ -99,11 +109,11 @@ class Forecast extends StatelessWidget {
     final List<Weather> daily = location.getDaily();
     final List<Widget> header = [
       _translateBuilder(
-        _title(l10n.nextHours.toUpperCase(), top: 40),
+        _title(l10n.nextHours.toUpperCase(), top: _hoursTitleTop),
         amount: 0.4,
       ),
       _translateBuilder(
-        _subtitle(l10n.nextHoursSubtitle, bottom: 16),
+        _subtitle(l10n.nextHoursSubtitle, bottom: _subtitleBottom),
         amount: 0.4,
       ),
       _translateBuilder(
@@ -114,11 +124,11 @@ class Forecast extends StatelessWidget {
         amount: 0.6,
       ),
       _translateBuilder(
-        _title(l10n.nextDays.toUpperCase(), top: 48),
+        _title(l10n.nextDays.toUpperCase(), top: _daysTitleTop),
         amount: 0.8,
       ),
       _translateBuilder(
-        _subtitle(l10n.nextDaysSubtitle(daily.length), bottom: 8),
+        _subtitle(l10n.nextDaysSubtitle(daily.length), bottom: _subtitleBottom),
         amount: 0.8,
       ),
     ];
