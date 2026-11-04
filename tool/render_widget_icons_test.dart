@@ -8,8 +8,8 @@
 //
 //   ICON_LOOPS=1 flutter test tool/render_widget_icons_test.dart
 //
-// instead renders each icon's whole loop as frames (widget_icon_<name>_<nn>.png in
-// drawable-nodpi) and writes, per icon, an animation-list (res/drawable/widget_anim_<name>.xml)
+// instead renders each icon's whole loop as frames (widget_icon_<name>_<nn>.webp in
+// drawable-nodpi, encoded with cwebp: `brew install webp`) and writes, per icon, an animation-list (res/drawable/widget_anim_<name>.xml)
 // and the layout the widget adds to its icon slot (res/layout/widget_icon_<name>.xml). A new icon
 // also needs a `when` entry in WeatherWidgetProvider.iconLayoutFor.
 //
@@ -57,8 +57,22 @@ const String resDir = 'android/app/src/main/res';
 /// phone), and the ProgressBar scales the frame to it.
 const int frameSize = 112;
 
+/// Encodes a frame PNG as lossy WebP with exact alpha and deletes the PNG, because Android rejects two
+/// resources with the same name. Lossy WebP is what keeps the frames near 0.6 MB.
+Future<void> encodeWebp(File png) async {
+  final webp = png.path.replaceFirst(RegExp(r'\.png$'), '.webp');
+  final ProcessResult result;
+  try {
+    result = await Process.run('cwebp', ['-q', '85', '-exact', '-alpha_q', '100', '-m', '6', png.path, '-o', webp]);
+  } on ProcessException catch (e) {
+    fail('cwebp could not be started (${e.message}); install it with: brew install webp');
+  }
+  if (result.exitCode != 0) fail('cwebp failed on ${png.path}: ${result.stderr}');
+  png.deleteSync();
+}
+
 /// How long the widget shows each frame: 125ms is 8 frames per second. Together with
-/// [frameSize] this keeps all the frames near 1.5 MB (the cap `test/widget_icon_resources_test.dart`
+/// [frameSize] this keeps all the frames near 0.6 MB (the cap `test/widget_icon_resources_test.dart`
 /// checks). Raise the rate or the size only with that total in mind.
 const int frameMs = 125;
 
@@ -116,7 +130,7 @@ Future<int> renderLoop(WidgetTester tester, String icon) async {
   print('$icon: ${seconds}s, looping=${controller.animation.isLooping}, $count frames');
 
   for (final old in Directory(outDir).listSync().whereType<File>()) {
-    if (RegExp('^widget_icon_${name}_[0-9][0-9]\\.png\$').hasMatch(old.uri.pathSegments.last)) old.deleteSync();
+    if (RegExp('^widget_icon_${name}_[0-9][0-9]\\.(png|webp)\$').hasMatch(old.uri.pathSegments.last)) old.deleteSync();
   }
 
   // A frame equal to one already written reuses its file, and a run of equal frames is one item
@@ -133,11 +147,13 @@ Future<int> renderLoop(WidgetTester tester, String icon) async {
       final ui.Image image = await boundary.toImage(pixelRatio: 1);
       return (await image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
     }))!;
-    final frame = written.putIfAbsent(String.fromCharCodes(png), () {
-      final frame = 'widget_icon_${name}_${i.toString().padLeft(2, '0')}';
-      File('$outDir/$frame.png').writeAsBytesSync(png);
-      return frame;
-    });
+    var frame = written[String.fromCharCodes(png)];
+    if (frame == null) {
+      frame = 'widget_icon_${name}_${i.toString().padLeft(2, '0')}';
+      final file = File('$outDir/$frame.png')..writeAsBytesSync(png);
+      await tester.runAsync(() => encodeWebp(file));
+      written[String.fromCharCodes(png)] = frame;
+    }
     if (items.isNotEmpty && items.last == frame) {
       counts.last++;
     } else {
@@ -151,7 +167,7 @@ Future<int> renderLoop(WidgetTester tester, String icon) async {
     counts.last = count - count ~/ 2;
     counts.insert(0, count ~/ 2);
   }
-  final bytes = [for (final frame in written.values) File('$outDir/$frame.png').lengthSync()].fold(0, (a, b) => a + b);
+  final bytes = [for (final frame in written.values) File('$outDir/$frame.webp').lengthSync()].fold(0, (a, b) => a + b);
   print('$icon: ${written.length} distinct frames, $bytes bytes');
 
   File('$resDir/drawable/widget_anim_$name.xml')

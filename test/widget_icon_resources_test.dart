@@ -20,11 +20,11 @@ const List<String> names = [
   'foggy',
 ];
 
-/// Frames and the static previews together stay near 1.5 MB, so the APK does not grow by much more.
-const int maxFrameBytes = 1572864;
+/// The WebP frames together measure 758914 bytes; the cap is that plus about 10%, rounded up to a whole KB.
+const int maxFrameBytes = 835584;
 
 void main() {
-  test('each icon has an endlessly looping animation list of at least two frames, all present as PNGs', () {
+  test('each icon has an endlessly looping animation list of at least two frames, all present as WebP', () {
     for (final name in names) {
       final file = File('$res/drawable/widget_anim_$name.xml');
       expect(file.existsSync(), isTrue, reason: '${file.path} is missing');
@@ -37,7 +37,8 @@ void main() {
           RegExp(r'android:drawable="@drawable/([a-z0-9_]+)"').allMatches(xml).map((m) => m.group(1)!).toList();
       expect(frames.length, greaterThanOrEqualTo(2), reason: '$name needs at least 2 frames');
       for (final frame in frames) {
-        expect(File('$res/drawable-nodpi/$frame.png').existsSync(), isTrue, reason: '$frame.png is missing');
+        expect(File('$res/drawable-nodpi/$frame.webp').existsSync(), isTrue, reason: '$frame.webp is missing');
+        expect(File('$res/drawable-nodpi/$frame.png').existsSync(), isFalse, reason: '$frame.png sits beside its WebP');
       }
     }
   });
@@ -55,8 +56,23 @@ void main() {
     }
   });
 
-  test('all frame PNGs together are at most 1.5 MB', () {
-    final frame = RegExp(r'^widget_icon_.*_[0-9][0-9]\.png$');
+  test('no frame is left as a PNG, and the stills stay PNG', () {
+    final dir = Directory('$res/drawable-nodpi');
+    final leftovers = dir
+        .listSync()
+        .whereType<File>()
+        .where((f) => RegExp(r'^widget_icon_.*_[0-9][0-9]\.png$').hasMatch(f.uri.pathSegments.last));
+    expect(leftovers, isEmpty);
+    for (final name in names) {
+      expect(File('${dir.path}/widget_icon_$name.png').existsSync(), isTrue, reason: 'widget_icon_$name.png');
+    }
+    for (final detail in ['sun', 'wind', 'drop']) {
+      expect(File('${dir.path}/widget_detail_$detail.png').existsSync(), isTrue, reason: 'widget_detail_$detail.png');
+    }
+  });
+
+  test('all WebP frames together are at most maxFrameBytes', () {
+    final frame = RegExp(r'^widget_icon_.*_[0-9][0-9]\.webp$');
     final frames = Directory('$res/drawable-nodpi')
         .listSync()
         .whereType<File>()
