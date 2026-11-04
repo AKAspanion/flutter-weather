@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterweather/components/overlay_card.dart';
 import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/theme_manager.dart';
+import 'package:flutterweather/theme/contrast.dart';
 import 'package:flutterweather/theme/gradients.dart';
 import 'package:provider/provider.dart';
 
@@ -24,8 +25,10 @@ class _DialogOverlayState extends State<DialogOverlay> {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context)!;
-    final Color textColor = Provider.of<ThemeManager>(context).textColor;
-    final Color accent = GradientValues().gradients[widget.accent].gradient[0];
+    final ThemeManager theme = Provider.of<ThemeManager>(context);
+    final Color textColor = theme.textColor;
+    final Color accent =
+        readableOn(GradientValues().gradients[widget.accent].gradient[0], theme.bgColor, minRatio: shapeContrast);
 
     return OverlayCard(
       title: l10n.city,

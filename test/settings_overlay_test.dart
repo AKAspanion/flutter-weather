@@ -7,6 +7,7 @@ import 'package:flutterweather/services/locale_manager.dart';
 import 'package:flutterweather/services/theme_manager.dart';
 import 'package:flutterweather/services/unit_manager.dart';
 import 'package:flutterweather/theme/app_theme.dart';
+import 'package:flutterweather/theme/contrast.dart';
 import 'package:flutterweather/views/settings/settings_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,7 +43,8 @@ class _Panel {
   _Panel(this.locale, this.unit, this.theme, this.calls);
 }
 
-Future<_Panel> _pump(WidgetTester tester, {Locale? chosen, TemperatureUnit? unit}) async {
+Future<_Panel> _pump(WidgetTester tester,
+    {Locale? chosen, TemperatureUnit? unit, int accent = 0, bool dark = false}) async {
   final locale = LocaleManager();
   await locale.load();
   if (chosen != null) await locale.setLocale(chosen);
@@ -50,6 +52,7 @@ Future<_Panel> _pump(WidgetTester tester, {Locale? chosen, TemperatureUnit? unit
   await units.load();
   if (unit != null) await units.setUnit(unit);
   final theme = ThemeManager();
+  if (dark) await theme.setTheme(AppTheme.Dark);
   final calls = _Calls();
   final store = await SharedPreferences.getInstance();
   await tester.pumpWidget(
@@ -73,7 +76,7 @@ Future<_Panel> _pump(WidgetTester tester, {Locale? chosen, TemperatureUnit? unit
             body: Stack(
               children: [
                 SettingsOverlay(
-                  accent: 0,
+                  accent: accent,
                   onClose: () => calls.names.add('close'),
                   onLanguage: () => calls.names.add('language'),
                   onRate: () => calls.names.add('rate'),
@@ -235,5 +238,43 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.byType(SingleChildScrollView), findsOneWidget);
+  });
+  testWidgets('in Arabic the unit labels still read °C and °F, left to right', (tester) async {
+    await _pump(tester, chosen: const Locale('ar'));
+
+    for (final String label in ['°C', '°F']) {
+      final Text text = tester.widget<Text>(find.text(label));
+      expect(text.textDirection, TextDirection.ltr, reason: label);
+    }
+  });
+
+  testWidgets('in Arabic the open-in-new icon is not mirrored', (tester) async {
+    await _pump(tester, chosen: const Locale('ar'));
+
+    expect(Directionality.of(tester.element(find.byIcon(Icons.open_in_new))), TextDirection.ltr);
+  });
+
+  testWidgets('the language chip reads clearly on either card, with dark and pale accents', (tester) async {
+    // 7 is Aubergine and 3 is 50 Shades of Grey, close to the dark card; 4 is Pale Wood, pale under white text.
+    for (final (int accent, bool dark) in [(7, true), (3, true), (4, false), (4, true)]) {
+      final _Panel panel = await _pump(tester, accent: accent, dark: dark);
+      final Text name = tester.widget<Text>(find.text('System default'));
+      final Container chip = tester.widget<Container>(
+        find.ancestor(of: find.text('System default'), matching: find.byType(Container)).first,
+      );
+      final Color fill = (chip.decoration as BoxDecoration).color!;
+      final String reason = 'accent $accent, ${dark ? 'dark' : 'light'}';
+      expect(contrastRatio(name.style!.color!, fill), greaterThanOrEqualTo(textContrast), reason: reason);
+      expect(contrastRatio(fill, panel.theme.bgColor), greaterThanOrEqualTo(shapeContrast), reason: reason);
+    }
+  });
+
+  testWidgets('on the dark card a selected segment stands out from the card', (tester) async {
+    final _Panel panel = await _pump(tester, accent: 3, dark: true);
+    final Container box = tester.widget<Container>(
+      find.ancestor(of: find.text('°C'), matching: find.byType(Container)).first,
+    );
+    final Color fill = (box.decoration as BoxDecoration).color!;
+    expect(contrastRatio(fill, panel.theme.bgColor), greaterThanOrEqualTo(shapeContrast));
   });
 }

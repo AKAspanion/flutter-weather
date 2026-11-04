@@ -5,6 +5,8 @@ import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/l10n/app_localizations_en.dart';
 import 'package:flutterweather/services/locale_manager.dart';
 import 'package:flutterweather/services/theme_manager.dart';
+import 'package:flutterweather/theme/app_theme.dart';
+import 'package:flutterweather/theme/contrast.dart';
 import 'package:flutterweather/views/home/language_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,14 +25,15 @@ class _EnglishForAll extends LocalizationsDelegate<AppLocalizations> {
   bool shouldReload(_EnglishForAll old) => false;
 }
 
-Future<LocaleManager> _pump(WidgetTester tester, {Locale? chosen, required void Function() onClose}) async {
+Future<LocaleManager> _pump(WidgetTester tester,
+    {Locale? chosen, required void Function() onClose, int accent = 0, ThemeManager? theme}) async {
   final manager = LocaleManager();
   await manager.load();
   if (chosen != null) await manager.setLocale(chosen);
   await tester.pumpWidget(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ThemeManager()),
+        ChangeNotifierProvider<ThemeManager>.value(value: theme ?? ThemeManager()),
         ChangeNotifierProvider<LocaleManager>.value(value: manager),
       ],
       child: Consumer<LocaleManager>(
@@ -44,7 +47,7 @@ Future<LocaleManager> _pump(WidgetTester tester, {Locale? chosen, required void 
           supportedLocales: [for (final l in supportedLanguages) Locale(l.code)],
           locale: m.locale,
           home: Scaffold(
-            body: Stack(children: [LanguageOverlay(accent: 0, onClose: onClose)]),
+            body: Stack(children: [LanguageOverlay(accent: accent, onClose: onClose)]),
           ),
         ),
       ),
@@ -127,5 +130,14 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(Directionality.of(tester.element(find.byType(LanguageOverlay))), TextDirection.rtl);
+  });
+
+  testWidgets('on the dark card the check mark stands out even with the darkest accent', (tester) async {
+    final ThemeManager theme = ThemeManager();
+    await theme.setTheme(AppTheme.Dark);
+    await _pump(tester, onClose: () {}, accent: 3, theme: theme);
+
+    final Icon check = tester.widget<Icon>(find.byIcon(Icons.check));
+    expect(contrastRatio(check.color!, theme.bgColor), greaterThanOrEqualTo(shapeContrast));
   });
 }

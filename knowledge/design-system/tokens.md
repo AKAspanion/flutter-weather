@@ -22,6 +22,13 @@ inline.
   and `AppTheme.Dark`. The surface and text colours the views actually use come from `ThemeManager.bgColor` and
   `ThemeManager.textColor` in `lib/services/theme_manager.dart`. Which of the two shows follows the system, unless the
   user overrode it ([themes and accents](../features/themes-and-accents.md)).
+- **Accent on a card:** the accents were picked for the light card, and several are unreadable on the dark one
+  (Aubergine, 50 Shades of Grey) or pale on white (Pale Wood). So an accent drawn on a card goes through
+  `readableOn` in `lib/theme/contrast.dart`, which lightens it on the dark card or darkens it on the light one just
+  enough for WCAG contrast: `textContrast = 4.5` for text, `shapeContrast = 3` for icons, borders and fills (the
+  picker's check, the city field, the toggles and the settings panel's language chip). A label on an accent fill uses
+  `onFill`, white or near-black, whichever reads better. Found testing on a phone with the Aubergine accent in the
+  dark theme.
 - Views also use Material colours inline (`Colors.white`, `Colors.black38`, `Colors.red[400]` and others).
 
 ## Spacing and radius
@@ -46,12 +53,16 @@ These values are repeated inline, not named:
 
 ## History
 
+- 2026-11-04: overlays drew the raw accent as text and icons on either card; now they pass it through `readableOn`
+  and `onFill`, because on the dark card some accents were unreadable. See
+  [overlays share one card](../decisions/overlays-share-one-card.md).
 - 2026-11-03: dialogs repeated their own radius and shadow; now the overlay card holds them once, because the three overlays share `OverlayCard`. See [overlays share one card](../decisions/overlays-share-one-card.md).
 
 ## Sources
 
 * `lib/theme/gradients.dart`
 * `lib/theme/app_theme.dart`
+* `lib/theme/contrast.dart`
 * `lib/services/theme_manager.dart`
 * `lib/components/btn.dart`
 * `lib/components/overlay_card.dart`

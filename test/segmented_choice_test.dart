@@ -15,7 +15,7 @@ Color? _fill(WidgetTester tester, String label) {
 }
 
 Future<List<_Unit>> _pump(WidgetTester tester,
-    {_Unit selected = _Unit.c, List<SegmentedOption<_Unit>>? options}) async {
+    {_Unit selected = _Unit.c, List<SegmentedOption<_Unit>>? options, Color accent = _accent}) async {
   final List<_Unit> changes = [];
   await tester.pumpWidget(
     MaterialApp(
@@ -28,7 +28,7 @@ Future<List<_Unit>> _pump(WidgetTester tester,
                   SegmentedOption(value: _Unit.f, child: Text('°F')),
                 ],
             selected: selected,
-            accent: _accent,
+            accent: accent,
             textColor: Colors.black,
             onChanged: changes.add,
           ),
@@ -72,5 +72,12 @@ void main() {
     ]);
     expect(find.bySemanticsLabel('Dark'), findsOneWidget);
     handle.dispose();
+  });
+
+  testWidgets('draws the selected text near-black on a pale accent, so it stays readable', (tester) async {
+    await _pump(tester, accent: const Color(0xFFd6ae7b));
+    final Color label = DefaultTextStyle.of(tester.element(find.text('°C'))).style.color!;
+    expect(label, isNot(Colors.white));
+    expect(label.computeLuminance(), lessThan(0.1));
   });
 }

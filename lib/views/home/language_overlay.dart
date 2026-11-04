@@ -3,6 +3,7 @@ import 'package:flutterweather/components/overlay_card.dart';
 import 'package:flutterweather/l10n/app_localizations.dart';
 import 'package:flutterweather/services/locale_manager.dart';
 import 'package:flutterweather/services/theme_manager.dart';
+import 'package:flutterweather/theme/contrast.dart';
 import 'package:flutterweather/theme/gradients.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +25,8 @@ class LanguageOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context)!;
     final ThemeManager theme = Provider.of<ThemeManager>(context);
-    final Color accentColor = GradientValues().gradients[accent].gradient[0];
+    final Color accentColor =
+        readableOn(GradientValues().gradients[accent].gradient[0], theme.bgColor, minRatio: shapeContrast);
     final Locale? current = context.watch<LocaleManager>().locale;
 
     Widget row(String label, Locale? locale) {
